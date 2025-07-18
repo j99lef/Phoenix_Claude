@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Briefs - TravelAiGent</title>
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Luxury Concierge Design System -->
+    <link href="/static/luxury-concierge.css" rel="stylesheet">
+    
+    <!-- Additional fonts for luxury design -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Enhanced Travel Briefs Page Styles */
+        .briefs-hero {
+            background: linear-gradient(135deg, var(--luxury-obsidian) 0%, #1a1a1a 100%);
+            color: var(--luxury-white);
+            padding: var(--space-luxury-4xl) 0;
+            margin-bottom: var(--space-luxury-4xl);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .briefs-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="luxury-pattern" patternUnits="userSpaceOnUse" width="50" height="50"><circle cx="25" cy="25" r="2" fill="rgba(201,169,110,0.3)"/><path d="M0 25 Q25 20 50 25" stroke="rgba(201,169,110,0.2)" stroke-width="0.5" fill="none"/></pattern></defs><rect width="100" height="100" fill="url(%23luxury-pattern)"/></svg>');
+            opacity: 0.5;
+        }
+        
+        .briefs-hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-luxury-2xl);
+            text-align: center;
+        }
+        
+        .briefs-hero-title {
+            font-family: var(--font-luxury-display);
+            font-size: 3.5rem;
+            font-weight: 400;
+            margin-bottom: var(--space-luxury-md);
+            letter-spacing: -0.03em;
+        }
+        
+        .briefs-hero-subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto var(--space-luxury-2xl);
+            line-height: 1.6;
+        }
+        
+        .briefs-stats {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-luxury-4xl);
+            flex-wrap: wrap;
+        }
+        
+        .brief-stat {
+            text-align: center;
+        }
+        
+        .brief-stat-number {
+            font-family: var(--font-luxury-display);
+            font-size: 3rem;
+            font-weight: 500;
+            color: var(--luxury-gold);
+            display: block;
+        }
+        
+        .brief-stat-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.8;
+        }
+        
+        /* Action Bar Enhancements */
+        .briefs-action-bar {
+            max-width: 1200px;
+            margin: 0 auto var(--space-luxury-3xl);
+            padding: 0 var(--space-luxury-2xl);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--space-luxury-lg);
+        }
+        
+        .briefs-filters {
+            display: flex;
+            gap: var(--space-luxury-md);
+            align-items: center;
+        }
+        
+        .filter-chip {
+            background: var(--luxury-pearl);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 24px;
+            padding: var(--space-luxury-sm) var(--space-luxury-lg);
+            font-size: 0.9rem;
+            color: var(--luxury-obsidian);
+            cursor: pointer;
+            transition: var(--transition-luxury);
+        }
+        
+        .filter-chip:hover,
+        .filter-chip.active {
+            background: var(--luxury-gold);
+            color: var(--luxury-white);
+            border-color: var(--luxury-gold);
+            transform: translateY(-2px);
+        }
+        
+        /* Enhanced Brief Cards */
+        .briefs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: var(--space-luxury-2xl);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-luxury-2xl);
+        }
+        
+        .brief-card {
+            background: var(--luxury-white);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        
+        .brief-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-color: var(--luxury-gold);
+        }
+        
+        .brief-card-header {
+            background: linear-gradient(135deg, var(--luxury-pearl) 0%, var(--luxury-ivory) 100%);
+            padding: var(--space-luxury-xl);
+            position: relative;
+        }
+        
+        .brief-destination {
+            font-family: var(--font-luxury-display);
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-xs);
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+        }
+        
+        .brief-route {
+            color: var(--luxury-charcoal);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+        }
+        
+        .brief-priority {
+            position: absolute;
+            top: var(--space-luxury-lg);
+            right: var(--space-luxury-lg);
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--luxury-silver);
+        }
+        
+        .brief-priority.high {
+            background: #ef4444;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2);
+        }
+        
+        .brief-priority.medium {
+            background: var(--luxury-gold);
+            box-shadow: 0 0 0 4px rgba(201, 169, 110, 0.2);
+        }
+        
+        .brief-card-body {
+            padding: var(--space-luxury-xl);
+        }
+        
+        .brief-details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-luxury-md);
+            margin-bottom: var(--space-luxury-lg);
+        }
+        
+        .brief-detail {
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+            color: var(--luxury-charcoal);
+            font-size: 0.9rem;
+        }
+        
+        .brief-detail i {
+            color: var(--luxury-gold);
+            width: 20px;
+            text-align: center;
+        }
+        
+        .brief-budget {
+            background: var(--luxury-champagne);
+            border-radius: 12px;
+            padding: var(--space-luxury-md);
+            text-align: center;
+            margin-bottom: var(--space-luxury-lg);
+        }
+        
+        .brief-budget-label {
+            font-size: 0.8rem;
+            color: var(--luxury-bronze);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .brief-budget-amount {
+            font-family: var(--font-luxury-display);
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--luxury-obsidian);
+        }
+        
+        .brief-requirements {
+            background: var(--luxury-pearl);
+            border-radius: 12px;
+            padding: var(--space-luxury-md);
+            margin-bottom: var(--space-luxury-lg);
+        }
+        
+        .brief-requirements-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--luxury-bronze);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: var(--space-luxury-sm);
+        }
+        
+        .brief-requirements-text {
+            color: var(--luxury-charcoal);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .brief-card-footer {
+            padding: var(--space-luxury-lg) var(--space-luxury-xl);
+            background: var(--luxury-pearl);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: var(--space-luxury-md);
+        }
+        
+        .brief-actions {
+            display: flex;
+            gap: var(--space-luxury-sm);
+        }
+        
+        .brief-action-btn {
+            padding: var(--space-luxury-sm) var(--space-luxury-md);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 8px;
+            background: var(--luxury-white);
+            color: var(--luxury-obsidian);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: var(--transition-luxury);
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-xs);
+        }
+        
+        .brief-action-btn:hover {
+            background: var(--luxury-gold);
+            color: var(--luxury-white);
+            border-color: var(--luxury-gold);
+            transform: translateY(-2px);
+        }
+        
+        .brief-status {
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+            font-size: 0.85rem;
+            color: var(--luxury-charcoal);
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--luxury-silver);
+        }
+        
+        .status-indicator.active {
+            background: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+        
+        .status-indicator.paused {
+            background: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+        }
+        
+        .status-indicator.completed {
+            background: #6b7280;
+            box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.2);
+        }
+        
+        .status-indicator.cancelled {
+            background: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+        }
+        
+        .brief-tracking {
+            text-align: right;
+            min-width: 200px;
+        }
+        
+        .brief-stats {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-luxury-xs);
+            margin-top: var(--space-luxury-sm);
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-xs);
+            font-size: 0.8rem;
+            color: var(--luxury-charcoal);
+        }
+        
+        .stat-item i {
+            width: 12px;
+            text-align: center;
+            color: var(--luxury-gold);
+        }
+        
+        /* Enhanced Empty State */
+        .empty-state-luxury {
+            text-align: center;
+            padding: var(--space-luxury-6xl) var(--space-luxury-2xl);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .empty-state-icon {
+            width: 120px;
+            height: 120px;
+            background: var(--gradient-luxury-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-luxury-2xl);
+            font-size: 3rem;
+            color: var(--luxury-white);
+            position: relative;
+        }
+        
+        .empty-state-icon::before {
+            content: '';
+            position: absolute;
+            inset: -20px;
+            border: 2px dashed var(--luxury-gold);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            to { transform: rotate(360deg); }
+        }
+        
+        .empty-state-title {
+            font-family: var(--font-luxury-display);
+            font-size: 2.5rem;
+            font-weight: 400;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-md);
+        }
+        
+        .empty-state-description {
+            color: var(--luxury-charcoal);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: var(--space-luxury-2xl);
+        }
+        
+        /* Floating action button enhancement */
+        .luxury-fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 64px;
+            height: 64px;
+            background: var(--gradient-luxury-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--luxury-white);
+            text-decoration: none;
+            box-shadow: var(--shadow-luxury-dramatic);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+        }
+        
+        .luxury-fab:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+        
+        .luxury-fab i {
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Luxury Travel Concierge Header -->
+    <header class="luxury-header">
+        <div class="header-luxury-content">
+            <a href="/" class="luxury-brand">
+                <img src="/static/TravelAigent_logo_header.png" alt="TravelAiGent" class="brand-luxury-logo">
+                <span class="brand-luxury-text">TravelAiGent</span>
+                <span class="brand-version">v1.2.1</span>
+            </a>
+            
+            <nav class="luxury-nav">
+                <a href="/" class="luxury-nav-link">Dashboard</a>
+                <a href="/profile" class="luxury-nav-link">Profile</a>
+                <a href="/briefs" class="luxury-nav-link active">Travel Briefs</a>
+                <a href="/groups" class="luxury-nav-link">Travel Groups</a>
+                <a href="/deals" class="luxury-nav-link">Deals</a>
+            </nav>
+            
+            <div class="luxury-profile dropdown">
+                <div class="luxury-profile-trigger" onclick="toggleProfileDropdown(event)">
+                    <div class="luxury-avatar">{{ (user.first_name[0] if user and user.first_name else user.username[0] if user and user.username else 'U') | upper }}</div>
+                    <span>{{ user.first_name if user and user.first_name else user.username if user else 'User' }}</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="luxury-dropdown-menu" id="profileDropdown">
+                    <a href="/profile" class="luxury-dropdown-item">
+                        <i class="fas fa-user"></i>
+                        Configure Profile
+                    </a>
+                    <a href="/briefs" class="luxury-dropdown-item">
+                        <i class="fas fa-suitcase"></i>
+                        My Travel Briefs
+                    </a>
+                    <a href="/account" class="luxury-dropdown-item">
+                        <i class="fas fa-cog"></i>
+                        Account Settings
+                    </a>
+                    <div class="luxury-dropdown-divider"></div>
+                    <a href="/logout" class="luxury-dropdown-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Log Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="briefs-hero">
+        <div class="briefs-hero-content">
+            <h1 class="briefs-hero-title luxury-animate-fade-up">Your Travel Portfolio</h1>
+            <p class="briefs-hero-subtitle luxury-animate-fade-up" style="animation-delay: 0.1s;">
+                Each brief represents a journey waiting to be discovered. Our AI concierge continuously searches for exclusive deals matching your preferences.
+            </p>
+            
+            <div class="briefs-stats luxury-animate-fade-up" style="animation-delay: 0.2s;">
+                <div class="brief-stat">
+                    <span class="brief-stat-number">{{ briefs|length }}</span>
+                    <span class="brief-stat-label">Active Briefs</span>
+                </div>
+                <div class="brief-stat">
+                    <span class="brief-stat-number">{{ (briefs|sum(attribute='budget_max') / 1000)|round(1) }}k</span>
+                    <span class="brief-stat-label">Total Budget</span>
+                </div>
+                <div class="brief-stat">
+                    <span class="brief-stat-number">24/7</span>
+                    <span class="brief-stat-label">AI Monitoring</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Action Bar -->
+    <div class="briefs-action-bar">
+        <div class="briefs-filters">
+            <button class="filter-chip active" onclick="filterBriefs('all')">
+                All Briefs
+            </button>
+            <button class="filter-chip" onclick="filterBriefs('high')">
+                <i class="fas fa-fire"></i> High Priority
+            </button>
+            <button class="filter-chip" onclick="filterBriefs('recent')">
+                <i class="fas fa-clock"></i> Recent
+            </button>
+        </div>
+        
+        <a href="/brief/new" class="btn-luxury-primary">
+            <i class="fas fa-plus"></i>
+            Create New Brief
+        </a>
+    </div>
+    
+    <!-- Main Content -->
+    <main>
+        {% if briefs %}
+            <div class="briefs-grid">
+                {% for brief in briefs %}
+                    <div class="brief-card luxury-animate-fade-up" data-priority="{{ brief.priority or 'medium' }}">
+                        <div class="brief-card-header">
+                            <div class="brief-destination">
+                                <i class="fas fa-map-pin"></i>
+                                {{ brief.destination }}
+                            </div>
+                            <div class="brief-route">
+                                <i class="fas fa-plane-departure"></i>
+                                {{ brief.departure_location }}
+                            </div>
+                            <div class="brief-priority {{ (brief.priority or 'medium')|lower }}"></div>
+                        </div>
+                        
+                        <div class="brief-card-body">
+                            <div class="brief-details-grid">
+                                <div class="brief-detail">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>{{ brief.departure_date.strftime('%b %d') if brief.departure_date else 'Flexible' }}</span>
+                                </div>
+                                <div class="brief-detail">
+                                    <i class="fas fa-users"></i>
+                                    <span>{{ brief.travelers }}</span>
+                                </div>
+                                <div class="brief-detail">
+                                    <i class="fas fa-bed"></i>
+                                    <span>{{ brief.accommodation_type.split()[0] }}</span>
+                                </div>
+                                <div class="brief-detail">
+                                    <i class="fas fa-clock"></i>
+                                    <span>{{ brief.trip_length|int }} days</span>
+                                </div>
+                            </div>
+                            
+                            <div class="brief-budget">
+                                <div class="brief-budget-label">Budget Range</div>
+                                <div class="brief-budget-amount">
+                                    £{{ "{:,}".format(brief.budget_min) }} - £{{ "{:,}".format(brief.budget_max) }}
+                                </div>
+                            </div>
+                            
+                            {% if brief.interests %}
+                                <div class="brief-requirements">
+                                    <div class="brief-requirements-title">Special Requirements</div>
+                                    <div class="brief-requirements-text">
+                                        {{ brief.interests[:80] }}{% if brief.interests|length > 80 %}...{% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="brief-card-footer">
+                            <div class="brief-actions">
+                                <a href="/brief/{{ brief.id }}/edit" class="brief-action-btn">
+                                    <i class="fas fa-edit"></i>
+                                    Edit
+                                </a>
+                                <a href="/brief/{{ brief.id }}" class="brief-action-btn">
+                                    <i class="fas fa-search"></i>
+                                    View Deals
+                                </a>
+                                <button class="brief-action-btn" onclick="toggleBriefStatus({{ brief.id }}, '{{ brief.status or 'active' }}')">
+                                    <i class="fas fa-{{ 'pause' if (brief.status or 'active') == 'active' else 'play' }}"></i>
+                                    {{ 'Pause' if (brief.status or 'active') == 'active' else 'Resume' }}
+                                </button>
+                            </div>
+                            <div class="brief-tracking">
+                                <div class="brief-status">
+                                    <span class="status-indicator {{ (brief.status or 'active')|lower }}"></span>
+                                    <span>{{ (brief.status or 'active').title() }}</span>
+                                </div>
+                                <div class="brief-stats">
+                                    <span class="stat-item">
+                                        <i class="fas fa-clock"></i>
+                                        Last checked: {{ brief.last_deal_check.strftime('%m/%d') if brief.last_deal_check else 'Never' }}
+                                    </span>
+                                    <span class="stat-item">
+                                        <i class="fas fa-bell"></i>
+                                        {{ 'Notifications On' if brief.deal_notifications else 'Notifications Off' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Enhanced Empty State -->
+            <div class="empty-state-luxury">
+                <div class="empty-state-icon">
+                    <i class="fas fa-compass"></i>
+                </div>
+                <h2 class="empty-state-title">Start Your Journey</h2>
+                <p class="empty-state-description">
+                    Create your first travel brief and let our AI concierge search the world for your perfect getaway. 
+                    We'll monitor thousands of deals 24/7 to find exactly what you're looking for.
+                </p>
+                <a href="/brief/new" class="btn-luxury-primary">
+                    <i class="fas fa-plus"></i>
+                    Create Your First Brief
+                </a>
+            </div>
+        {% endif %}
+    </main>
+    
+    <!-- Floating Action Button -->
+    <a href="/brief/new" class="luxury-fab" title="Create Travel Brief">
+        <i class="fas fa-plus"></i>
+    </a>
+    
+    <script>
+        // Profile dropdown functionality
+        function toggleProfileDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.classList.toggle('show');
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('profileDropdown');
+            const trigger = document.querySelector('.luxury-profile-trigger');
+            
+            if (dropdown && trigger && !trigger.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+        
+        // Filter briefs
+        function filterBriefs(filter) {
+            // Update active filter chip
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Filter cards (would implement actual filtering logic)
+            console.log('Filtering by:', filter);
+        }
+        
+        // Enhanced animations on scroll
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, index * 100);
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe all cards
+            document.querySelectorAll('.brief-card').forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                observer.observe(card);
+            });
+            
+            // Smooth page reveal
+            document.body.style.opacity = '1';
+            document.body.style.transition = 'opacity 0.5s ease-in-out';
+        });
+        
+        // Toggle brief status (active/paused)
+        async function toggleBriefStatus(briefId, currentStatus) {
+            try {
+                const newStatus = currentStatus === 'active' ? 'paused' : 'active';
+                
+                const response = await fetch(`/api/briefs/${briefId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                
+                if (response.ok) {
+                    // Reload page to show updated status
+                    window.location.reload();
+                } else {
+                    alert('Error updating brief status');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to update brief status');
+            }
+        }
+        
+        // Add dropdown styles if not present
+        const style = document.createElement('style');
+        style.textContent = `
+            .luxury-dropdown-menu {
+                position: absolute;
+                top: calc(100% + 10px);
+                right: 0;
+                background: var(--luxury-white);
+                border: 1px solid var(--luxury-stone);
+                border-radius: 12px;
+                box-shadow: var(--shadow-luxury-elevated);
+                min-width: 220px;
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(-10px);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 9999;
+            }
+            
+            .luxury-dropdown-menu.show {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+            
+            .luxury-dropdown-item {
+                display: flex;
+                align-items: center;
+                gap: var(--space-luxury-md);
+                padding: var(--space-luxury-md) var(--space-luxury-lg);
+                color: var(--luxury-obsidian);
+                text-decoration: none;
+                transition: var(--transition-luxury);
+                font-size: 0.95rem;
+            }
+            
+            .luxury-dropdown-item:hover {
+                background: var(--luxury-pearl);
+                color: var(--luxury-gold);
+            }
+            
+            .luxury-dropdown-divider {
+                height: 1px;
+                background: var(--luxury-stone);
+                margin: var(--space-luxury-xs) 0;
+            }
+            
+            .dropdown {
+                position: relative;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

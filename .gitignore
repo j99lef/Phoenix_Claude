@@ -1,0 +1,38 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+build/
+dist/
+
+# Logs
+*.log
+travel_agent.log
+
+# Environment & secrets
+.env
+
+# IDE / Editor config
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Unit test coverage
+htmlcov/
+.coverage*
+
+# Database files
+*.sqlite
+instance/
+
+# Large files that slow deployment
+*.zip
+*.tar.gz
+uv.lock
+*.md.bak
+
+# Misc
+*.swp

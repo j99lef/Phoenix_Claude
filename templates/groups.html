@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Groups - TravelAiGent</title>
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Luxury Concierge Design System -->
+    <link href="/static/luxury-concierge.css" rel="stylesheet">
+    
+    <!-- Additional fonts for luxury design -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Travel Groups Management Styles */
+        .groups-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-luxury-2xl);
+        }
+        
+        .groups-header {
+            text-align: center;
+            margin-bottom: var(--space-luxury-4xl);
+        }
+        
+        .groups-title {
+            font-family: var(--font-luxury-display);
+            font-size: 3rem;
+            font-weight: 400;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-md);
+            letter-spacing: -0.02em;
+        }
+        
+        .groups-subtitle {
+            color: var(--luxury-charcoal);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .groups-section {
+            background: var(--luxury-white);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 24px;
+            padding: var(--space-luxury-2xl);
+            margin-bottom: var(--space-luxury-xl);
+            box-shadow: var(--shadow-luxury-subtle);
+            transition: var(--transition-luxury);
+        }
+        
+        .groups-section:hover {
+            box-shadow: var(--shadow-luxury-elevated);
+            transform: translateY(-2px);
+        }
+        
+        .section-title {
+            font-family: var(--font-luxury-display);
+            font-size: 1.75rem;
+            font-weight: 500;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-md);
+        }
+        
+        .section-title i {
+            color: var(--luxury-gold);
+            font-size: 1.5rem;
+        }
+        
+        .groups-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--space-luxury-xl);
+        }
+        
+        .group-card {
+            background: var(--luxury-pearl);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 16px;
+            padding: var(--space-luxury-xl);
+            transition: var(--transition-luxury);
+            position: relative;
+        }
+        
+        .group-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-luxury-elevated);
+        }
+        
+        .group-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-luxury-md);
+        }
+        
+        .group-name {
+            font-family: var(--font-luxury-display);
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-xs);
+        }
+        
+        .group-type {
+            display: inline-block;
+            background: var(--luxury-gold);
+            color: var(--luxury-white);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .group-actions {
+            display: flex;
+            gap: var(--space-luxury-sm);
+        }
+        
+        .group-members {
+            margin-bottom: var(--space-luxury-lg);
+        }
+        
+        .group-members-title {
+            font-weight: 600;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-sm);
+        }
+        
+        .member-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-luxury-xs);
+            background: var(--luxury-white);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 8px;
+            padding: var(--space-luxury-xs) var(--space-luxury-sm);
+            margin-right: var(--space-luxury-xs);
+            margin-bottom: var(--space-luxury-xs);
+            font-size: 0.9rem;
+        }
+        
+        .member-tag i {
+            color: var(--luxury-gold);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: var(--space-luxury-4xl);
+            color: var(--luxury-charcoal);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--luxury-stone);
+            margin-bottom: var(--space-luxury-md);
+        }
+        
+        .create-group-btn {
+            background: var(--gradient-luxury-gold);
+            color: var(--luxury-white);
+            border: none;
+            padding: var(--space-luxury-md) var(--space-luxury-xl);
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-luxury);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+        }
+        
+        .create-group-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-luxury-elevated);
+        }
+        
+        .btn-group-action {
+            background: var(--luxury-white);
+            border: 1px solid var(--luxury-stone);
+            padding: var(--space-luxury-xs) var(--space-luxury-sm);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition-luxury);
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-xs);
+        }
+        
+        .btn-group-action:hover {
+            background: var(--luxury-pearl);
+            border-color: var(--luxury-gold);
+        }
+        
+        .btn-group-action.danger:hover {
+            background: #fee;
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+        
+        /* Modal styles from profile.html */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-luxury);
+            z-index: 1000;
+        }
+        
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: var(--luxury-white);
+            border-radius: 24px;
+            padding: var(--space-luxury-2xl);
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: var(--transition-luxury);
+        }
+        
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-header {
+            margin-bottom: var(--space-luxury-xl);
+        }
+        
+        .modal-title {
+            font-family: var(--font-luxury-display);
+            font-size: 1.8rem;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-sm);
+        }
+        
+        .member-input-group {
+            background: var(--luxury-pearl);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 12px;
+            padding: var(--space-luxury-md);
+            margin-bottom: var(--space-luxury-sm);
+            position: relative;
+        }
+        
+        .member-input-row {
+            display: grid;
+            grid-template-columns: 1.5fr 1.5fr 1.5fr 1fr auto;
+            gap: var(--space-luxury-sm);
+            align-items: center;
+        }
+        
+        @media (max-width: 768px) {
+            .member-input-row {
+                grid-template-columns: 1fr;
+                gap: var(--space-luxury-xs);
+            }
+        }
+        
+        .member-remove-btn {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: var(--space-luxury-sm);
+            transition: var(--transition-luxury);
+        }
+        
+        .member-remove-btn:hover {
+            transform: scale(1.2);
+        }
+        
+        .add-member-btn {
+            background: var(--luxury-pearl);
+            border: 2px dashed var(--luxury-stone);
+            border-radius: 12px;
+            padding: var(--space-luxury-md);
+            width: 100%;
+            cursor: pointer;
+            color: var(--luxury-charcoal);
+            font-weight: 500;
+            transition: var(--transition-luxury);
+            margin-top: var(--space-luxury-md);
+        }
+        
+        .add-member-btn:hover {
+            border-color: var(--luxury-gold);
+            background: var(--luxury-ivory);
+            color: var(--luxury-gold);
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: var(--space-luxury-md);
+            justify-content: flex-end;
+            margin-top: var(--space-luxury-xl);
+        }
+        
+        .save-button {
+            background: var(--gradient-luxury-gold);
+            color: var(--luxury-white);
+            border: none;
+            padding: var(--space-luxury-md) var(--space-luxury-xl);
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-luxury);
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+        }
+        
+        .save-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-luxury-elevated);
+        }
+        
+        .cancel-link {
+            color: var(--luxury-charcoal);
+            text-decoration: none;
+            padding: var(--space-luxury-md) var(--space-luxury-xl);
+            border-radius: 12px;
+            transition: var(--transition-luxury);
+        }
+        
+        .cancel-link:hover {
+            background: var(--luxury-pearl);
+        }
+        
+        .success-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--luxury-success);
+            color: var(--luxury-white);
+            padding: var(--space-luxury-md) var(--space-luxury-xl);
+            border-radius: 12px;
+            box-shadow: var(--shadow-luxury-elevated);
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+            transform: translateX(400px);
+            transition: var(--transition-luxury);
+            z-index: 1001;
+        }
+        
+        .success-notification.show {
+            transform: translateX(0);
+        }
+        
+        /* Form styles for modal */
+        .form-group {
+            margin-bottom: var(--space-luxury-lg);
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-sm);
+            font-size: 0.95rem;
+        }
+        
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: var(--space-luxury-md);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 12px;
+            font-size: 1rem;
+            background: var(--luxury-white);
+            transition: var(--transition-luxury);
+            color: var(--luxury-obsidian);
+        }
+        
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--luxury-gold);
+            box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.1);
+        }
+        
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23333' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right var(--space-luxury-md) center;
+            padding-right: calc(var(--space-luxury-md) * 2 + 12px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Luxury Travel Concierge Header -->
+    <header class="luxury-header">
+        <div class="header-luxury-content">
+            <a href="/" class="luxury-brand">
+                <img src="/static/TravelAigent_logo_header.png" alt="TravelAiGent" class="brand-luxury-logo">
+                <span class="brand-luxury-text">TravelAiGent</span>
+                <span class="brand-version">v1.2.1</span>
+            </a>
+            
+            <nav class="luxury-nav">
+                <a href="/" class="luxury-nav-link">Dashboard</a>
+                <a href="/profile" class="luxury-nav-link">Profile</a>
+                <a href="/briefs" class="luxury-nav-link">Travel Briefs</a>
+                <a href="/groups" class="luxury-nav-link active">Travel Groups</a>
+                <a href="/deals" class="luxury-nav-link">Deals</a>
+            </nav>
+            
+            <div class="luxury-profile">
+                <div class="luxury-profile-trigger" onclick="toggleProfileDropdown(event)">
+                    <div class="luxury-avatar">{{ (user.first_name[:1] if user.first_name else user.username[:1]) | upper }}</div>
+                    <span>{{ user.first_name or user.username }}</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="luxury-dropdown-menu" id="profileDropdown">
+                    <a href="/profile" class="luxury-dropdown-item">
+                        <i class="fas fa-user"></i>
+                        Configure Profile
+                    </a>
+                    <a href="/briefs" class="luxury-dropdown-item">
+                        <i class="fas fa-suitcase"></i>
+                        My Travel Briefs
+                    </a>
+                    <a href="/account" class="luxury-dropdown-item">
+                        <i class="fas fa-cog"></i>
+                        Account Settings
+                    </a>
+                    <div class="luxury-dropdown-divider"></div>
+                    <a href="/logout" class="luxury-dropdown-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Log Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Travel Groups Management -->
+    <main class="groups-container">
+        <div class="groups-header luxury-animate-fade-up">
+            <h1 class="groups-title">Travel Groups</h1>
+            <p class="groups-subtitle">
+                Manage your travel groups and companions for easy booking and personalized recommendations
+            </p>
+        </div>
+        
+        <div class="groups-section luxury-animate-fade-up">
+            <div class="section-title">
+                <i class="fas fa-users"></i>
+                <span>My Travel Groups</span>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-luxury-xl);">
+                <p style="color: var(--luxury-charcoal); margin: 0;">
+                    Create and manage different travel configurations for quick selection when planning trips.
+                </p>
+                <button class="create-group-btn" onclick="showAddGroupModal()">
+                    <i class="fas fa-plus"></i>
+                    Create New Group
+                </button>
+            </div>
+            
+            <div id="groupsContainer" class="groups-grid">
+                <!-- Groups will be loaded here -->
+            </div>
+        </div>
+    </main>
+    
+    <!-- Success Notification -->
+    <div class="success-notification" id="successNotification">
+        <i class="fas fa-check-circle"></i>
+        <span>Action completed successfully!</span>
+    </div>
+    
+    <!-- Travel Group Modal -->
+    <div class="modal-overlay" id="groupModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Create Travel Group</h3>
+                <p style="color: var(--luxury-charcoal);">
+                    Add your travel companions to create a personalized group
+                </p>
+            </div>
+            
+            <form id="groupForm" onsubmit="saveGroup(event)">
+                <div class="form-group">
+                    <label class="form-label">Group Name</label>
+                    <input type="text" class="form-input" name="group_name" 
+                           placeholder="e.g., Family Vacation, Weekend with Friends" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Group Type</label>
+                    <select class="form-select" name="group_type">
+                        <option value="family">Family</option>
+                        <option value="friends">Friends</option>
+                        <option value="couple">Couple</option>
+                        <option value="solo">Solo</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Group Members</label>
+                    <div id="membersContainer">
+                        <!-- Member inputs will be added here -->
+                    </div>
+                    <button type="button" class="add-member-btn" onclick="addMemberInput()">
+                        <i class="fas fa-plus"></i> Add Member
+                    </button>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="cancel-link" onclick="closeGroupModal()">Cancel</button>
+                    <button type="submit" class="save-button">
+                        <i class="fas fa-save"></i>
+                        Create Group
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Travel Groups Management
+        let groups = [];
+        let memberCounter = 0;
+        
+        // Calculate age from date of birth
+        function calculateAge(dob) {
+            if (!dob) return null;
+            const birthDate = new Date(dob);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        }
+        
+        async function loadGroups() {
+            try {
+                const response = await fetch('/api/groups');
+                if (response.ok) {
+                    groups = await response.json();
+                    displayGroups();
+                } else {
+                    console.error('Error loading groups:', response.status);
+                }
+            } catch (error) {
+                console.error('Error loading groups:', error);
+            }
+        }
+        
+        function displayGroups() {
+            const container = document.getElementById('groupsContainer');
+            
+            if (groups.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-users"></i>
+                        <h3>No travel groups created yet</h3>
+                        <p>Create your first group to get started with personalized travel planning!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = groups.map(group => `
+                <div class="group-card">
+                    <div class="group-card-header">
+                        <div>
+                            <div class="group-name">${group.group_name}</div>
+                            <span class="group-type">${group.group_type}</span>
+                        </div>
+                        <div class="group-actions">
+                            <button class="btn-group-action" onclick="editGroup(${group.id})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn-group-action danger" onclick="deleteGroup(${group.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                    <div class="group-members">
+                        <div class="group-members-title">Members (${group.members.length})</div>
+                        <div>
+                            ${group.members.map(member => `
+                                <div class="member-tag">
+                                    <i class="fas fa-user"></i>
+                                    ${member.name || member.first_name} ${member.age ? `(${member.age})` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function showAddGroupModal() {
+            const modal = document.getElementById('groupModal');
+            modal.classList.add('show');
+            memberCounter = 0;
+            document.getElementById('membersContainer').innerHTML = '';
+            document.getElementById('groupForm').reset();
+            addMemberInput(); // Add first member input
+        }
+        
+        function closeGroupModal() {
+            const modal = document.getElementById('groupModal');
+            modal.classList.remove('show');
+            
+            // Reset form state
+            const form = document.getElementById('groupForm');
+            form.dataset.editMode = 'false';
+            delete form.dataset.groupId;
+            
+            // Reset modal title and button
+            document.querySelector('.modal-title').textContent = 'Create Travel Group';
+            document.querySelector('.save-button').innerHTML = '<i class="fas fa-save"></i> Create Group';
+        }
+        
+        function addMemberInput() {
+            memberCounter++;
+            const container = document.getElementById('membersContainer');
+            const memberDiv = document.createElement('div');
+            memberDiv.className = 'member-input-group';
+            memberDiv.innerHTML = `
+                <div class="member-input-row">
+                    <input type="text" class="form-input" placeholder="First Name" name="member_first_name_${memberCounter}" required>
+                    <input type="text" class="form-input" placeholder="Last Name" name="member_last_name_${memberCounter}">
+                    <input type="date" class="form-input" placeholder="Date of Birth" name="member_dob_${memberCounter}">
+                    <select class="form-select" name="member_type_${memberCounter}">
+                        <option value="adult">Adult</option>
+                        <option value="child">Child</option>
+                        <option value="senior">Senior</option>
+                        <option value="infant">Infant</option>
+                    </select>
+                    <button type="button" class="member-remove-btn" onclick="removeMember(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(memberDiv);
+        }
+        
+        function removeMember(button) {
+            button.closest('.member-input-group').remove();
+        }
+        
+        async function saveGroup(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            // Check if we're in edit mode
+            const isEditMode = form.dataset.editMode === 'true';
+            const groupId = form.dataset.groupId;
+            
+            // Collect members from all member input groups
+            const members = [];
+            const memberInputs = document.querySelectorAll('#membersContainer .member-input-group');
+            
+            memberInputs.forEach((memberGroup, index) => {
+                const firstName = memberGroup.querySelector(`input[name*="member_first_name_"]`)?.value;
+                const lastName = memberGroup.querySelector(`input[name*="member_last_name_"]`)?.value;
+                const dob = memberGroup.querySelector(`input[name*="member_dob_"]`)?.value;
+                const type = memberGroup.querySelector(`select[name*="member_type_"]`)?.value;
+                
+                if (firstName && firstName.trim()) {
+                    members.push({
+                        first_name: firstName.trim(),
+                        last_name: lastName?.trim() || '',
+                        name: `${firstName.trim()} ${lastName?.trim() || ''}`.trim(),
+                        type: type || 'adult',
+                        dob: dob || null,
+                        age: dob ? calculateAge(dob) : null
+                    });
+                }
+            });
+            
+            // Validate that at least one member is added
+            if (members.length === 0) {
+                alert('Please add at least one member to the group.');
+                return;
+            }
+            
+            const groupData = {
+                group_name: formData.get('group_name'),
+                group_type: formData.get('group_type'),
+                members: members
+            };
+            
+            try {
+                const url = isEditMode ? `/api/groups/${groupId}` : '/api/groups';
+                const method = isEditMode ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(groupData)
+                });
+                
+                if (response.ok) {
+                    const savedGroup = await response.json();
+                    
+                    if (isEditMode) {
+                        // Update existing group in array
+                        const index = groups.findIndex(g => g.id === parseInt(groupId));
+                        if (index !== -1) {
+                            groups[index] = savedGroup;
+                        }
+                    } else {
+                        // Add new group
+                        groups.push(savedGroup);
+                    }
+                    
+                    displayGroups();
+                    closeGroupModal();
+                    
+                    // Show success notification
+                    const notification = document.getElementById('successNotification');
+                    notification.querySelector('span').textContent = isEditMode ? 
+                        'Travel group updated successfully!' : 
+                        'Travel group created successfully!';
+                    notification.classList.add('show');
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                    
+                    // Reset form state
+                    form.dataset.editMode = 'false';
+                    delete form.dataset.groupId;
+                } else {
+                    const error = await response.json();
+                    alert(`Error ${isEditMode ? 'updating' : 'creating'} group: ` + (error.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert(`Failed to ${isEditMode ? 'update' : 'create'} group`);
+            }
+        }
+        
+        async function editGroup(groupId) {
+            // Find the group
+            const group = groups.find(g => g.id === groupId);
+            if (!group) return;
+            
+            // Reset form
+            document.getElementById('groupForm').reset();
+            document.getElementById('membersContainer').innerHTML = '';
+            memberCounter = 0;
+            
+            // Populate form with group data
+            document.querySelector('input[name="group_name"]').value = group.group_name;
+            document.querySelector('select[name="group_type"]').value = group.group_type;
+            
+            // Add members
+            group.members.forEach(member => {
+                addMemberInput();
+                const lastMemberGroup = document.querySelector('#membersContainer .member-input-group:last-child');
+                lastMemberGroup.querySelector('input[name*="first_name"]').value = member.first_name || member.name?.split(' ')[0] || '';
+                lastMemberGroup.querySelector('input[name*="last_name"]').value = member.last_name || member.name?.split(' ').slice(1).join(' ') || '';
+                lastMemberGroup.querySelector('input[name*="dob"]').value = member.dob || '';
+                lastMemberGroup.querySelector('select[name*="member_type"]').value = member.type || 'adult';
+            });
+            
+            // Update modal for editing
+            document.querySelector('.modal-title').textContent = 'Edit Travel Group';
+            document.querySelector('.save-button').innerHTML = '<i class="fas fa-save"></i> Update Group';
+            
+            // Store the group ID for update
+            document.getElementById('groupForm').dataset.groupId = groupId;
+            document.getElementById('groupForm').dataset.editMode = 'true';
+            
+            // Show modal
+            document.getElementById('groupModal').classList.add('show');
+        }
+        
+        async function deleteGroup(groupId) {
+            if (!confirm('Are you sure you want to delete this travel group?')) return;
+            
+            try {
+                const response = await fetch(`/api/groups/${groupId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    groups = groups.filter(g => g.id !== groupId);
+                    displayGroups();
+                    
+                    // Show success notification
+                    const notification = document.getElementById('successNotification');
+                    notification.querySelector('span').textContent = 'Travel group deleted successfully!';
+                    notification.classList.add('show');
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                } else {
+                    const error = await response.json();
+                    alert('Error deleting group: ' + (error.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to delete group');
+            }
+        }
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGroups();
+            
+            // Modal overlay click to close
+            document.getElementById('groupModal').addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal-overlay')) {
+                    closeGroupModal();
+                }
+            });
+            
+            // Add animation to sections
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            document.querySelectorAll('.groups-section').forEach(section => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                section.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                observer.observe(section);
+            });
+        });
+    </script>
+    <script src="/static/common.js"></script>
+</body>
+</html>

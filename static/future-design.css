@@ -1,0 +1,471 @@
+/*
+ * FUTURE-FACING TRAVEL DESIGN SYSTEM
+ * Inspired by RCA experimental design + travel psychology
+ * Revolutionary approach to digital travel experiences
+ */
+
+/* ==========================================
+   EMOTIONAL COLOR SCIENCE
+   ========================================== */
+:root {
+  /* Primary Emotional Palette - Travel Psychology */
+  --horizon-blue: #0066FF;
+  --deep-ocean: #003D82;
+  --sunset-coral: #FF6B47;
+  --golden-hour: #FFD23F;
+  --earth-terracotta: #D73502;
+  --sky-lavender: #A855F7;
+  --forest-emerald: #059669;
+  
+  /* Neutral Foundation - Sophisticated */
+  --ink-black: #0A0A0B;
+  --charcoal-grey: #1C1C1E;
+  --storm-grey: #48484A;
+  --silver-mist: #8E8E93;
+  --cloud-white: #F2F2F7;
+  --pearl-white: #FFFFFF;
+  
+  /* Experimental Gradients - Emotional Journey */
+  --gradient-horizon: linear-gradient(135deg, var(--horizon-blue) 0%, var(--sky-lavender) 100%);
+  --gradient-sunset: linear-gradient(135deg, var(--sunset-coral) 0%, var(--golden-hour) 100%);
+  --gradient-earth: linear-gradient(135deg, var(--earth-terracotta) 0%, var(--forest-emerald) 100%);
+  --gradient-space: linear-gradient(135deg, var(--ink-black) 0%, var(--deep-ocean) 100%);
+  
+  /* Advanced Materials */
+  --glass-neural: rgba(255, 255, 255, 0.08);
+  --glass-warm: rgba(255, 215, 63, 0.12);
+  --glass-cool: rgba(0, 102, 255, 0.08);
+  
+  /* Typography Scale - Expressive */
+  --font-display: 'SF Pro Display', 'Inter', system-ui, sans-serif;
+  --font-reading: 'SF Pro Text', 'Inter', system-ui, sans-serif;
+  --font-mono: 'SF Mono', 'Fira Code', monospace;
+  
+  /* Spatial System - Architectural */
+  --space-nano: 2px;
+  --space-micro: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 96px;
+  --space-5xl: 128px;
+  
+  /* Motion Language */
+  --easing-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --easing-decelerate: cubic-bezier(0.0, 0.0, 0.2, 1);
+  --easing-accelerate: cubic-bezier(0.4, 0.0, 1, 1);
+  --easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  --duration-instant: 100ms;
+  --duration-fast: 200ms;
+  --duration-standard: 300ms;
+  --duration-slow: 500ms;
+  --duration-cinematic: 800ms;
+}
+
+/* ==========================================
+   REVOLUTIONARY BASE SYSTEM
+   ========================================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-reading);
+  color: var(--ink-black);
+  background: var(--ink-black);
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ==========================================
+   SPATIAL COMPUTING LOGIN EXPERIENCE
+   ========================================== */
+.login-universe {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gradient-space);
+  overflow: hidden;
+}
+
+/* Animated Background - Living Particles */
+.universe-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--horizon-blue);
+  border-radius: 50%;
+  animation: float 20s infinite linear;
+  opacity: 0.6;
+}
+
+.particle:nth-child(odd) {
+  background: var(--sky-lavender);
+  animation-duration: 25s;
+}
+
+.particle:nth-child(3n) {
+  background: var(--golden-hour);
+  animation-duration: 15s;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(100vh) translateX(0) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(200px) scale(1);
+    opacity: 0;
+  }
+}
+
+/* Revolutionary Login Container */
+.login-portal {
+  position: relative;
+  z-index: 10;
+  width: min(90vw, 480px);
+  background: var(--glass-neural);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: var(--space-3xl);
+  box-shadow: 
+    0 32px 64px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transform: translateY(0);
+  transition: all var(--duration-cinematic) var(--easing-bounce);
+}
+
+.login-portal:hover {
+  transform: translateY(-8px);
+  box-shadow: 
+    0 48px 96px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Experimental Typography */
+.portal-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  color: var(--pearl-white);
+  text-align: center;
+  margin-bottom: var(--space-lg);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  position: relative;
+}
+
+.portal-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: var(--gradient-horizon);
+  border-radius: 2px;
+}
+
+.portal-subtitle {
+  color: var(--silver-mist);
+  text-align: center;
+  margin-bottom: var(--space-2xl);
+  font-size: 1.1rem;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+/* Revolutionary Form Design */
+.portal-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.input-field {
+  position: relative;
+  margin-bottom: var(--space-lg);
+}
+
+.input-neural {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: var(--space-lg) var(--space-lg);
+  font-size: 1.1rem;
+  color: var(--pearl-white);
+  font-family: var(--font-reading);
+  transition: all var(--duration-standard) var(--easing-standard);
+  outline: none;
+}
+
+.input-neural::placeholder {
+  color: var(--silver-mist);
+  opacity: 0.7;
+}
+
+.input-neural:focus {
+  border-color: var(--horizon-blue);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    0 0 0 4px rgba(0, 102, 255, 0.15),
+    0 8px 24px rgba(0, 102, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Future Button Design */
+.btn-portal {
+  background: var(--gradient-horizon);
+  border: none;
+  border-radius: 16px;
+  padding: var(--space-lg) var(--space-xl);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--pearl-white);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--duration-standard) var(--easing-standard);
+  box-shadow: 0 8px 24px rgba(0, 102, 255, 0.3);
+}
+
+.btn-portal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left var(--duration-slow) var(--easing-standard);
+}
+
+.btn-portal:hover::before {
+  left: 100%;
+}
+
+.btn-portal:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px rgba(0, 102, 255, 0.4);
+}
+
+.btn-portal:active {
+  transform: translateY(-1px);
+}
+
+/* Intelligent Demo Section */
+.demo-access {
+  margin-top: var(--space-2xl);
+  padding: var(--space-lg);
+  background: var(--glass-warm);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 215, 63, 0.2);
+  text-align: center;
+}
+
+.demo-title {
+  color: var(--golden-hour);
+  font-weight: 600;
+  margin-bottom: var(--space-sm);
+  font-size: 0.95rem;
+}
+
+.demo-credentials {
+  color: var(--cloud-white);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+.demo-code {
+  background: rgba(0, 0, 0, 0.3);
+  padding: var(--space-micro) var(--space-xs);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  color: var(--golden-hour);
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+/* Error State Design */
+.error-neural {
+  background: rgba(231, 76, 60, 0.1);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  border-radius: 12px;
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
+  color: #ff6b6b;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  animation: errorPulse 0.5s var(--easing-bounce);
+}
+
+@keyframes errorPulse {
+  0% { transform: scale(0.95); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Loading State Animation */
+.loading-neural {
+  position: relative;
+  pointer-events: none;
+}
+
+.loading-neural::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid transparent;
+  border-top: 2px solid var(--pearl-white);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Excellence */
+@media (max-width: 768px) {
+  .login-portal {
+    width: 95vw;
+    padding: var(--space-xl);
+    margin: var(--space-lg);
+  }
+  
+  .portal-title {
+    font-size: 2.5rem;
+    margin-bottom: var(--space-md);
+  }
+  
+  .input-neural {
+    padding: var(--space-md);
+    font-size: 1rem;
+  }
+  
+  .btn-portal {
+    padding: var(--space-md) var(--space-lg);
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .universe-particles {
+    display: none; /* Optimize for mobile performance */
+  }
+  
+  .login-portal {
+    padding: var(--space-lg);
+  }
+  
+  .portal-title {
+    font-size: 2rem;
+  }
+}
+
+/* ==========================================
+   MICRO-INTERACTIONS & EASTER EGGS
+   ========================================== */
+.portal-form:focus-within .portal-title::after {
+  width: 100px;
+  transition: width var(--duration-standard) var(--easing-standard);
+}
+
+/* Accessibility Focus States */
+.input-neural:focus-visible,
+.btn-portal:focus-visible {
+  outline: 2px solid var(--golden-hour);
+  outline-offset: 3px;
+}
+
+/* Dark mode ready */
+@media (prefers-color-scheme: light) {
+  .login-universe {
+    background: linear-gradient(135deg, var(--cloud-white) 0%, var(--silver-mist) 100%);
+  }
+  
+  .login-portal {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+  
+  .portal-title {
+    color: var(--ink-black);
+  }
+  
+  .portal-subtitle {
+    color: var(--storm-grey);
+  }
+  
+  .input-neural {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: var(--ink-black);
+  }
+}
+
+/* Performance optimizations */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .universe-particles {
+    display: none;
+  }
+}

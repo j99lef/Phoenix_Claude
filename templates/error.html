@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - TravelAiGent</title>
+    <link href="https://fonts.googleapis.com/css2?family=Circular:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="travel-header">
+        <div class="header-content">
+            <div class="brand-logo">
+                <a href="/" style="text-decoration: none; color: inherit;">
+                    <span class="brand-name">👨🏻‍💻 Lefley <span class="highlight">TravelAiGent</span></span>
+                </a>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="/" class="btn btn-outline-light btn-sm">
+                    <i class="fas fa-home me-1"></i>Dashboard
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="empty-state-premium text-center">
+                    <div class="empty-icon">
+                        <i class="fas fa-exclamation-triangle text-warning" style="font-size: 64px;"></i>
+                    </div>
+                    <h3 class="text-danger">Oops! Something went wrong</h3>
+                    <p class="text-muted">
+                        {{ message or "We encountered an unexpected error. Our AI is working to fix this issue." }}
+                    </p>
+                    
+                    <div class="mt-4">
+                        <a href="/" class="btn btn-primary me-2">
+                            <i class="fas fa-home me-1"></i>Return to Dashboard
+                        </a>
+                        <button onclick="window.history.back()" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>Go Back
+                        </button>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <small class="text-muted">
+                            If this problem persists, please try:
+                            <ul class="list-unstyled mt-2">
+                                <li><i class="fas fa-check text-success me-1"></i>Refreshing the page</li>
+                                <li><i class="fas fa-check text-success me-1"></i>Checking your internet connection</li>
+                                <li><i class="fas fa-check text-success me-1"></i>Trying again in a few minutes</li>
+                            </ul>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings - TravelAiGent</title>
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Luxury Concierge Design System -->
+    <link href="/static/luxury-concierge.css" rel="stylesheet">
+    
+    <style>
+        .account-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: var(--space-luxury-2xl);
+        }
+        
+        .account-header {
+            text-align: center;
+            margin-bottom: var(--space-luxury-4xl);
+        }
+        
+        .account-title {
+            font-family: var(--font-luxury-display);
+            font-size: 3rem;
+            font-weight: 400;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-md);
+            letter-spacing: -0.02em;
+        }
+        
+        .account-subtitle {
+            color: var(--luxury-charcoal);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .account-section {
+            background: var(--luxury-white);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 24px;
+            padding: var(--space-luxury-2xl);
+            margin-bottom: var(--space-luxury-xl);
+            box-shadow: var(--shadow-luxury-subtle);
+        }
+        
+        .section-title {
+            font-family: var(--font-luxury-display);
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-md);
+        }
+        
+        .section-title i {
+            color: var(--luxury-gold);
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-luxury-md) 0;
+            border-bottom: 1px solid var(--luxury-stone);
+        }
+        
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        
+        .setting-info h4 {
+            font-weight: 600;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-xs);
+        }
+        
+        .setting-info p {
+            color: var(--luxury-charcoal);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        
+        .setting-toggle {
+            background: var(--luxury-stone);
+            width: 48px;
+            height: 24px;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition-luxury);
+        }
+        
+        .setting-toggle.active {
+            background: var(--luxury-gold);
+        }
+        
+        .setting-toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: var(--luxury-white);
+            border-radius: 50%;
+            transition: var(--transition-luxury);
+        }
+        
+        .setting-toggle.active::after {
+            transform: translateX(24px);
+        }
+        
+        .coming-soon {
+            text-align: center;
+            padding: var(--space-luxury-2xl);
+            color: var(--luxury-charcoal);
+        }
+        
+        .coming-soon i {
+            font-size: 2rem;
+            color: var(--luxury-gold);
+            margin-bottom: var(--space-luxury-md);
+        }
+    </style>
+</head>
+<body>
+    <!-- Luxury Travel Concierge Header -->
+    <header class="luxury-header">
+        <div class="header-luxury-content">
+            <a href="/" class="luxury-brand">
+                <img src="/static/TravelAigent_logo_header.png" alt="TravelAiGent" class="brand-luxury-logo">
+                <span class="brand-luxury-text">TravelAiGent</span>
+                <span class="brand-version">v1.2.1</span>
+            </a>
+            
+            <nav class="luxury-nav">
+                <a href="/" class="luxury-nav-link">Dashboard</a>
+                <a href="/profile" class="luxury-nav-link">Profile</a>
+                <a href="/briefs" class="luxury-nav-link">Travel Briefs</a>
+                <a href="/groups" class="luxury-nav-link">Travel Groups</a>
+                <a href="/deals" class="luxury-nav-link">Deals</a>
+            </nav>
+            
+            <div class="luxury-profile">
+                <div class="luxury-avatar">{{ (user.first_name[:1] if user.first_name else user.username[:1]) | upper }}</div>
+                <span>{{ user.first_name or user.username }}</span>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Account Settings -->
+    <main class="account-container">
+        <div class="account-header">
+            <h1 class="account-title">Account Settings</h1>
+            <p class="account-subtitle">
+                Manage your account preferences, security settings, and privacy options
+            </p>
+        </div>
+        
+        <div class="account-section">
+            <h2 class="section-title">
+                <i class="fas fa-lock"></i>
+                Security & Privacy
+            </h2>
+            
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h4>Two-Factor Authentication</h4>
+                    <p>Coming soon - Enhanced security features in development</p>
+                </div>
+                <div class="setting-toggle disabled" style="opacity: 0.5; cursor: not-allowed;"></div>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h4>Data Privacy</h4>
+                    <p>Your data is never shared - Privacy by default</p>
+                </div>
+                <div class="setting-toggle active disabled" style="opacity: 0.5; cursor: not-allowed;"></div>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h4>Location Services</h4>
+                    <p>Coming soon - Location-based recommendations</p>
+                </div>
+                <div class="setting-toggle disabled" style="opacity: 0.5; cursor: not-allowed;"></div>
+            </div>
+        </div>
+        
+        <div class="account-section">
+            <h2 class="section-title">
+                <i class="fas fa-bell"></i>
+                Notifications
+            </h2>
+            
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h4>Email Notifications</h4>
+                    <p>Receive updates about your travel briefs and deals</p>
+                </div>
+                <div class="setting-toggle active" id="emailNotifications" onclick="toggleSetting(this, 'email_notifications')"></div>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h4>Push Notifications</h4>
+                    <p>Coming soon - Browser push notifications</p>
+                </div>
+                <div class="setting-toggle disabled" style="opacity: 0.5; cursor: not-allowed;"></div>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h4>SMS Alerts</h4>
+                    <p>Coming soon - Text message alerts</p>
+                </div>
+                <div class="setting-toggle disabled" style="opacity: 0.5; cursor: not-allowed;"></div>
+            </div>
+        </div>
+        
+        <div class="account-section">
+            <h2 class="section-title">
+                <i class="fas fa-cogs"></i>
+                Advanced Features
+            </h2>
+            
+            <div class="coming-soon">
+                <i class="fas fa-hammer"></i>
+                <h3>Coming Soon</h3>
+                <p>Advanced account features are currently in development and will be available in a future update.</p>
+            </div>
+        </div>
+    </main>
+    
+    <script src="/static/common.js"></script>
+    <script>
+        // Load user preferences
+        async function loadPreferences() {
+            try {
+                const response = await fetch('/api/user/preferences');
+                if (response.ok) {
+                    const prefs = await response.json();
+                    // Set email notifications toggle
+                    if (prefs.email_notifications !== undefined) {
+                        const emailToggle = document.getElementById('emailNotifications');
+                        if (emailToggle) {
+                            if (prefs.email_notifications) {
+                                emailToggle.classList.add('active');
+                            } else {
+                                emailToggle.classList.remove('active');
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading preferences:', error);
+            }
+        }
+
+        async function toggleSetting(toggle, settingName) {
+            // Don't allow toggling disabled settings
+            if (toggle.classList.contains('disabled')) {
+                return;
+            }
+            
+            toggle.classList.toggle('active');
+            const isActive = toggle.classList.contains('active');
+            
+            // Save to backend
+            if (settingName) {
+                try {
+                    const response = await fetch('/api/user/preferences', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            [settingName]: isActive
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        // Revert on error
+                        toggle.classList.toggle('active');
+                        alert('Failed to update setting');
+                    }
+                } catch (error) {
+                    console.error('Error saving setting:', error);
+                    // Revert on error
+                    toggle.classList.toggle('active');
+                }
+            }
+        }
+        
+        // Load preferences on page load
+        document.addEventListener('DOMContentLoaded', loadPreferences);
+    </script>
+</body>
+</html>

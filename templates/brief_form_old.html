@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if mode == 'edit' %}Edit{% else %}Create{% endif %} Travel Brief - TravelAiGent</title>
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Luxury Concierge Design System -->
+    <link href="/static/luxury-concierge.css" rel="stylesheet">
+    
+    <!-- Additional fonts for luxury design -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Elegant Travel Brief Form */
+        .brief-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--space-luxury-2xl);
+        }
+        
+        .brief-header {
+            text-align: center;
+            margin-bottom: var(--space-luxury-4xl);
+        }
+        
+        .brief-title {
+            font-family: var(--font-luxury-display);
+            font-size: 2.5rem;
+            font-weight: 400;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-md);
+            letter-spacing: -0.02em;
+        }
+        
+        .brief-subtitle {
+            color: var(--luxury-charcoal);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .brief-form-card {
+            background: var(--luxury-white);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 24px;
+            box-shadow: var(--shadow-luxury-elevated);
+            overflow: hidden;
+        }
+        
+        .form-section {
+            padding: var(--space-luxury-2xl);
+            border-bottom: 1px solid var(--luxury-stone);
+        }
+        
+        .form-section:last-child {
+            border-bottom: none;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-md);
+            margin-bottom: var(--space-luxury-xl);
+        }
+        
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-luxury-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--luxury-white);
+            font-size: 1.25rem;
+        }
+        
+        .section-title {
+            font-family: var(--font-luxury-display);
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--luxury-obsidian);
+            margin: 0;
+        }
+        
+        .luxury-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-luxury-lg);
+        }
+        
+        .luxury-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-luxury-sm);
+        }
+        
+        .luxury-form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .luxury-label {
+            font-weight: 600;
+            color: var(--luxury-obsidian);
+            font-size: 0.95rem;
+            letter-spacing: 0.02em;
+        }
+        
+        .luxury-input,
+        .luxury-select,
+        .luxury-textarea {
+            background: var(--luxury-ivory);
+            border: 2px solid var(--luxury-stone);
+            border-radius: 12px;
+            padding: var(--space-luxury-md) var(--space-luxury-lg);
+            font-family: var(--font-luxury-body);
+            font-size: 1rem;
+            color: var(--luxury-obsidian);
+            transition: var(--transition-luxury);
+            outline: none;
+        }
+        
+        .luxury-input:focus,
+        .luxury-select:focus,
+        .luxury-textarea:focus {
+            border-color: var(--luxury-gold);
+            background: var(--luxury-white);
+            box-shadow: 0 0 0 4px rgba(201, 169, 110, 0.15);
+            transform: translateY(-1px);
+        }
+        
+        .luxury-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .form-actions {
+            padding: var(--space-luxury-2xl);
+            background: var(--luxury-pearl);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .luxury-button {
+            border: none;
+            border-radius: 12px;
+            padding: var(--space-luxury-md) var(--space-luxury-xl);
+            font-family: var(--font-luxury-body);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-luxury);
+            letter-spacing: 0.02em;
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+        }
+        
+        .luxury-button-primary {
+            background: var(--gradient-luxury-gold);
+            color: var(--luxury-white);
+        }
+        
+        .luxury-button-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-luxury-elevated);
+        }
+        
+        .luxury-button-secondary {
+            background: transparent;
+            color: var(--luxury-charcoal);
+            border: 2px solid var(--luxury-stone);
+        }
+        
+        .luxury-button-secondary:hover {
+            border-color: var(--luxury-gold);
+            color: var(--luxury-gold);
+        }
+        
+        .luxury-button-danger {
+            background: transparent;
+            color: #dc3545;
+            border: 2px solid #dc3545;
+        }
+        
+        .luxury-button-danger:hover {
+            background: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Luxury Travel Concierge Header -->
+    <header class="luxury-header">
+        <div class="header-luxury-content">
+            <a href="/" class="luxury-brand">
+                <img src="/static/TravelAigent_logo_header.png" alt="TravelAiGent" class="brand-luxury-logo">
+                <span class="brand-luxury-text">TravelAiGent</span>
+                <span class="brand-version">v1.2.1</span>
+            </a>
+            
+            <nav class="luxury-nav">
+                <a href="/" class="luxury-nav-link">Dashboard</a>
+                <a href="/profile" class="luxury-nav-link">Profile</a>
+                <a href="/briefs" class="luxury-nav-link active">Travel Briefs</a>
+                <a href="/deals" class="luxury-nav-link">Deals</a>
+            </nav>
+            
+            <div class="luxury-profile">
+                <div class="luxury-avatar">A</div>
+                <span>Admin</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="brief-container">
+        <div class="brief-header luxury-animate-fade-up">
+            <h1 class="brief-title">
+                {% if mode == 'edit' %}
+                    Edit Travel Brief
+                {% else %}
+                    Create Travel Brief
+                {% endif %}
+            </h1>
+            <p class="brief-subtitle">
+                {% if mode == 'edit' %}
+                    Update your travel search criteria and let our AI find better deals
+                {% else %}
+                    Describe your perfect trip and our AI concierge will curate exclusive deals
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- Brief Form Card -->
+        <div class="brief-form-card luxury-animate-fade-up">
+            <form id="briefForm" onsubmit="submitBrief(event)">
+                <!-- Destination Section -->
+                <section class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <h2 class="section-title">Where would you like to go?</h2>
+                    </div>
+                    
+                    <div class="luxury-form-grid">
+                        <div class="luxury-form-group">
+                            <label class="luxury-label">Departure Location</label>
+                            <input type="text" class="luxury-input" name="departure_location" 
+                                   value="{{ brief.Departure_Location or brief.departure_location if brief else 'London Airports (LHR, LGW, STN)' }}" 
+                                   placeholder="e.g., London Airports (LHR, LGW, STN)" required>
+                        </div>
+                        
+                        <div class="luxury-form-group">
+                            <label class="luxury-label">Destinations</label>
+                            <input type="text" class="luxury-input" name="destinations" 
+                                   value="{{ brief.Destinations or brief.destinations if brief else '' }}" 
+                                   placeholder="e.g., Mediterranean, Caribbean, Asia" required>
+                        </div>
+                    </div>
+                </section>
+
+                            <!-- Travel Details -->
+                            <div class="mb-4">
+                                <h5 class="mb-3">
+                                    <i class="fas fa-map-marker-alt me-2 text-primary"></i>Travel Details
+                                </h5>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="departure_location" class="form-label">Departure Location</label>
+                                        <input type="text" class="form-control" id="departure_location" name="departure_location" 
+                                               value="{{ brief.Departure_Location or brief.departure_location if brief else 'London Airports (LHR, LGW, STN)' }}" 
+                                               placeholder="e.g., London Airports (LHR, LGW, STN)" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="destinations" class="form-label">Destinations</label>
+                                        <input type="text" class="form-control" id="destinations" name="destinations" 
+                                               value="{{ brief.Destinations or brief.destinations if brief else '' }}" 
+                                               placeholder="e.g., Mediterranean & Warm Weather Destinations" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="travel_dates" class="form-label">Travel Dates</label>
+                                        <input type="text" class="form-control" id="travel_dates" name="travel_dates" 
+                                               value="{{ brief.Travel_Dates or brief.travel_dates if brief else '' }}" 
+                                               placeholder="e.g., October Half Term 2025 (21-28 Oct)" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="trip_duration" class="form-label">Trip Duration</label>
+                                        <select class="form-select" id="trip_duration" name="trip_duration">
+                                            <option value="3-4 nights" {% if brief and ('3-4' in (brief.Trip_Duration or brief.trip_duration or '')) %}selected{% endif %}>3-4 nights</option>
+                                            <option value="5-7 nights" {% if not brief or '5-7' in (brief.Trip_Duration or brief.trip_duration or '5-7') %}selected{% endif %}>5-7 nights</option>
+                                            <option value="7-10 nights" {% if brief and ('7-10' in (brief.Trip_Duration or brief.trip_duration or '')) %}selected{% endif %}>7-10 nights</option>
+                                            <option value="10+ nights" {% if brief and ('10+' in (brief.Trip_Duration or brief.trip_duration or '')) %}selected{% endif %}>10+ nights</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Travel Group & Budget -->
+                            <div class="mb-4">
+                                <h5 class="mb-3">
+                                    <i class="fas fa-users me-2 text-primary"></i>Travel Group & Budget
+                                </h5>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="travelers" class="form-label">Travelers</label>
+                                        <input type="text" class="form-control" id="travelers" name="travelers" 
+                                               value="{{ brief.Travelers or brief.travelers if brief else 'Family of 4 (2 adults + 2 children)' }}" 
+                                               placeholder="e.g., Family of 4 (2 adults + 2 children)" required>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="budget_min" class="form-label">Min Budget (£)</label>
+                                        <input type="number" class="form-control" id="budget_min" name="budget_min" 
+                                               value="{{ brief.Budget_Min or brief.budget_min if brief else '1000' }}" 
+                                               placeholder="1000" min="0">
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="budget_max" class="form-label">Max Budget (£)</label>
+                                        <input type="number" class="form-control" id="budget_max" name="budget_max" 
+                                               value="{{ brief.Budget_Max or brief.budget_max if brief else '3000' }}" 
+                                               placeholder="3000" min="0">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Preferences -->
+                            <div class="mb-4">
+                                <h5 class="mb-3">
+                                    <i class="fas fa-star me-2 text-primary"></i>Preferences
+                                </h5>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="accommodation_type" class="form-label">Accommodation Type</label>
+                                        <select class="form-select" id="accommodation_type" name="accommodation_type">
+                                            <option value="3+ star hotels" {% if brief and '3+' in (brief.Accommodation_Type or brief.accommodation_type or '') %}selected{% endif %}>3+ star hotels</option>
+                                            <option value="4+ star family-friendly hotels" {% if not brief or '4+' in (brief.Accommodation_Type or brief.accommodation_type or '4+') %}selected{% endif %}>4+ star family-friendly hotels</option>
+                                            <option value="5 star luxury hotels" {% if brief and '5 star' in (brief.Accommodation_Type or brief.accommodation_type or '') %}selected{% endif %}>5 star luxury hotels</option>
+                                            <option value="Vacation rentals" {% if brief and 'rental' in (brief.Accommodation_Type or brief.accommodation_type or '').lower() %}selected{% endif %}>Vacation rentals</option>
+                                            <option value="Any" {% if brief and (brief.Accommodation_Type or brief.accommodation_type or '').lower() == 'any' %}selected{% endif %}>Any</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="flight_class" class="form-label">Flight Class</label>
+                                        <select class="form-select" id="flight_class" name="flight_class">
+                                            <option value="Economy" {% if not brief or (brief.Flight_Class or brief.flight_class or 'Economy') == 'Economy' %}selected{% endif %}>Economy</option>
+                                            <option value="Economy with comfort" {% if brief and 'comfort' in (brief.Flight_Class or brief.flight_class or '').lower() %}selected{% endif %}>Economy with comfort</option>
+                                            <option value="Premium Economy" {% if brief and 'premium' in (brief.Flight_Class or brief.flight_class or '').lower() %}selected{% endif %}>Premium Economy</option>
+                                            <option value="Business" {% if brief and 'business' in (brief.Flight_Class or brief.flight_class or '').lower() %}selected{% endif %}>Business</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- AI Instructions -->
+                            <div class="mb-4">
+                                <h5 class="mb-3">
+                                    <i class="fas fa-robot me-2 text-primary"></i>AI Instructions
+                                </h5>
+                                <div class="mb-3">
+                                    <label for="ai_instructions" class="form-label">Special Instructions for AI</label>
+                                    <textarea class="form-control" id="ai_instructions" name="ai_instructions" rows="4" 
+                                              placeholder="e.g., Look for deals with pools, family activities, or cultural attractions. Avoid party destinations.">{{ brief.AI_Instructions or brief.ai_instructions if brief else '' }}</textarea>
+                                    <div class="form-text">Tell our AI what's important to you - amenities, location preferences, things to avoid, etc.</div>
+                                </div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="d-flex justify-content-between">
+                                <a href="/" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-1"></i>Cancel
+                                </a>
+                                <div class="d-flex gap-2">
+                                    {% if mode == 'edit' %}
+                                        <button type="button" class="btn btn-outline-danger" onclick="deleteBrief()">
+                                            <i class="fas fa-trash me-1"></i>Delete
+                                        </button>
+                                    {% endif %}
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-1"></i>
+                                        {% if mode == 'edit' %}Update Brief{% else %}Create Brief{% endif %}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="successToast" class="toast" role="alert">
+            <div class="toast-header bg-success text-white">
+                <i class="fas fa-check-circle me-2"></i>
+                <strong class="me-auto">Success</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="successToastBody">
+                Action completed successfully!
+            </div>
+        </div>
+
+        <div id="errorToast" class="toast" role="alert">
+            <div class="toast-header bg-danger text-white">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <strong class="me-auto">Error</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="errorToastBody">
+                An error occurred!
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showToast(type, message) {
+            const toastId = type === 'error' ? 'errorToast' : 'successToast';
+            const bodyId = type === 'error' ? 'errorToastBody' : 'successToastBody';
+            
+            document.getElementById(bodyId).textContent = message;
+            
+            const toast = new bootstrap.Toast(document.getElementById(toastId));
+            toast.show();
+        }
+
+        async function submitBrief(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            // Show loading state
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Saving...';
+            submitBtn.disabled = true;
+            
+            try {
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                
+                // Convert numeric fields
+                data.budget_min = parseInt(data.budget_min) || 0;
+                data.budget_max = parseInt(data.budget_max) || 0;
+                
+                const mode = '{{ mode }}';
+                const briefId = '{{ brief.Brief_ID or brief.brief_id if brief else "" }}';
+                
+                let url, method;
+                if (mode === 'edit') {
+                    url = `/api/briefs/${briefId}`;
+                    method = 'PUT';
+                } else {
+                    url = '/api/briefs';
+                    method = 'POST';
+                }
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showToast('success', result.message || 'Brief saved successfully!');
+                    // Redirect to dashboard after a short delay
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1500);
+                } else {
+                    throw new Error(result.error || 'Failed to save brief');
+                }
+                
+            } catch (error) {
+                console.error('Error saving brief:', error);
+                showToast('error', 'Failed to save brief: ' + error.message);
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        async function deleteBrief() {
+            if (!confirm('Are you sure you want to delete this travel brief? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                const briefId = '{{ brief.Brief_ID or brief.brief_id if brief else "" }}';
+                
+                const response = await fetch(`/api/briefs/${briefId}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showToast('success', 'Brief deleted successfully!');
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1500);
+                } else {
+                    throw new Error(result.error || 'Failed to delete brief');
+                }
+                
+            } catch (error) {
+                console.error('Error deleting brief:', error);
+                showToast('error', 'Failed to delete brief: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

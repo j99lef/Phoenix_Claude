@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if mode == 'edit' %}Edit{% else %}Create{% endif %} Travel Brief - TravelAiGent</title>
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Luxury Concierge Design System -->
+    <link href="/static/luxury-concierge.css" rel="stylesheet">
+    
+    <!-- School Holiday Intelligence -->
+    <script src="/static/school-holidays.js"></script>
+    <script src="/static/uk-schools-database.js"></script>
+    
+    <!-- Additional fonts for luxury design -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Elegant Travel Brief Form */
+        .brief-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--space-luxury-2xl);
+        }
+        
+        .brief-header {
+            text-align: center;
+            margin-bottom: var(--space-luxury-4xl);
+        }
+        
+        .brief-title {
+            font-family: var(--font-luxury-display);
+            font-size: 2.5rem;
+            font-weight: 400;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-md);
+            letter-spacing: -0.02em;
+        }
+        
+        .brief-subtitle {
+            color: var(--luxury-charcoal);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .brief-form-card {
+            background: var(--luxury-white);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 24px;
+            box-shadow: var(--shadow-luxury-elevated);
+            overflow: hidden;
+        }
+        
+        .form-section {
+            padding: var(--space-luxury-2xl);
+            border-bottom: 1px solid var(--luxury-stone);
+        }
+        
+        .form-section:last-child {
+            border-bottom: none;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-md);
+            margin-bottom: var(--space-luxury-xl);
+        }
+        
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-luxury-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--luxury-white);
+            font-size: 1.25rem;
+        }
+        
+        .section-title {
+            font-family: var(--font-luxury-display);
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--luxury-obsidian);
+            margin: 0;
+        }
+        
+        .luxury-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-luxury-lg);
+        }
+        
+        .luxury-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-luxury-sm);
+        }
+        
+        .luxury-form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .luxury-label {
+            font-weight: 600;
+            color: var(--luxury-obsidian);
+            font-size: 0.95rem;
+            letter-spacing: 0.02em;
+        }
+        
+        .luxury-input,
+        .luxury-select,
+        .luxury-textarea {
+            background: var(--luxury-ivory);
+            border: 2px solid var(--luxury-stone);
+            border-radius: 12px;
+            padding: var(--space-luxury-md) var(--space-luxury-lg);
+            font-family: var(--font-luxury-body);
+            font-size: 1rem;
+            color: var(--luxury-obsidian);
+            transition: var(--transition-luxury);
+            outline: none;
+        }
+        
+        .luxury-input:focus,
+        .luxury-select:focus,
+        .luxury-textarea:focus {
+            border-color: var(--luxury-gold);
+            background: var(--luxury-white);
+            box-shadow: 0 0 0 4px rgba(201, 169, 110, 0.15);
+            transform: translateY(-1px);
+        }
+        
+        .luxury-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        /* Date input styling */
+        .date-input-wrapper {
+            display: flex;
+            gap: var(--space-luxury-md);
+            align-items: center;
+        }
+        
+        .date-input-wrapper .luxury-input {
+            flex: 1;
+        }
+        
+        .date-separator {
+            color: var(--luxury-charcoal);
+            font-weight: 500;
+            padding: 0 var(--space-luxury-sm);
+        }
+        
+        /* Flexibility slider */
+        .flexibility-slider-wrapper {
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-lg);
+            padding: var(--space-luxury-md);
+            background: var(--luxury-pearl);
+            border-radius: 12px;
+            max-width: 600px;
+        }
+        
+        .flexibility-slider {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--luxury-stone);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .flexibility-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--gradient-luxury-gold);
+            cursor: pointer;
+            box-shadow: var(--shadow-luxury-soft);
+            transition: var(--transition-luxury);
+        }
+        
+        .flexibility-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-luxury-elevated);
+        }
+        
+        .flexibility-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--luxury-gold);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .flexibility-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 100px;
+            padding: var(--space-luxury-sm);
+            background: var(--luxury-white);
+            border-radius: 8px;
+        }
+        
+        .flexibility-label {
+            font-size: 0.8rem;
+            color: var(--luxury-charcoal);
+            margin-bottom: var(--space-luxury-xs);
+        }
+        
+        .flexibility-value {
+            font-weight: 600;
+            color: var(--luxury-gold);
+            font-size: 1rem;
+        }
+        
+        /* Checkbox styling */
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-luxury-md);
+        }
+        
+        .luxury-checkbox-item {
+            position: relative;
+        }
+        
+        .luxury-checkbox-item input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+            padding: var(--space-luxury-md);
+            border: 2px solid var(--luxury-stone);
+            border-radius: 12px;
+            background: var(--luxury-ivory);
+            cursor: pointer;
+            transition: var(--transition-luxury);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        .checkbox-label:hover {
+            border-color: var(--luxury-gold);
+            background: var(--luxury-white);
+            transform: translateY(-2px);
+        }
+        
+        .checkbox-label i {
+            color: var(--luxury-gold);
+            font-size: 1.1rem;
+        }
+        
+        .luxury-checkbox-item input[type="checkbox"]:checked + .checkbox-label {
+            border-color: var(--luxury-gold);
+            background: var(--luxury-champagne);
+            box-shadow: 0 0 0 4px rgba(201, 169, 110, 0.15);
+        }
+        
+        .luxury-checkbox-item input[type="checkbox"]:checked + .checkbox-label::after {
+            content: '✓';
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            color: var(--luxury-gold);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        /* Budget slider */
+        .budget-display {
+            background: var(--luxury-pearl);
+            padding: var(--space-luxury-lg);
+            border-radius: 12px;
+            text-align: center;
+            margin-top: var(--space-luxury-md);
+        }
+        
+        .budget-amount {
+            font-family: var(--font-luxury-display);
+            font-size: 2rem;
+            color: var(--luxury-gold);
+            font-weight: 500;
+        }
+        
+        /* Priority indicator */
+        .priority-options {
+            display: flex;
+            gap: var(--space-luxury-md);
+        }
+        
+        .priority-option {
+            flex: 1;
+            padding: var(--space-luxury-lg);
+            border: 2px solid var(--luxury-stone);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition-luxury);
+        }
+        
+        .priority-option.selected {
+            border-color: var(--luxury-gold);
+            background: var(--luxury-champagne);
+        }
+        
+        .priority-option:hover {
+            border-color: var(--luxury-gold);
+            transform: translateY(-2px);
+        }
+        
+        .form-actions {
+            padding: var(--space-luxury-2xl);
+            background: var(--luxury-pearl);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .luxury-button {
+            border: none;
+            border-radius: 12px;
+            padding: var(--space-luxury-md) var(--space-luxury-xl);
+            font-family: var(--font-luxury-body);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-luxury);
+            letter-spacing: 0.02em;
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+        }
+        
+        .luxury-button-primary {
+            background: var(--gradient-luxury-gold);
+            color: var(--luxury-white);
+        }
+        
+        .luxury-button-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-luxury-elevated);
+        }
+        
+        .luxury-button-secondary {
+            background: transparent;
+            color: var(--luxury-charcoal);
+            border: 2px solid var(--luxury-stone);
+        }
+        
+        .luxury-button-secondary:hover {
+            border-color: var(--luxury-gold);
+            color: var(--luxury-gold);
+        }
+        
+        .luxury-button-danger {
+            background: transparent;
+            color: #dc3545;
+            border: 2px solid #dc3545;
+        }
+        
+        .luxury-button-danger:hover {
+            background: #dc3545;
+            color: white;
+        }
+        
+        /* Loading state */
+        .luxury-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        /* Traveler management styles */
+        .traveler-item {
+            background: var(--luxury-pearl);
+            border-radius: 12px;
+            padding: var(--space-luxury-md);
+            margin-bottom: var(--space-luxury-md);
+            transition: var(--transition-luxury);
+        }
+        
+        .traveler-item:hover {
+            background: var(--luxury-champagne);
+            transform: translateY(-2px);
+        }
+        
+        .traveler-item input[type="text"] {
+            background: var(--luxury-white);
+        }
+        
+        .traveler-item select {
+            background: var(--luxury-white);
+        }
+        
+        .traveler-item .luxury-button-danger {
+            min-width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Enhanced date picker styling */
+        .date-input-wrapper {
+            position: relative;
+        }
+        
+        .date-input-wrapper input[type="date"] {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .date-input-wrapper input[type="date"]::-webkit-calendar-picker-indicator {
+            background: var(--luxury-gold);
+            border-radius: 4px;
+            padding: 4px;
+            cursor: pointer;
+        }
+        
+        .date-input-wrapper input[type="date"]:focus::-webkit-calendar-picker-indicator {
+            background: var(--luxury-obsidian);
+        }
+        
+        /* Success toast */
+        .luxury-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--luxury-obsidian);
+            color: var(--luxury-white);
+            padding: var(--space-luxury-lg) var(--space-luxury-xl);
+            border-radius: 12px;
+            box-shadow: var(--shadow-luxury-dramatic);
+            transform: translateY(100px);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+        }
+        
+        .luxury-toast.show {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Luxury Travel Concierge Header -->
+    <header class="luxury-header">
+        <div class="header-luxury-content">
+            <a href="/" class="luxury-brand">
+                <img src="/static/TravelAigent_logo_header.png" alt="TravelAiGent" class="brand-luxury-logo">
+                <span class="brand-luxury-text">TravelAiGent</span>
+                <span class="brand-version">v1.2.1</span>
+            </a>
+            
+            <nav class="luxury-nav">
+                <a href="/" class="luxury-nav-link">Dashboard</a>
+                <a href="/profile" class="luxury-nav-link">Profile</a>
+                <a href="/briefs" class="luxury-nav-link active">Travel Briefs</a>
+                <a href="/groups" class="luxury-nav-link">Travel Groups</a>
+                <a href="/deals" class="luxury-nav-link">Deals</a>
+            </nav>
+            
+            <div class="luxury-profile">
+                <div class="luxury-avatar">{{ (user.first_name[0] if user and user.first_name else user.username[0] if user and user.username else 'U') | upper }}</div>
+                <span>{{ user.first_name if user and user.first_name else user.username if user else 'User' }}</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="brief-container">
+        <div class="brief-header luxury-animate-fade-up">
+            <h1 class="brief-title">
+                {% if mode == 'edit' %}
+                    Edit Travel Brief
+                {% else %}
+                    Create Travel Brief
+                {% endif %}
+            </h1>
+            <p class="brief-subtitle">
+                {% if mode == 'edit' %}
+                    Update your travel search criteria and let our AI find better deals
+                {% else %}
+                    Describe your perfect trip and our AI concierge will curate exclusive deals
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- Brief Form Card -->
+        <div class="brief-form-card luxury-animate-fade-up">
+            <form id="briefForm" onsubmit="submitBrief(event)">
+                <!-- Destination Section -->
+                <section class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <h2 class="section-title">Where would you like to go?</h2>
+                    </div>
+                    
+                    <div class="luxury-form-grid">
+                        <div class="luxury-form-group">
+                            <label class="luxury-label">Departure Location</label>
+                            <input type="text" class="luxury-input" name="departure_location" 
+                                   value="{{ brief.Departure_Location or brief.departure_location if brief else 'London Airports (LHR, LGW, STN)' }}" 
+                                   placeholder="e.g., London Airports (LHR, LGW, STN)" required>
+                        </div>
+                        
+                        <div class="luxury-form-group">
+                            <label class="luxury-label">Destinations</label>
+                            <input type="text" class="luxury-input" name="destinations" 
+                                   value="{{ brief.Destinations or brief.destinations if brief else '' }}" 
+                                   placeholder="e.g., Mediterranean, Caribbean, Asia" required>
+                        </div>
+                        
+                        <div class="luxury-form-group full-width">
+                            <label class="luxury-label">Brief Name (for your reference)</label>
+                            <input type="text" class="luxury-input" name="brief_name" 
+                                   value="{{ brief.Brief_Name or brief.brief_name if brief else '' }}" 
+                                   placeholder="e.g., Summer 2025 Family Holiday">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- When Section -->
+                <section class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <h2 class="section-title">When are you traveling?</h2>
+                    </div>
+                    
+                    <div class="luxury-form-grid">
+                        <div class="luxury-form-group">
+                            <label class="luxury-label">Travel Dates</label>
+                            <div class="date-input-wrapper">
+                                <input type="date" class="luxury-input" name="departure_date" id="departure_date"
+                                       value="{{ brief.departure_date.strftime('%Y-%m-%d') if brief and brief.departure_date else '' }}" 
+                                       required>
+                                <span class="date-separator">to</span>
+                                <input type="date" class="luxury-input" name="return_date" id="return_date"
+                                       value="{{ brief.return_date.strftime('%Y-%m-%d') if brief and brief.return_date else '' }}">
+                            </div>
+                            
+                            <!-- School Holiday Suggestions -->
+                            <div id="schoolHolidayHints" style="display: none; margin-top: var(--space-luxury-md); padding: var(--space-luxury-md); background: var(--luxury-champagne); border-radius: 8px; border-left: 4px solid var(--luxury-gold);">
+                                <h4 style="margin: 0 0 var(--space-luxury-sm) 0; color: var(--luxury-obsidian); font-size: 0.9rem;">
+                                    <i class="fas fa-graduation-cap" style="color: var(--luxury-gold);"></i>
+                                    School Holiday Suggestions
+                                </h4>
+                                <div id="holidayOptions" style="display: flex; flex-wrap: wrap; gap: var(--space-luxury-sm);">
+                                    <!-- Holiday options will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="luxury-form-group full-width">
+                            <label class="luxury-label">Date Flexibility</label>
+                            <div class="flexibility-slider-wrapper">
+                                <input type="range" class="flexibility-slider" name="date_flexibility" id="date_flexibility"
+                                       min="0" max="7" value="2" step="1">
+                                <div class="flexibility-display">
+                                    <span class="flexibility-label">Flexible by</span>
+                                    <span class="flexibility-value" id="flexibility_value">2 days</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="luxury-form-group">
+                            <label class="luxury-label">Search Priority</label>
+                            <select class="luxury-select" name="priority">
+                                <option value="Low" {% if brief and (brief.Priority == 'Low' or brief.priority == 'Low') %}selected{% endif %}>Low - I'm flexible</option>
+                                <option value="Medium" {% if not brief or brief.Priority == 'Medium' or brief.priority == 'Medium' %}selected{% endif %}>Medium - Actively looking</option>
+                                <option value="High" {% if brief and (brief.Priority == 'High' or brief.priority == 'High') %}selected{% endif %}>High - Need to book soon</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Travelers Section -->
+                <section class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h2 class="section-title">Who's traveling?</h2>
+                    </div>
+                    
+                    <div class="luxury-form-grid">
+                        <div class="luxury-form-group">
+                            <label class="luxury-label">Select Travel Group</label>
+                            <select class="luxury-select" id="travel_group_select" onchange="loadGroupMembers()">
+                                <option value="">Custom travelers</option>
+                                <!-- Groups will be loaded here -->
+                            </select>
+                        </div>
+                        
+                        <div class="luxury-form-group">
+                            <label class="luxury-label">&nbsp;</label>
+                            <button type="button" class="luxury-button luxury-button-outline" onclick="window.location.href='/groups'">
+                                <i class="fas fa-plus"></i>
+                                Create New Group
+                            </button>
+                        </div>
+                        
+                        <div class="luxury-form-group full-width">
+                            <label class="luxury-label">Travel Group Members</label>
+                            <div id="travelersContainer">
+                                <!-- Dynamic traveler inputs will be added here -->
+                            </div>
+                            <button type="button" class="luxury-button luxury-button-secondary" onclick="addTraveler()" style="margin-top: var(--space-luxury-md);">
+                                <i class="fas fa-plus"></i>
+                                Add Traveler
+                            </button>
+                            
+                            <!-- Hidden field for form submission -->
+                            <input type="hidden" name="travelers" id="travelers_hidden">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Budget Section -->
+                <section class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-pound-sign"></i>
+                        </div>
+                        <h2 class="section-title">What's your budget?</h2>
+                    </div>
+                    
+                    <div class="luxury-form-grid">
+                        <div class="luxury-form-group">
+                            <label class="luxury-label">Minimum Budget (£)</label>
+                            <input type="number" class="luxury-input" name="budget_min" id="budget_min"
+                                   value="{{ brief.Budget_Min or brief.budget_min if brief else '1000' }}" 
+                                   min="0" onchange="updateBudgetDisplay()">
+                        </div>
+                        
+                        <div class="luxury-form-group">
+                            <label class="luxury-label">Maximum Budget (£)</label>
+                            <input type="number" class="luxury-input" name="budget_max" id="budget_max"
+                                   value="{{ brief.Budget_Max or brief.budget_max if brief else '3000' }}" 
+                                   min="0" onchange="updateBudgetDisplay()">
+                        </div>
+                        
+                        <div class="luxury-form-group full-width">
+                            <div class="budget-display">
+                                <div class="budget-amount" id="budgetDisplay">£1,000 - £3,000</div>
+                                <div style="color: var(--luxury-charcoal); font-size: 0.9rem;">Total budget for all travelers</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Preferences Section -->
+                <section class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h2 class="section-title">Travel Preferences</h2>
+                    </div>
+                    
+                    <div class="luxury-form-grid">
+                        <div class="luxury-form-group">
+                            <label class="luxury-label">Search Type</label>
+                            <select class="luxury-select" name="search_type" id="search_type" onchange="toggleAccommodationSection()">
+                                <option value="flight_and_hotel" {% if not brief or (brief.search_type or 'flight_and_hotel') == 'flight_and_hotel' %}selected{% endif %}>Flight + Accommodation</option>
+                                <option value="flight_only" {% if brief and brief.search_type == 'flight_only' %}selected{% endif %}>Flight Only</option>
+                                <option value="hotel_only" {% if brief and brief.search_type == 'hotel_only' %}selected{% endif %}>Accommodation Only</option>
+                            </select>
+                        </div>
+                        
+                        <div class="luxury-form-group">
+                            <label class="luxury-label">Flight Class</label>
+                            <select class="luxury-select" name="flight_class" id="flight_class_select">
+                                <option value="Economy" {% if not brief or (brief.Flight_Class or brief.flight_class or 'Economy') == 'Economy' %}selected{% endif %}>Economy</option>
+                                <option value="Premium Economy" {% if brief and 'premium' in (brief.Flight_Class or brief.flight_class or '').lower() %}selected{% endif %}>Premium Economy</option>
+                                <option value="Business" {% if brief and 'business' in (brief.Flight_Class or brief.flight_class or '').lower() %}selected{% endif %}>Business Class</option>
+                                <option value="First" {% if brief and 'first' in (brief.Flight_Class or brief.flight_class or '').lower() %}selected{% endif %}>First Class</option>
+                            </select>
+                        </div>
+                        
+                        <div class="luxury-form-group full-width" id="accommodation_section">
+                            <label class="luxury-label">Accommodation Types (select all that interest you)</label>
+                            <div class="checkbox-group">
+                                <div class="luxury-checkbox-item">
+                                    <input type="checkbox" id="acc_3star" name="accommodation_type" value="3+ star hotels" 
+                                           {% if brief and '3+' in (brief.Accommodation_Type or brief.accommodation_type or '') %}checked{% endif %}>
+                                    <label for="acc_3star" class="checkbox-label">
+                                        <i class="fas fa-hotel"></i>
+                                        3+ Star Hotels
+                                    </label>
+                                </div>
+                                
+                                <div class="luxury-checkbox-item">
+                                    <input type="checkbox" id="acc_4star" name="accommodation_type" value="4+ star family-friendly hotels" 
+                                           {% if not brief or '4+' in (brief.Accommodation_Type or brief.accommodation_type or '4+') %}checked{% endif %}>
+                                    <label for="acc_4star" class="checkbox-label">
+                                        <i class="fas fa-star"></i>
+                                        4+ Star Family Hotels
+                                    </label>
+                                </div>
+                                
+                                <div class="luxury-checkbox-item">
+                                    <input type="checkbox" id="acc_5star" name="accommodation_type" value="5 star luxury hotels" 
+                                           {% if brief and '5 star' in (brief.Accommodation_Type or brief.accommodation_type or '') %}checked{% endif %}>
+                                    <label for="acc_5star" class="checkbox-label">
+                                        <i class="fas fa-crown"></i>
+                                        5 Star Luxury Hotels
+                                    </label>
+                                </div>
+                                
+                                <div class="luxury-checkbox-item">
+                                    <input type="checkbox" id="acc_boutique" name="accommodation_type" value="Boutique hotels" 
+                                           {% if brief and 'boutique' in (brief.Accommodation_Type or brief.accommodation_type or '').lower() %}checked{% endif %}>
+                                    <label for="acc_boutique" class="checkbox-label">
+                                        <i class="fas fa-building"></i>
+                                        Boutique Hotels
+                                    </label>
+                                </div>
+                                
+                                <div class="luxury-checkbox-item">
+                                    <input type="checkbox" id="acc_resort" name="accommodation_type" value="All-inclusive resorts" 
+                                           {% if brief and 'all-inclusive' in (brief.Accommodation_Type or brief.accommodation_type or '').lower() %}checked{% endif %}>
+                                    <label for="acc_resort" class="checkbox-label">
+                                        <i class="fas fa-umbrella-beach"></i>
+                                        All-Inclusive Resorts
+                                    </label>
+                                </div>
+                                
+                                <div class="luxury-checkbox-item">
+                                    <input type="checkbox" id="acc_rental" name="accommodation_type" value="Vacation rentals" 
+                                           {% if brief and 'rental' in (brief.Accommodation_Type or brief.accommodation_type or '').lower() %}checked{% endif %}>
+                                    <label for="acc_rental" class="checkbox-label">
+                                        <i class="fas fa-home"></i>
+                                        Vacation Rentals
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="luxury-form-group full-width">
+                            <label class="luxury-label">Special Requirements & AI Instructions</label>
+                            <textarea class="luxury-textarea" name="ai_instructions" 
+                                      placeholder="Tell our AI what's important: Pool for kids? Beach access? Cultural sites? Specific airlines to avoid? Any special requirements...">{{ brief.AI_Instructions or brief.ai_instructions if brief else '' }}</textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <a href="/briefs" class="luxury-button luxury-button-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        Cancel
+                    </a>
+                    
+                    <div style="display: flex; gap: var(--space-luxury-md);">
+                        {% if mode == 'edit' and brief %}
+                            <button type="button" class="luxury-button luxury-button-danger" onclick="deleteBrief()">
+                                <i class="fas fa-trash"></i>
+                                Delete
+                            </button>
+                        {% endif %}
+                        
+                        <button type="submit" class="luxury-button luxury-button-primary" id="submitButton">
+                            <i class="fas fa-save"></i>
+                            <span id="submitText">
+                                {% if mode == 'edit' %}Update Brief{% else %}Create Brief & Start Search{% endif %}
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+    
+    <!-- Success Toast -->
+    <div class="luxury-toast" id="successToast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Brief saved successfully!</span>
+    </div>
+    
+    <script>
+        // Update budget display
+        function updateBudgetDisplay() {
+            const min = document.getElementById('budget_min').value || 0;
+            const max = document.getElementById('budget_max').value || 0;
+            const display = document.getElementById('budgetDisplay');
+            
+            // Format numbers with commas
+            const minFormatted = parseInt(min).toLocaleString();
+            const maxFormatted = parseInt(max).toLocaleString();
+            
+            display.textContent = `£${minFormatted} - £${maxFormatted}`;
+        }
+        
+        // Update flexibility display
+        function updateFlexibilityDisplay() {
+            const slider = document.getElementById('date_flexibility');
+            const display = document.getElementById('flexibility_value');
+            const value = parseInt(slider.value);
+            
+            if (value === 0) {
+                display.textContent = 'Exact dates';
+            } else if (value === 1) {
+                display.textContent = '1 day';
+            } else {
+                display.textContent = `${value} days`;
+            }
+        }
+        
+        // Calculate return date based on departure and duration
+        function updateReturnDate() {
+            const departureInput = document.getElementById('departure_date');
+            const returnInput = document.getElementById('return_date');
+            const durationSelect = document.querySelector('select[name="trip_duration"]');
+            
+            if (departureInput.value && durationSelect.value) {
+                const departure = new Date(departureInput.value);
+                const duration = durationSelect.value;
+                
+                let days = 7; // default
+                if (duration.includes('3-4')) days = 4;
+                else if (duration.includes('5-7')) days = 7;
+                else if (duration.includes('7-10')) days = 10;
+                else if (duration.includes('10+')) days = 14;
+                
+                const returnDate = new Date(departure);
+                returnDate.setDate(returnDate.getDate() + days);
+                
+                returnInput.value = returnDate.toISOString().split('T')[0];
+            }
+        }
+        
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.getElementById('successToast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Submit form
+        async function submitBrief(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const submitButton = document.getElementById('submitButton');
+            const submitText = document.getElementById('submitText');
+            const originalText = submitText.textContent;
+            
+            // Show loading state
+            submitButton.disabled = true;
+            submitText.textContent = 'Saving...';
+            
+            try {
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                
+                // Handle accommodation type checkboxes
+                const accommodationTypes = [];
+                const accommodationCheckboxes = form.querySelectorAll('input[name="accommodation_type"]:checked');
+                accommodationCheckboxes.forEach(checkbox => {
+                    accommodationTypes.push(checkbox.value);
+                });
+                data.accommodation_type = accommodationTypes.join(', ');
+                
+                // Convert numeric fields
+                data.budget_min = parseInt(data.budget_min) || 0;
+                data.budget_max = parseInt(data.budget_max) || 0;
+                data.date_flexibility = parseInt(data.date_flexibility) || 2;
+                
+                // Combine date fields for backward compatibility
+                if (data.departure_date && data.return_date) {
+                    const depDate = new Date(data.departure_date);
+                    const retDate = new Date(data.return_date);
+                    data.travel_dates = `${depDate.toLocaleDateString()} - ${retDate.toLocaleDateString()}`;
+                } else if (data.departure_date) {
+                    data.travel_dates = new Date(data.departure_date).toLocaleDateString();
+                }
+                
+                const mode = '{{ mode }}';
+                const briefId = '{{ brief.id if brief else "" }}';
+                
+                let url, method;
+                if (mode === 'edit' && briefId) {
+                    url = `/api/briefs/${briefId}`;
+                    method = 'PUT';
+                } else {
+                    url = '/api/briefs';
+                    method = 'POST';
+                }
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showToast(result.message || 'Brief saved successfully!');
+                    
+                    // Redirect after a short delay
+                    setTimeout(() => {
+                        window.location.href = '/briefs';
+                    }, 1500);
+                } else {
+                    throw new Error(result.error || 'Failed to save brief');
+                }
+                
+            } catch (error) {
+                console.error('Error saving brief:', error);
+                showToast('Error: ' + error.message);
+                
+                // Reset button
+                submitButton.disabled = false;
+                submitText.textContent = originalText;
+            }
+        }
+        
+        // Delete brief
+        async function deleteBrief() {
+            if (!confirm('Are you sure you want to delete this travel brief? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                const briefId = '{{ brief.id if brief else "" }}';
+                
+                const response = await fetch(`/api/briefs/${briefId}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showToast('Brief deleted successfully!');
+                    setTimeout(() => {
+                        window.location.href = '/briefs';
+                    }, 1500);
+                } else {
+                    throw new Error(result.error || 'Failed to delete brief');
+                }
+                
+            } catch (error) {
+                console.error('Error deleting brief:', error);
+                showToast('Error: ' + error.message);
+            }
+        }
+        
+        // Dynamic traveler management
+        let travelerCount = 0;
+        
+        function addTraveler() {
+            travelerCount++;
+            const container = document.getElementById('travelersContainer');
+            
+            const travelerDiv = document.createElement('div');
+            travelerDiv.className = 'traveler-item';
+            travelerDiv.style.display = 'flex';
+            travelerDiv.style.gap = 'var(--space-luxury-md)';
+            travelerDiv.style.alignItems = 'center';
+            travelerDiv.style.marginBottom = 'var(--space-luxury-md)';
+            
+            travelerDiv.innerHTML = `
+                <input type="text" class="luxury-input" placeholder="Traveler name" style="flex: 1;" 
+                       onchange="updateTravelersField()" data-traveler-id="${travelerCount}">
+                <select class="luxury-select" style="min-width: 120px;" onchange="updateTravelersField()" data-traveler-id="${travelerCount}">
+                    <option value="adult">Adult</option>
+                    <option value="child">Child</option>
+                    <option value="senior">Senior</option>
+                    <option value="infant">Infant</option>
+                </select>
+                <button type="button" class="luxury-button luxury-button-danger" onclick="removeTraveler(this)" style="padding: var(--space-luxury-sm);">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            
+            container.appendChild(travelerDiv);
+            updateTravelersField();
+        }
+        
+        function removeTraveler(button) {
+            button.closest('.traveler-item').remove();
+            updateTravelersField();
+        }
+        
+        function updateTravelersField() {
+            const travelers = [];
+            const travelerItems = document.querySelectorAll('.traveler-item');
+            
+            travelerItems.forEach(item => {
+                const nameInput = item.querySelector('input[type="text"]');
+                const typeSelect = item.querySelector('select');
+                
+                if (nameInput.value.trim()) {
+                    travelers.push(`${nameInput.value.trim()} (${typeSelect.value})`);
+                }
+            });
+            
+            const travelersField = document.getElementById('travelers_hidden');
+            travelersField.value = travelers.join(', ') || 'No travelers added';
+        }
+        
+        function initializeTravelers() {
+            const existingTravelers = "{{ brief.Travelers or brief.travelers if brief else '' }}";
+            if (existingTravelers && existingTravelers.trim() && existingTravelers !== 'No travelers added') {
+                // Parse existing travelers or add default
+                addTraveler();
+                const firstInput = document.querySelector('.traveler-item input[type="text"]');
+                if (firstInput) {
+                    firstInput.value = existingTravelers;
+                    updateTravelersField();
+                }
+            } else {
+                // Add default travelers
+                addTraveler();
+                addTraveler();
+            }
+        }
+        
+        // Toggle accommodation section based on search type
+        function toggleAccommodationSection() {
+            const searchType = document.getElementById('search_type').value;
+            const accommodationSection = document.getElementById('accommodation_section');
+            const flightClassSelect = document.getElementById('flight_class_select').parentElement;
+            
+            if (searchType === 'flight_only') {
+                accommodationSection.style.display = 'none';
+                flightClassSelect.style.display = 'block';
+            } else if (searchType === 'hotel_only') {
+                accommodationSection.style.display = 'block';
+                flightClassSelect.style.display = 'none';
+            } else {
+                accommodationSection.style.display = 'block';
+                flightClassSelect.style.display = 'block';
+            }
+        }
+        
+        // Enhanced date picker with better UX
+        function enhanceDatePickers() {
+            const departureInput = document.getElementById('departure_date');
+            const returnInput = document.getElementById('return_date');
+            
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            departureInput.setAttribute('min', today);
+            returnInput.setAttribute('min', today);
+            
+            // Add visual feedback
+            departureInput.addEventListener('click', function() {
+                this.showPicker && this.showPicker();
+            });
+            
+            returnInput.addEventListener('click', function() {
+                this.showPicker && this.showPicker();
+            });
+            
+            // Auto-update return date when departure changes
+            departureInput.addEventListener('change', function() {
+                const departureDate = new Date(this.value);
+                const minReturnDate = new Date(departureDate);
+                minReturnDate.setDate(minReturnDate.getDate() + 1);
+                
+                returnInput.setAttribute('min', minReturnDate.toISOString().split('T')[0]);
+                
+                // Auto-set return date if not set
+                if (!returnInput.value) {
+                    const defaultReturn = new Date(departureDate);
+                    defaultReturn.setDate(defaultReturn.getDate() + 7);
+                    returnInput.value = defaultReturn.toISOString().split('T')[0];
+                }
+            });
+        }
+        
+        // Load travel groups
+        async function loadTravelGroups() {
+            try {
+                const response = await fetch('/api/groups');
+                if (response.ok) {
+                    const groups = await response.json();
+                    const select = document.getElementById('travel_group_select');
+                    
+                    // Clear existing options except the first one
+                    while (select.options.length > 1) {
+                        select.remove(1);
+                    }
+                    
+                    // Add group options
+                    groups.forEach(group => {
+                        const option = document.createElement('option');
+                        option.value = group.id;
+                        option.textContent = `${group.group_name} (${group.members.length} members)`;
+                        option.dataset.members = JSON.stringify(group.members);
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading groups:', error);
+            }
+        }
+        
+        // Load group members when a group is selected
+        function loadGroupMembers() {
+            const select = document.getElementById('travel_group_select');
+            const container = document.getElementById('travelersContainer');
+            
+            if (select.value) {
+                const option = select.options[select.selectedIndex];
+                const members = JSON.parse(option.dataset.members);
+                
+                // Clear existing travelers
+                container.innerHTML = '';
+                travelerCount = 0;
+                
+                // Add members from the group
+                members.forEach(member => {
+                    travelerCount++;
+                    const travelerDiv = document.createElement('div');
+                    travelerDiv.className = 'traveler-item';
+                    travelerDiv.style.display = 'flex';
+                    travelerDiv.style.gap = 'var(--space-luxury-md)';
+                    travelerDiv.style.alignItems = 'center';
+                    travelerDiv.style.marginBottom = 'var(--space-luxury-md)';
+                    
+                    travelerDiv.innerHTML = `
+                        <input type="text" class="luxury-input" placeholder="Traveler name" style="flex: 1;" 
+                               value="${member.name}" onchange="updateTravelersField()" data-traveler-id="${travelerCount}">
+                        <select class="luxury-select" style="min-width: 120px;" onchange="updateTravelersField()" data-traveler-id="${travelerCount}">
+                            <option value="adult" ${member.type === 'adult' ? 'selected' : ''}>Adult</option>
+                            <option value="child" ${member.type === 'child' ? 'selected' : ''}>Child</option>
+                            <option value="senior" ${member.type === 'senior' ? 'selected' : ''}>Senior</option>
+                            <option value="infant" ${member.type === 'infant' ? 'selected' : ''}>Infant</option>
+                        </select>
+                        <button type="button" class="luxury-button luxury-button-danger" onclick="removeTraveler(this)" style="padding: var(--space-luxury-sm);">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    `;
+                    
+                    container.appendChild(travelerDiv);
+                });
+                
+                updateTravelersField();
+                
+                // Show school holiday suggestions if family group detected
+                checkForFamilyGroup();
+            }
+        }
+        
+        // Check if current group has children and show school holiday suggestions
+        function checkForFamilyGroup() {
+            const travelers = document.querySelectorAll('#travelersContainer .traveler-item');
+            let hasChildren = false;
+            
+            travelers.forEach(traveler => {
+                const typeSelect = traveler.querySelector('select');
+                if (typeSelect && (typeSelect.value === 'child' || typeSelect.value === 'infant')) {
+                    hasChildren = true;
+                }
+            });
+            
+            if (hasChildren) {
+                showSchoolHolidayHints();
+            } else {
+                hideSchoolHolidayHints();
+            }
+        }
+        
+        // Show school holiday suggestions based on user's schools
+        async function showSchoolHolidayHints() {
+            const hintsDiv = document.getElementById('schoolHolidayHints');
+            const optionsDiv = document.getElementById('holidayOptions');
+            
+            if (!hintsDiv || !optionsDiv) return;
+            
+            try {
+                // Load user's schools
+                const response = await fetch('/api/schools');
+                if (!response.ok) {
+                    hideSchoolHolidayHints();
+                    return;
+                }
+                
+                const userSchools = await response.json();
+                if (userSchools.length === 0) {
+                    hideSchoolHolidayHints();
+                    return;
+                }
+                
+                // Get primary school or first school
+                const primarySchool = userSchools.find(s => s.is_primary) || userSchools[0];
+                
+                // Get holidays for this school
+                const schoolInfo = window.getSchoolInfo(primarySchool.school_key);
+                if (!schoolInfo) {
+                    hideSchoolHolidayHints();
+                    return;
+                }
+                
+                const holidays = window.getUpcomingHolidays(primarySchool.school_key, 12);
+                
+                if (holidays.length === 0) {
+                    hideSchoolHolidayHints();
+                    return;
+                }
+                
+                // Create holiday option buttons with INSET day bonuses
+                let optionsHTML = holidays.slice(0, 4).map(holiday => {
+                    const holidayDate = new Date(holiday.start);
+                    const duration = Math.ceil((new Date(holiday.end) - holidayDate) / (1000 * 60 * 60 * 24));
+                    
+                    return `
+                        <button type="button" class="luxury-button luxury-button-outline" 
+                                onclick="selectSchoolHoliday('${primarySchool.school_key}', '${holiday.key}')" 
+                                style="font-size: 0.85rem; padding: var(--space-luxury-xs) var(--space-luxury-sm);">
+                            ${holiday.name} (${duration} days)
+                        </button>
+                    `;
+                }).join('');
+                
+                // Add INSET day opportunities
+                const insetOpportunities = window.getWeekendGetawayOpportunities(primarySchool.school_key, 6);
+                if (insetOpportunities.length > 0) {
+                    optionsHTML += '<div style="margin-top: var(--space-luxury-sm); padding-top: var(--space-luxury-sm); border-top: 1px solid var(--luxury-stone);"><strong>INSET Day Deals:</strong></div>';
+                    optionsHTML += insetOpportunities.slice(0, 3).map(inset => `
+                        <button type="button" class="luxury-button luxury-button-outline" 
+                                onclick="selectInsetDay('${primarySchool.school_key}', '${inset.date}')" 
+                                style="font-size: 0.8rem; padding: var(--space-luxury-xs) var(--space-luxury-sm); background: var(--luxury-champagne); border-color: var(--luxury-gold);">
+                            ${inset.marketingMessage} - ${new Date(inset.date).toLocaleDateString()}
+                        </button>
+                    `).join('');
+                }
+                
+                optionsDiv.innerHTML = optionsHTML;
+                
+                // Update header with school name
+                const headerText = `School Holiday Suggestions for ${primarySchool.school_name}`;
+                document.querySelector('#schoolHolidayHints h4').textContent = headerText;
+                
+                hintsDiv.style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error loading school holidays:', error);
+                hideSchoolHolidayHints();
+            }
+        }
+        
+        // Hide school holiday suggestions
+        function hideSchoolHolidayHints() {
+            const hintsDiv = document.getElementById('schoolHolidayHints');
+            if (hintsDiv) {
+                hintsDiv.style.display = 'none';
+            }
+        }
+        
+        // Select a school holiday and populate dates
+        function selectSchoolHoliday(schoolKey, holidayKey) {
+            const schoolInfo = window.getSchoolInfo(schoolKey);
+            if (!schoolInfo || !schoolInfo.holidays[holidayKey]) return;
+            
+            const holiday = schoolInfo.holidays[holidayKey];
+            document.getElementById('departure_date').value = holiday.start;
+            document.getElementById('return_date').value = holiday.end;
+            
+            // Update form with holiday context
+            updateReturnDate();
+        }
+        
+        // Select an INSET day and populate for weekend getaway
+        function selectInsetDay(schoolKey, insetDate) {
+            const insetDay = window.isInsetDay(schoolKey, insetDate);
+            if (!insetDay) return;
+            
+            const date = new Date(insetDate);
+            const dayOfWeek = date.getDay();
+            
+            // Set departure date based on INSET day type
+            if (dayOfWeek === 1) { // Monday - long weekend
+                // Start Saturday before
+                const startDate = new Date(date);
+                startDate.setDate(date.getDate() - 2);
+                document.getElementById('departure_date').value = startDate.toISOString().split('T')[0];
+                document.getElementById('return_date').value = insetDate;
+            } else if (dayOfWeek === 5) { // Friday - long weekend
+                // Start Friday and end Sunday
+                document.getElementById('departure_date').value = insetDate;
+                const endDate = new Date(date);
+                endDate.setDate(date.getDate() + 2);
+                document.getElementById('return_date').value = endDate.toISOString().split('T')[0];
+            } else {
+                // For other days, create a short break
+                document.getElementById('departure_date').value = insetDate;
+                const endDate = new Date(date);
+                endDate.setDate(date.getDate() + 2);
+                document.getElementById('return_date').value = endDate.toISOString().split('T')[0];
+            }
+            
+            // Update form with INSET day context
+            updateReturnDate();
+        }
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateBudgetDisplay();
+            updateFlexibilityDisplay();
+            initializeTravelers();
+            enhanceDatePickers();
+            loadTravelGroups();
+            
+            // Check for school holiday suggestions
+            setTimeout(() => {
+                showSchoolHolidayHints();
+            }, 500);
+            
+            // Add event listeners
+            document.getElementById('budget_min').addEventListener('input', updateBudgetDisplay);
+            document.getElementById('budget_max').addEventListener('input', updateBudgetDisplay);
+            document.getElementById('date_flexibility').addEventListener('input', updateFlexibilityDisplay);
+            // Removed updateReturnDate listener to prevent conflicts
+            
+            // Add smooth scroll behavior
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }
+                    });
+                }, { threshold: 0.1 });
+                
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>

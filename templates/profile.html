@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configure Profile - TravelAiGent</title>
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Luxury Concierge Design System -->
+    <link href="/static/luxury-concierge.css" rel="stylesheet">
+    
+    <!-- Additional fonts for luxury design -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Elegant Profile Form Styles */
+        .profile-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: var(--space-luxury-2xl);
+        }
+        
+        .profile-header {
+            text-align: center;
+            margin-bottom: var(--space-luxury-4xl);
+        }
+        
+        .profile-title {
+            font-family: var(--font-luxury-display);
+            font-size: 3rem;
+            font-weight: 400;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-md);
+            letter-spacing: -0.02em;
+        }
+        
+        .profile-subtitle {
+            color: var(--luxury-charcoal);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .profile-form-section {
+            background: var(--luxury-white);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 24px;
+            padding: var(--space-luxury-2xl);
+            margin-bottom: var(--space-luxury-xl);
+            box-shadow: var(--shadow-luxury-subtle);
+            transition: var(--transition-luxury);
+        }
+        
+        .profile-form-section:hover {
+            box-shadow: var(--shadow-luxury-elevated);
+            transform: translateY(-2px);
+        }
+        
+        .section-title {
+            font-family: var(--font-luxury-display);
+            font-size: 1.75rem;
+            font-weight: 500;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-md);
+        }
+        
+        .section-title i {
+            color: var(--luxury-gold);
+            font-size: 1.5rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-luxury-lg);
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-luxury-sm);
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--luxury-obsidian);
+            font-size: 0.95rem;
+            letter-spacing: 0.02em;
+        }
+        
+        .form-input,
+        .form-select,
+        .form-textarea {
+            background: var(--luxury-ivory);
+            border: 2px solid var(--luxury-stone);
+            border-radius: 12px;
+            padding: var(--space-luxury-md);
+            font-family: var(--font-luxury-body);
+            font-size: 1rem;
+            color: var(--luxury-obsidian);
+            transition: var(--transition-luxury);
+            outline: none;
+        }
+        
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: var(--luxury-gold);
+            background: var(--luxury-white);
+            box-shadow: 0 0 0 4px rgba(201, 169, 110, 0.15);
+            transform: translateY(-1px);
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .luxury-tag-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-luxury-sm);
+            background: var(--luxury-ivory);
+            border: 2px solid var(--luxury-stone);
+            border-radius: 12px;
+            padding: var(--space-luxury-sm);
+            min-height: 50px;
+            align-items: center;
+        }
+        
+        .luxury-tag {
+            background: var(--gradient-luxury-gold);
+            color: var(--luxury-white);
+            padding: var(--space-luxury-xs) var(--space-luxury-md);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-xs);
+        }
+        
+        .luxury-tag button {
+            background: none;
+            border: none;
+            color: var(--luxury-white);
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0;
+            margin-left: var(--space-luxury-xs);
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: var(--space-luxury-2xl);
+            padding-top: var(--space-luxury-2xl);
+            border-top: 1px solid var(--luxury-stone);
+        }
+        
+        .save-button {
+            background: var(--gradient-luxury-gold);
+            color: var(--luxury-white);
+            border: none;
+            border-radius: 12px;
+            padding: var(--space-luxury-lg) var(--space-luxury-2xl);
+            font-family: var(--font-luxury-body);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-luxury);
+            letter-spacing: 0.02em;
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+        }
+        
+        .save-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-luxury-elevated);
+        }
+        
+        .cancel-link {
+            color: var(--luxury-charcoal);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition-luxury);
+        }
+        
+        .cancel-link:hover {
+            color: var(--luxury-obsidian);
+        }
+        
+        /* Checkbox styling */
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-luxury-md);
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-luxury-md);
+            background: var(--luxury-ivory);
+            border: 2px solid var(--luxury-stone);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition-luxury);
+        }
+        
+        .checkbox-item:hover {
+            border-color: var(--luxury-gold);
+            background: var(--luxury-pearl);
+            transform: translateY(-2px);
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            margin-right: var(--space-luxury-sm);
+        }
+        
+        .checkbox-item input[type="checkbox"]:checked + .checkbox-label {
+            color: var(--luxury-gold);
+            font-weight: 600;
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+            flex: 1;
+        }
+        
+        .checkbox-label i {
+            color: var(--luxury-gold);
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Success notification */
+        .success-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--luxury-obsidian);
+            color: var(--luxury-white);
+            padding: var(--space-luxury-lg) var(--space-luxury-xl);
+            border-radius: 12px;
+            box-shadow: var(--shadow-luxury-dramatic);
+            transform: translateX(400px);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+        }
+        
+        .success-notification.show {
+            transform: translateX(0);
+        }
+        
+        /* Travel Groups Section */
+        .groups-container {
+            margin-top: var(--space-luxury-xl);
+        }
+        
+        .group-item {
+            background: var(--luxury-pearl);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 12px;
+            padding: var(--space-luxury-lg);
+            margin-bottom: var(--space-luxury-md);
+            position: relative;
+            transition: var(--transition-luxury);
+        }
+        
+        .group-item:hover {
+            border-color: var(--luxury-gold);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-luxury-subtle);
+        }
+        
+        .group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-luxury-md);
+        }
+        
+        .group-name {
+            font-family: var(--font-luxury-display);
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--luxury-obsidian);
+        }
+        
+        .group-type {
+            background: var(--luxury-gold);
+            color: var(--luxury-white);
+            padding: var(--space-luxury-xs) var(--space-luxury-sm);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .group-members {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-luxury-sm);
+            margin-bottom: var(--space-luxury-md);
+        }
+        
+        .member-tag {
+            background: var(--luxury-white);
+            border: 1px solid var(--luxury-stone);
+            padding: var(--space-luxury-xs) var(--space-luxury-md);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-xs);
+        }
+        
+        .member-tag i {
+            color: var(--luxury-gold);
+            font-size: 0.8rem;
+        }
+        
+        .group-actions {
+            display: flex;
+            gap: var(--space-luxury-sm);
+        }
+        
+        .btn-group-action {
+            background: none;
+            border: 1px solid var(--luxury-stone);
+            color: var(--luxury-charcoal);
+            padding: var(--space-luxury-xs) var(--space-luxury-md);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition-luxury);
+        }
+        
+        .btn-group-action:hover {
+            border-color: var(--luxury-gold);
+            color: var(--luxury-gold);
+            transform: translateY(-1px);
+        }
+        
+        .btn-group-action.danger:hover {
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+        
+        /* Add Group Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1100;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: var(--luxury-white);
+            border-radius: 24px;
+            padding: var(--space-luxury-2xl);
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-luxury-dramatic);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-header {
+            margin-bottom: var(--space-luxury-xl);
+        }
+        
+        .modal-title {
+            font-family: var(--font-luxury-display);
+            font-size: 1.8rem;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-sm);
+        }
+        
+        .member-input-group {
+            background: var(--luxury-pearl);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 12px;
+            padding: var(--space-luxury-md);
+            margin-bottom: var(--space-luxury-sm);
+            position: relative;
+        }
+        
+        .member-input-row {
+            display: grid;
+            grid-template-columns: 1.5fr 1.5fr 1.5fr 1fr auto;
+            gap: var(--space-luxury-sm);
+            align-items: center;
+        }
+        
+        @media (max-width: 768px) {
+            .member-input-row {
+                grid-template-columns: 1fr;
+                gap: var(--space-luxury-xs);
+            }
+        }
+        
+        .member-remove-btn {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: var(--space-luxury-sm);
+            transition: var(--transition-luxury);
+        }
+        
+        .member-remove-btn:hover {
+            transform: scale(1.2);
+        }
+        
+        .add-member-btn {
+            background: var(--luxury-pearl);
+            border: 2px dashed var(--luxury-stone);
+            border-radius: 12px;
+            padding: var(--space-luxury-md);
+            width: 100%;
+            cursor: pointer;
+            color: var(--luxury-charcoal);
+            font-weight: 500;
+            transition: var(--transition-luxury);
+            margin-top: var(--space-luxury-md);
+        }
+        
+        .add-member-btn:hover {
+            border-color: var(--luxury-gold);
+            background: var(--luxury-ivory);
+            color: var(--luxury-gold);
+        }
+        
+        /* School Search Styles */
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--luxury-white);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 12px;
+            box-shadow: var(--shadow-luxury-elevated);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .search-results.show {
+            display: block;
+        }
+        
+        .search-result-item {
+            padding: var(--space-luxury-md);
+            border-bottom: 1px solid var(--luxury-stone);
+            cursor: pointer;
+            transition: var(--transition-luxury);
+        }
+        
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .search-result-item:hover {
+            background: var(--luxury-pearl);
+        }
+        
+        .search-result-name {
+            font-weight: 600;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-xs);
+        }
+        
+        .search-result-details {
+            font-size: 0.9rem;
+            color: var(--luxury-charcoal);
+        }
+        
+        .selected-school-card {
+            background: var(--luxury-pearl);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 12px;
+            padding: var(--space-luxury-md);
+        }
+        
+        .selected-school-name {
+            font-weight: 600;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-xs);
+        }
+        
+        .selected-school-info {
+            font-size: 0.9rem;
+            color: var(--luxury-charcoal);
+            margin-bottom: var(--space-luxury-xs);
+        }
+        
+        .school-item {
+            background: var(--luxury-pearl);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 12px;
+            padding: var(--space-luxury-md);
+            margin-bottom: var(--space-luxury-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .school-info {
+            flex: 1;
+        }
+        
+        .school-name {
+            font-weight: 600;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-xs);
+        }
+        
+        .school-details {
+            font-size: 0.9rem;
+            color: var(--luxury-charcoal);
+        }
+        
+        .school-actions {
+            display: flex;
+            gap: var(--space-luxury-sm);
+        }
+        
+        .school-primary-badge {
+            background: var(--luxury-gold);
+            color: var(--luxury-white);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-left: var(--space-luxury-sm);
+        }
+    </style>
+</head>
+<body>
+    <!-- Luxury Travel Concierge Header -->
+    <header class="luxury-header">
+        <div class="header-luxury-content">
+            <a href="/" class="luxury-brand">
+                <img src="/static/TravelAigent_logo_header.png" alt="TravelAiGent" class="brand-luxury-logo">
+                <span class="brand-luxury-text">TravelAiGent</span>
+                <span class="brand-version">v1.2.1</span>
+            </a>
+            
+            <nav class="luxury-nav">
+                <a href="/" class="luxury-nav-link">Dashboard</a>
+                <a href="/profile" class="luxury-nav-link active">Profile</a>
+                <a href="/briefs" class="luxury-nav-link">Travel Briefs</a>
+                <a href="/groups" class="luxury-nav-link">Travel Groups</a>
+                <a href="/deals" class="luxury-nav-link">Deals</a>
+            </nav>
+            
+            <div class="luxury-profile">
+                <div class="luxury-profile-trigger" onclick="toggleProfileDropdown(event)">
+                    <div class="luxury-avatar">{{ (user.first_name[:1] if user.first_name else user.username[:1]) | upper }}</div>
+                    <span>{{ user.first_name or user.username }}</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="luxury-dropdown-menu" id="profileDropdown">
+                    <a href="/profile" class="luxury-dropdown-item">
+                        <i class="fas fa-user"></i>
+                        Configure Profile
+                    </a>
+                    <a href="/briefs" class="luxury-dropdown-item">
+                        <i class="fas fa-suitcase"></i>
+                        My Travel Briefs
+                    </a>
+                    <a href="/account" class="luxury-dropdown-item">
+                        <i class="fas fa-cog"></i>
+                        Account Settings
+                    </a>
+                    <div class="luxury-dropdown-divider"></div>
+                    <a href="/logout" class="luxury-dropdown-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Log Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Profile Configuration -->
+    <main class="profile-container">
+        <div class="profile-header luxury-animate-fade-up">
+            <h1 class="profile-title">Configure Your Profile</h1>
+            <p class="profile-subtitle">
+                Tell us about yourself and your travel preferences to receive perfectly curated experiences
+            </p>
+        </div>
+        
+        <form id="profileForm" onsubmit="saveProfile(event)">
+            <!-- Personal Information -->
+            <section class="profile-form-section luxury-animate-fade-up">
+                <h2 class="section-title">
+                    <i class="fas fa-user"></i>
+                    Personal Information
+                </h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">First Name</label>
+                        <input type="text" class="form-input" name="first_name" 
+                               value="{{ user.first_name or '' }}" placeholder="John">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" class="form-input" name="last_name" 
+                               value="{{ user.last_name or '' }}" placeholder="Doe">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" name="email" 
+                               value="{{ user.email or '' }}" placeholder="john@example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" class="form-input" name="phone" 
+                               value="{{ user.phone or '' }}" placeholder="+1 (555) 123-4567">
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Primary Travel Group -->
+            <section class="profile-form-section luxury-animate-fade-up">
+                <h2 class="section-title">
+                    <i class="fas fa-user-friends"></i>
+                    Primary Travel Group
+                </h2>
+                
+                <p style="color: var(--luxury-charcoal); margin-bottom: var(--space-luxury-xl);">
+                    Set up your default travel configuration. This will be your primary group when creating travel briefs.
+                </p>
+                
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label class="form-label">Primary Group Type</label>
+                        <select class="form-select" name="primary_group_type" id="primary_group_type" onchange="updatePrimaryGroupFields()">
+                            <option value="solo">Solo Traveler</option>
+                            <option value="couple">Couple</option>
+                            <option value="family">Family</option>
+                            <option value="custom">Custom Group</option>
+                        </select>
+                    </div>
+                    
+                    <div id="primaryGroupDetails" style="display: none; grid-column: 1 / -1;">
+                        <div class="form-grid" style="margin-top: var(--space-luxury-lg);">
+                            <div class="form-group">
+                                <label class="form-label">Number of Adults</label>
+                                <input type="number" class="form-input" name="adults_count" 
+                                       value="{{ user.adults_count or 2 }}" min="1" max="10">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Children Ages (comma separated)</label>
+                                <input type="text" class="form-input" name="children_ages" 
+                                       value="{{ user.children_ages or '' }}" placeholder="e.g., 10, 13">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Senior Travelers (65+)</label>
+                                <select class="form-select" name="senior_travelers">
+                                    <option value="false" {% if not user.senior_travelers %}selected{% endif %}>No</option>
+                                    <option value="true" {% if user.senior_travelers %}selected{% endif %}>Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Travel Preferences -->
+            <section class="profile-form-section luxury-animate-fade-up">
+                <h2 class="section-title">
+                    <i class="fas fa-plane"></i>
+                    Travel Preferences
+                </h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Home Airports (comma separated codes)</label>
+                        <input type="text" class="form-input" name="home_airports" 
+                               value="{{ user.home_airports or '' }}" placeholder="e.g., LHR, LGW, STN">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Travel Style</label>
+                        <select class="form-select" name="travel_style">
+                            <option value="luxury" {% if user.travel_style == 'luxury' %}selected{% endif %}>Luxury</option>
+                            <option value="premium" {% if user.travel_style == 'premium' %}selected{% endif %}>Premium</option>
+                            <option value="comfort" {% if user.travel_style == 'comfort' %}selected{% endif %}>Comfort</option>
+                            <option value="budget" {% if user.travel_style == 'budget' %}selected{% endif %}>Budget</option>
+                            <option value="adventure" {% if user.travel_style == 'adventure' %}selected{% endif %}>Adventure</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Preferred Airlines (comma separated)</label>
+                        <input type="text" class="form-input" name="preferred_airlines" 
+                               value="{{ user.preferred_airlines or '' }}" placeholder="e.g., BA, Emirates, Singapore">
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label class="form-label">Preferred Accommodation (select all that apply)</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="preferred_accommodation" value="5-star-hotels" 
+                                       {% if user.preferred_accommodation and '5-star-hotels' in user.preferred_accommodation %}checked{% endif %}>
+                                <span class="checkbox-label">
+                                    <i class="fas fa-crown"></i>
+                                    5 Star Hotels
+                                </span>
+                            </label>
+                            
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="preferred_accommodation" value="4-star-hotels" 
+                                       {% if user.preferred_accommodation and '4-star-hotels' in user.preferred_accommodation %}checked{% endif %}>
+                                <span class="checkbox-label">
+                                    <i class="fas fa-star"></i>
+                                    4 Star Hotels
+                                </span>
+                            </label>
+                            
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="preferred_accommodation" value="boutique-hotels" 
+                                       {% if user.preferred_accommodation and 'boutique-hotels' in user.preferred_accommodation %}checked{% endif %}>
+                                <span class="checkbox-label">
+                                    <i class="fas fa-building"></i>
+                                    Boutique Hotels
+                                </span>
+                            </label>
+                            
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="preferred_accommodation" value="resorts" 
+                                       {% if user.preferred_accommodation and 'resorts' in user.preferred_accommodation %}checked{% endif %}>
+                                <span class="checkbox-label">
+                                    <i class="fas fa-umbrella-beach"></i>
+                                    Resorts
+                                </span>
+                            </label>
+                            
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="preferred_accommodation" value="vacation-rentals" 
+                                       {% if user.preferred_accommodation and 'vacation-rentals' in user.preferred_accommodation %}checked{% endif %}>
+                                <span class="checkbox-label">
+                                    <i class="fas fa-home"></i>
+                                    Vacation Rentals
+                                </span>
+                            </label>
+                            
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="preferred_accommodation" value="all-inclusive" 
+                                       {% if user.preferred_accommodation and 'all-inclusive' in user.preferred_accommodation %}checked{% endif %}>
+                                <span class="checkbox-label">
+                                    <i class="fas fa-cocktail"></i>
+                                    All-Inclusive Resorts
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label class="form-label">Dietary Restrictions & Special Needs</label>
+                        <textarea class="form-textarea" name="dietary_restrictions" 
+                                  placeholder="e.g., Vegetarian, Gluten-free, Wheelchair accessible">{{ user.dietary_restrictions or '' }}</textarea>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Travel Groups -->
+            <section class="profile-form-section luxury-animate-fade-up">
+                <h2 class="section-title">
+                    <i class="fas fa-users"></i>
+                    Travel Groups
+                </h2>
+                
+                <p style="color: var(--luxury-charcoal); margin-bottom: var(--space-luxury-xl);">
+                    Create different travel groups for various occasions - family trips, romantic getaways, or adventures with friends.
+                </p>
+                
+                <div class="groups-container" id="groupsContainer">
+                    <!-- Groups will be loaded here -->
+                </div>
+                
+                <button type="button" class="save-button" onclick="showAddGroupModal()">
+                    <i class="fas fa-plus"></i>
+                    Add Travel Group
+                </button>
+            </section>
+            
+            <!-- School/Council Selection -->
+            <section class="profile-form-section luxury-animate-fade-up">
+                <h2 class="section-title">
+                    <i class="fas fa-graduation-cap"></i>
+                    School & Council Profiles
+                </h2>
+                
+                <p style="color: var(--luxury-charcoal); margin-bottom: var(--space-luxury-xl);">
+                    Add your school or council to get personalized travel suggestions based on term dates and holidays. 
+                    Perfect for families planning around school breaks and INSET days.
+                </p>
+                
+                <div id="schoolsContainer">
+                    <!-- School profiles will be loaded here -->
+                </div>
+                
+                <button type="button" class="save-button" onclick="showAddSchoolModal()">
+                    <i class="fas fa-plus"></i>
+                    Add School/Council
+                </button>
+            </section>
+            
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <a href="/" class="cancel-link">Cancel</a>
+                <button type="submit" class="save-button">
+                    <i class="fas fa-save"></i>
+                    Save Profile
+                </button>
+            </div>
+        </form>
+    </main>
+    
+    <!-- Success Notification -->
+    <div class="success-notification" id="successNotification">
+        <i class="fas fa-check-circle"></i>
+        Profile saved successfully!
+    </div>
+    
+    <!-- Travel Group Modal -->
+    <div class="modal-overlay" id="groupModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Create Travel Group</h3>
+                <p style="color: var(--luxury-charcoal);">
+                    Add your travel companions to create a personalized group
+                </p>
+            </div>
+            
+            <form id="groupForm" onsubmit="saveGroup(event)">
+                <div class="form-group">
+                    <label class="form-label">Group Name</label>
+                    <input type="text" class="form-input" name="group_name" 
+                           placeholder="e.g., Family Vacation, Weekend with Friends" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Group Type</label>
+                    <select class="form-select" name="group_type">
+                        <option value="family">Family</option>
+                        <option value="friends">Friends</option>
+                        <option value="couple">Couple</option>
+                        <option value="solo">Solo</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Group Members</label>
+                    <div id="membersContainer">
+                        <!-- Member inputs will be added here -->
+                    </div>
+                    <button type="button" class="add-member-btn" onclick="addMemberInput()">
+                        <i class="fas fa-plus"></i> Add Member
+                    </button>
+                </div>
+                
+                <div class="form-actions" style="margin-top: var(--space-luxury-xl);">
+                    <button type="button" class="cancel-link" onclick="closeGroupModal()">Cancel</button>
+                    <button type="submit" class="save-button">
+                        <i class="fas fa-save"></i>
+                        Create Group
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- School/Council Selection Modal -->
+    <div class="modal-overlay" id="schoolModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add School/Council</h3>
+                <p style="color: var(--luxury-charcoal);">
+                    Search for your school or local council to get accurate term dates and holiday information
+                </p>
+            </div>
+            
+            <form id="schoolForm" onsubmit="saveSchool(event)">
+                <div class="form-group">
+                    <label class="form-label">Search Schools/Councils</label>
+                    <input type="text" class="form-input" id="schoolSearch" 
+                           placeholder="Type school name, council, or location..." 
+                           onkeyup="searchSchools()" autocomplete="off">
+                    <div id="schoolSearchResults" class="search-results"></div>
+                </div>
+                
+                <div class="form-group" id="selectedSchoolInfo" style="display: none;">
+                    <label class="form-label">Selected School/Council</label>
+                    <div id="selectedSchoolDetails" class="selected-school-card"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Child's Name (Optional)</label>
+                    <input type="text" class="form-input" name="child_name" 
+                           placeholder="Which child attends this school?">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Set as Primary School</label>
+                    <select class="form-select" name="is_primary">
+                        <option value="false">No</option>
+                        <option value="true">Yes - Use for travel suggestions</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions" style="margin-top: var(--space-luxury-xl);">
+                    <button type="button" class="cancel-link" onclick="closeSchoolModal()">Cancel</button>
+                    <button type="submit" class="save-button" id="saveSchoolBtn" disabled>
+                        <i class="fas fa-save"></i>
+                        Add School/Council
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="/static/uk-schools-database.js"></script>
+    <script src="/static/common.js"></script>
+    <script>
+        async function saveProfile(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = {};
+            
+            // Convert form data to object
+            for (let [key, value] of formData.entries()) {
+                // Handle array fields
+                if (key === 'home_airports' || key === 'preferred_airlines') {
+                    data[key] = value.split(',').map(v => v.trim()).filter(v => v);
+                } else if (key === 'children_ages') {
+                    data[key] = value.split(',').map(v => v.trim()).filter(v => v);
+                } else if (key === 'senior_travelers') {
+                    data[key] = value === 'true';
+                } else if (key === 'preferred_accommodation') {
+                    // Handle multiple accommodation selections
+                    if (!data[key]) data[key] = [];
+                    data[key].push(value);
+                } else {
+                    data[key] = value;
+                }
+            }
+            
+            // Convert accommodation array to comma-separated string
+            if (data.preferred_accommodation && Array.isArray(data.preferred_accommodation)) {
+                data.preferred_accommodation = data.preferred_accommodation.join(', ');
+            }
+            
+            try {
+                const response = await fetch('/api/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    // Show success notification
+                    const notification = document.getElementById('successNotification');
+                    notification.classList.add('show');
+                    
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                } else {
+                    const error = await response.json();
+                    alert('Error saving profile: ' + (error.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to save profile');
+            }
+        }
+        
+        // Travel Groups Management
+        let groups = [];
+        let memberCounter = 0;
+        
+        // Calculate age from date of birth
+        function calculateAge(dob) {
+            if (!dob) return null;
+            const birthDate = new Date(dob);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        }
+        
+        // Update primary group fields visibility
+        function updatePrimaryGroupFields() {
+            const groupType = document.getElementById('primary_group_type').value;
+            const detailsDiv = document.getElementById('primaryGroupDetails');
+            
+            if (groupType === 'solo') {
+                detailsDiv.style.display = 'none';
+                // Set adults to 1 for solo
+                document.querySelector('input[name="adults_count"]').value = 1;
+                document.querySelector('input[name="children_ages"]').value = '';
+                document.querySelector('select[name="senior_travelers"]').value = 'false';
+            } else {
+                detailsDiv.style.display = 'block';
+                if (groupType === 'couple') {
+                    document.querySelector('input[name="adults_count"]').value = 2;
+                    document.querySelector('input[name="children_ages"]').value = '';
+                }
+            }
+        }
+        
+        async function loadGroups() {
+            try {
+                const response = await fetch('/api/groups');
+                if (response.ok) {
+                    groups = await response.json();
+                    displayGroups();
+                }
+            } catch (error) {
+                console.error('Error loading groups:', error);
+            }
+        }
+        
+        function displayGroups() {
+            const container = document.getElementById('groupsContainer');
+            
+            if (groups.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: var(--space-luxury-2xl); color: var(--luxury-charcoal);">
+                        <i class="fas fa-users" style="font-size: 2rem; color: var(--luxury-stone); margin-bottom: var(--space-luxury-md);"></i>
+                        <p>No travel groups created yet. Add your first group to get started!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = groups.map(group => `
+                <div class="group-item">
+                    <div class="group-header">
+                        <div>
+                            <div class="group-name">${group.group_name}</div>
+                            <span class="group-type">${group.group_type}</span>
+                        </div>
+                        <div class="group-actions">
+                            <button class="btn-group-action" onclick="editGroup(${group.id})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn-group-action danger" onclick="deleteGroup(${group.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                    <div class="group-members">
+                        ${group.members.map(member => `
+                            <div class="member-tag">
+                                <i class="fas fa-user"></i>
+                                ${member.name} ${member.age ? `(${member.age})` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function showAddGroupModal() {
+            const modal = document.getElementById('groupModal');
+            modal.classList.add('show');
+            memberCounter = 0;
+            document.getElementById('membersContainer').innerHTML = '';
+            document.getElementById('groupForm').reset();
+            addMemberInput(); // Add first member input
+        }
+        
+        function closeGroupModal() {
+            const modal = document.getElementById('groupModal');
+            modal.classList.remove('show');
+        }
+        
+        function addMemberInput() {
+            memberCounter++;
+            const container = document.getElementById('membersContainer');
+            const memberDiv = document.createElement('div');
+            memberDiv.className = 'member-input-group';
+            memberDiv.innerHTML = `
+                <div class="member-input-row">
+                    <input type="text" class="form-input" placeholder="First Name" name="member_first_name_${memberCounter}" required>
+                    <input type="text" class="form-input" placeholder="Last Name" name="member_last_name_${memberCounter}">
+                    <input type="date" class="form-input" placeholder="Date of Birth" name="member_dob_${memberCounter}">
+                    <select class="form-select" name="member_type_${memberCounter}">
+                        <option value="adult">Adult</option>
+                        <option value="child">Child</option>
+                        <option value="senior">Senior</option>
+                        <option value="infant">Infant</option>
+                    </select>
+                    <button type="button" class="member-remove-btn" onclick="removeMember(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(memberDiv);
+        }
+        
+        function removeMember(button) {
+            button.closest('.member-input-group').remove();
+        }
+        
+        async function saveGroup(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            // Collect members from all member input groups
+            const members = [];
+            const memberInputs = document.querySelectorAll('#membersContainer .member-input-group');
+            
+            memberInputs.forEach((memberGroup, index) => {
+                const firstName = memberGroup.querySelector(`input[name*="member_first_name_"]`)?.value;
+                const lastName = memberGroup.querySelector(`input[name*="member_last_name_"]`)?.value;
+                const dob = memberGroup.querySelector(`input[name*="member_dob_"]`)?.value;
+                const type = memberGroup.querySelector(`select[name*="member_type_"]`)?.value;
+                
+                if (firstName && firstName.trim()) {
+                    members.push({
+                        first_name: firstName.trim(),
+                        last_name: lastName?.trim() || '',
+                        name: `${firstName.trim()} ${lastName?.trim() || ''}`.trim(),
+                        type: type || 'adult',
+                        dob: dob || null,
+                        age: dob ? calculateAge(dob) : null
+                    });
+                }
+            });
+            
+            // Validate that at least one member is added
+            if (members.length === 0) {
+                alert('Please add at least one member to the group.');
+                return;
+            }
+            
+            const groupData = {
+                group_name: formData.get('group_name'),
+                group_type: formData.get('group_type'),
+                members: members
+            };
+            
+            try {
+                const response = await fetch('/api/groups', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(groupData)
+                });
+                
+                if (response.ok) {
+                    const newGroup = await response.json();
+                    groups.push(newGroup);
+                    displayGroups();
+                    closeGroupModal();
+                    
+                    // Show success notification
+                    const notification = document.getElementById('successNotification');
+                    notification.textContent = 'Travel group created successfully!';
+                    notification.classList.add('show');
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                } else {
+                    const error = await response.json();
+                    alert('Error creating group: ' + (error.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to create group');
+            }
+        }
+        
+        async function deleteGroup(groupId) {
+            if (!confirm('Are you sure you want to delete this travel group?')) return;
+            
+            try {
+                const response = await fetch(`/api/groups/${groupId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    groups = groups.filter(g => g.id !== groupId);
+                    displayGroups();
+                    
+                    // Show success notification
+                    const notification = document.getElementById('successNotification');
+                    notification.textContent = 'Travel group deleted successfully!';
+                    notification.classList.add('show');
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to delete group');
+            }
+        }
+        
+        // School Management
+        let schools = [];
+        let selectedSchool = null;
+        
+        async function loadSchools() {
+            try {
+                const response = await fetch('/api/schools');
+                if (response.ok) {
+                    schools = await response.json();
+                    displaySchools();
+                } else {
+                    const error = await response.json();
+                    console.error('Failed to load schools:', error);
+                    // Display message for 404 (API not available)
+                    if (response.status === 404) {
+                        const container = document.getElementById('schoolsContainer');
+                        if (container) {
+                            container.innerHTML = `
+                                <div style="text-align: center; padding: var(--space-luxury-2xl); color: #e74c3c;">
+                                    <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: var(--space-luxury-md);"></i>
+                                    <p>School functionality will be available after deployment. Please check back later.</p>
+                                </div>
+                            `;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading schools:', error);
+                // Display error message in the schools container
+                const container = document.getElementById('schoolsContainer');
+                if (container) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: var(--space-luxury-2xl); color: #e74c3c;">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: var(--space-luxury-md);"></i>
+                            <p>Failed to load schools. Please refresh the page.</p>
+                        </div>
+                    `;
+                }
+            }
+        }
+        
+        function displaySchools() {
+            const container = document.getElementById('schoolsContainer');
+            
+            if (schools.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: var(--space-luxury-2xl); color: var(--luxury-charcoal);">
+                        <i class="fas fa-graduation-cap" style="font-size: 2rem; color: var(--luxury-stone); margin-bottom: var(--space-luxury-md);"></i>
+                        <p>No schools or councils added yet. Add your first school to get personalized travel suggestions!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = schools.map(school => `
+                <div class="school-item">
+                    <div class="school-info">
+                        <div class="school-name">
+                            ${school.school_name}
+                            ${school.is_primary ? '<span class="school-primary-badge">Primary</span>' : ''}
+                        </div>
+                        <div class="school-details">
+                            ${school.region}, ${school.country}
+                            ${school.child_name ? ` • ${school.child_name}` : ''}
+                        </div>
+                    </div>
+                    <div class="school-actions">
+                        <button class="btn-group-action" onclick="deleteSchool(${school.id})">
+                            <i class="fas fa-trash"></i> Remove
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function showAddSchoolModal() {
+            console.log('Opening school modal...');
+            document.getElementById('schoolModal').classList.add('show');
+            document.getElementById('schoolSearch').focus();
+            
+            // Test if the API is available
+            fetch('/api/schools')
+                .then(response => {
+                    if (!response.ok) {
+                        console.error('Schools API not available. Status:', response.status);
+                        alert('School functionality is not available. Please refresh the page or contact support.');
+                    } else {
+                        console.log('Schools API is available');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking schools API:', error);
+                });
+        }
+        
+        function closeSchoolModal() {
+            document.getElementById('schoolModal').classList.remove('show');
+            document.getElementById('schoolForm').reset();
+            document.getElementById('schoolSearchResults').classList.remove('show');
+            document.getElementById('selectedSchoolInfo').style.display = 'none';
+            document.getElementById('saveSchoolBtn').disabled = true;
+            selectedSchool = null;
+        }
+        
+        function searchSchools() {
+            const query = document.getElementById('schoolSearch').value;
+            const resultsContainer = document.getElementById('schoolSearchResults');
+            
+            if (query.length < 2) {
+                resultsContainer.classList.remove('show');
+                return;
+            }
+            
+            // Check if the searchSchools function is available
+            if (typeof window.searchSchools !== 'function') {
+                console.error('School search function not loaded. Please refresh the page.');
+                resultsContainer.innerHTML = '<div class="search-result-item">Error: School database not loaded. Please refresh the page.</div>';
+                resultsContainer.classList.add('show');
+                return;
+            }
+            
+            const results = window.searchSchools(query);
+            
+            if (results.length === 0) {
+                resultsContainer.innerHTML = '<div class="search-result-item">No schools found</div>';
+                resultsContainer.classList.add('show');
+                return;
+            }
+            
+            resultsContainer.innerHTML = results.slice(0, 10).map(school => `
+                <div class="search-result-item" onclick="selectSchool('${school.key}')">
+                    <div class="search-result-name">${school.name}</div>
+                    <div class="search-result-details">
+                        ${school.region}, ${school.country}
+                        ${school.type ? ` • ${school.type}` : ''}
+                    </div>
+                </div>
+            `).join('');
+            
+            resultsContainer.classList.add('show');
+        }
+        
+        function selectSchool(schoolKey) {
+            selectedSchool = window.getSchoolInfo(schoolKey);
+            
+            if (selectedSchool) {
+                document.getElementById('selectedSchoolDetails').innerHTML = `
+                    <div class="selected-school-name">${selectedSchool.name}</div>
+                    <div class="selected-school-info">${selectedSchool.region}, ${selectedSchool.country}</div>
+                    ${selectedSchool.type ? `<div class="selected-school-info">Type: ${selectedSchool.type}</div>` : ''}
+                `;
+                
+                document.getElementById('selectedSchoolInfo').style.display = 'block';
+                document.getElementById('schoolSearchResults').classList.remove('show');
+                document.getElementById('saveSchoolBtn').disabled = false;
+            }
+        }
+        
+        async function saveSchool(event) {
+            event.preventDefault();
+            
+            if (!selectedSchool) {
+                alert('Please select a school or council first');
+                return;
+            }
+            
+            const formData = new FormData(event.target);
+            const data = {
+                school_key: selectedSchool.key,
+                school_name: selectedSchool.name,
+                school_type: selectedSchool.type || 'council',
+                region: selectedSchool.region,
+                country: selectedSchool.country,
+                child_name: formData.get('child_name') || null,
+                is_primary: formData.get('is_primary') === 'true'
+            };
+            
+            try {
+                const response = await fetch('/api/schools', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    const newSchool = await response.json();
+                    schools.push(newSchool);
+                    displaySchools();
+                    closeSchoolModal();
+                    
+                    // Show success notification
+                    const notification = document.getElementById('successNotification');
+                    notification.textContent = 'School/Council added successfully!';
+                    notification.classList.add('show');
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                } else {
+                    const error = await response.json();
+                    console.error('School save error:', error);
+                    alert('Error adding school: ' + (error.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error saving school:', error);
+                alert('Failed to add school: ' + error.message);
+            }
+        }
+        
+        async function deleteSchool(schoolId) {
+            if (!confirm('Are you sure you want to remove this school/council?')) return;
+            
+            try {
+                const response = await fetch(`/api/schools/${schoolId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    schools = schools.filter(s => s.id !== schoolId);
+                    displaySchools();
+                    
+                    // Show success notification
+                    const notification = document.getElementById('successNotification');
+                    notification.textContent = 'School/Council removed successfully!';
+                    notification.classList.add('show');
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to remove school');
+            }
+        }
+        
+        // Add elegant form interactions
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Initializing profile page...');
+            
+            // Check if uk-schools-database is loaded
+            if (typeof window.searchSchools === 'function') {
+                console.log('UK schools database loaded successfully');
+            } else {
+                console.error('UK schools database not loaded!');
+            }
+            
+            // Load travel groups and schools
+            loadGroups();
+            loadSchools();
+            
+            // Auto-format phone number
+            const phoneInput = document.querySelector('input[name="phone"]');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', (e) => {
+                    // Basic phone formatting logic here
+                });
+            }
+            
+            // Add animation to form sections
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            document.querySelectorAll('.profile-form-section').forEach(section => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                section.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                observer.observe(section);
+            });
+            
+            // Modal overlay click to close
+            document.getElementById('groupModal').addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal-overlay')) {
+                    closeGroupModal();
+                }
+            });
+            
+            document.getElementById('schoolModal').addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal-overlay')) {
+                    closeSchoolModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

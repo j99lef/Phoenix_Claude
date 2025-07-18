@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelAiGent - Your AI-Powered Travel Deal Finder</title>
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Luxury Concierge Design System -->
+    <link href="/static/luxury-concierge.css" rel="stylesheet">
+    
+    <style>
+        /* Hero Section */
+        .hero-section {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--luxury-obsidian) 0%, #1a1a1a 100%);
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="luxury-pattern" patternUnits="userSpaceOnUse" width="60" height="60"><circle cx="30" cy="30" r="2" fill="rgba(201,169,110,0.15)"/><path d="M10 40 Q30 35 50 40" stroke="rgba(201,169,110,0.1)" stroke-width="1" fill="none"/></pattern></defs><rect width="100" height="100" fill="url(%23luxury-pattern)"/></svg>');
+            opacity: 0.5;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-luxury-2xl);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-luxury-4xl);
+            align-items: center;
+        }
+        
+        @media (max-width: 968px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+        
+        .hero-text {
+            color: var(--luxury-white);
+        }
+        
+        .hero-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-md);
+            margin-bottom: var(--space-luxury-2xl);
+        }
+        
+        .hero-logo img {
+            height: 60px;
+        }
+        
+        .hero-title {
+            font-family: var(--font-luxury-display);
+            font-size: 3.5rem;
+            font-weight: 400;
+            line-height: 1.1;
+            margin-bottom: var(--space-luxury-xl);
+            letter-spacing: -0.03em;
+        }
+        
+        .hero-title .highlight {
+            background: var(--gradient-luxury-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            opacity: 0.9;
+            margin-bottom: var(--space-luxury-3xl);
+            max-width: 600px;
+        }
+        
+        .hero-features {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-luxury-lg);
+            margin-bottom: var(--space-luxury-3xl);
+        }
+        
+        .hero-feature {
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-md);
+        }
+        
+        .hero-feature i {
+            color: var(--luxury-gold);
+            font-size: 1.2rem;
+            width: 24px;
+        }
+        
+        .hero-cta {
+            display: flex;
+            gap: var(--space-luxury-lg);
+            flex-wrap: wrap;
+        }
+        
+        @media (max-width: 968px) {
+            .hero-cta {
+                justify-content: center;
+            }
+        }
+        
+        .btn-primary {
+            background: var(--gradient-luxury-gold);
+            color: var(--luxury-white);
+            padding: var(--space-luxury-lg) var(--space-luxury-2xl);
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+            transition: var(--transition-luxury);
+            font-size: 1.1rem;
+            box-shadow: 0 10px 30px rgba(201, 169, 110, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(201, 169, 110, 0.4);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--luxury-white);
+            padding: var(--space-luxury-lg) var(--space-luxury-2xl);
+            border: 2px solid var(--luxury-gold);
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+            transition: var(--transition-luxury);
+            font-size: 1.1rem;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--luxury-gold);
+            transform: translateY(-2px);
+        }
+        
+        /* Hero Visual */
+        .hero-visual {
+            position: relative;
+        }
+        
+        .hero-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(201, 169, 110, 0.3);
+            border-radius: 24px;
+            padding: var(--space-luxury-2xl);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: perspective(1000px) rotateY(-5deg);
+            transition: var(--transition-luxury);
+        }
+        
+        .hero-card:hover {
+            transform: perspective(1000px) rotateY(0deg);
+        }
+        
+        .deal-preview {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: var(--space-luxury-lg);
+            margin-bottom: var(--space-luxury-md);
+        }
+        
+        .deal-preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-luxury-md);
+        }
+        
+        .deal-destination {
+            font-family: var(--font-luxury-display);
+            font-size: 1.5rem;
+            color: var(--luxury-white);
+        }
+        
+        .deal-badge {
+            background: var(--luxury-gold);
+            color: var(--luxury-obsidian);
+            padding: var(--space-luxury-xs) var(--space-luxury-sm);
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        
+        .deal-price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--luxury-gold);
+            margin-bottom: var(--space-luxury-sm);
+        }
+        
+        .deal-details {
+            display: flex;
+            gap: var(--space-luxury-md);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+        
+        /* Features Section */
+        .features-section {
+            padding: var(--space-luxury-4xl) 0;
+            background: var(--luxury-pearl);
+        }
+        
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-luxury-2xl);
+        }
+        
+        .features-header {
+            text-align: center;
+            margin-bottom: var(--space-luxury-4xl);
+        }
+        
+        .features-title {
+            font-family: var(--font-luxury-display);
+            font-size: 2.5rem;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-md);
+        }
+        
+        .features-subtitle {
+            color: var(--luxury-charcoal);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--space-luxury-2xl);
+        }
+        
+        .feature-card {
+            background: var(--luxury-white);
+            border-radius: 20px;
+            padding: var(--space-luxury-2xl);
+            text-align: center;
+            transition: var(--transition-luxury);
+            border: 1px solid var(--luxury-stone);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-luxury-elevated);
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-luxury-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-luxury-lg);
+            font-size: 2rem;
+            color: var(--luxury-white);
+        }
+        
+        .feature-title {
+            font-family: var(--font-luxury-display);
+            font-size: 1.5rem;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-md);
+        }
+        
+        .feature-description {
+            color: var(--luxury-charcoal);
+            line-height: 1.6;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            padding: var(--space-luxury-4xl) 0;
+            background: linear-gradient(135deg, var(--luxury-obsidian) 0%, #2a2a2a 100%);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--luxury-gold) 0%, transparent 70%);
+            opacity: 0.1;
+        }
+        
+        .cta-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 var(--space-luxury-2xl);
+        }
+        
+        .cta-title {
+            font-family: var(--font-luxury-display);
+            font-size: 2.5rem;
+            color: var(--luxury-white);
+            margin-bottom: var(--space-luxury-lg);
+        }
+        
+        .cta-description {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            margin-bottom: var(--space-luxury-2xl);
+        }
+        
+        /* Navigation */
+        .home-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(44, 44, 44, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: var(--space-luxury-md) 0;
+            transition: var(--transition-luxury);
+        }
+        
+        .home-nav.scrolled {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-luxury-2xl);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+            text-decoration: none;
+            color: var(--luxury-white);
+        }
+        
+        .nav-brand img {
+            height: 40px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: var(--space-luxury-lg);
+        }
+        
+        .nav-link {
+            color: var(--luxury-white);
+            text-decoration: none;
+            padding: var(--space-luxury-sm) var(--space-luxury-md);
+            border-radius: 8px;
+            transition: var(--transition-luxury);
+        }
+        
+        .nav-link:hover {
+            background: rgba(201, 169, 110, 0.2);
+            color: var(--luxury-gold);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="home-nav" id="homeNav">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">
+                <img src="/static/TravelAigent_logo_header.png" alt="TravelAiGent">
+                <span style="font-size: 1.2rem; font-weight: 600;">TravelAiGent</span>
+            </a>
+            <div class="nav-links">
+                <a href="/login" class="nav-link">Sign In</a>
+                <a href="/register" class="btn-primary" style="padding: var(--space-luxury-sm) var(--space-luxury-lg); font-size: 1rem;">
+                    Get Started Free
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <div class="hero-text">
+                <div class="hero-logo">
+                    <img src="/static/TravelAigent_logo_header.png" alt="TravelAiGent">
+                    <span style="font-size: 1.5rem; font-weight: 600;">TravelAiGent</span>
+                </div>
+                
+                <h1 class="hero-title">
+                    Your Personal AI <br>
+                    <span class="highlight">Travel Deal Finder</span>
+                </h1>
+                
+                <p class="hero-subtitle">
+                    Stop spending hours searching for deals. Our AI monitors thousands of 
+                    travel sites 24/7, finding perfect matches for your dream vacations 
+                    at unbeatable prices.
+                </p>
+                
+                <div class="hero-features">
+                    <div class="hero-feature">
+                        <i class="fas fa-robot"></i>
+                        <span>AI-powered deal discovery across major booking sites</span>
+                    </div>
+                    <div class="hero-feature">
+                        <i class="fas fa-bell"></i>
+                        <span>Real-time alerts when prices drop for your trips</span>
+                    </div>
+                    <div class="hero-feature">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Smart matching with UK school holidays</span>
+                    </div>
+                    <div class="hero-feature">
+                        <i class="fas fa-users"></i>
+                        <span>Personalized for your travel group preferences</span>
+                    </div>
+                </div>
+                
+                <div class="hero-cta">
+                    <a href="/register" class="btn-primary">
+                        <i class="fas fa-magic"></i>
+                        Start Finding Deals
+                    </a>
+                    <a href="/login" class="btn-secondary">
+                        <i class="fas fa-play-circle"></i>
+                        Try Demo
+                    </a>
+                </div>
+            </div>
+            
+            <div class="hero-visual">
+                <div class="hero-card">
+                    <div class="deal-preview">
+                        <div class="deal-preview-header">
+                            <span class="deal-destination">Barcelona</span>
+                            <span class="deal-badge">AI Score 9.2</span>
+                        </div>
+                        <div class="deal-price">£1,299</div>
+                        <div class="deal-details">
+                            <span><i class="fas fa-plane"></i> BA Direct</span>
+                            <span><i class="fas fa-hotel"></i> 5★ Hotel</span>
+                            <span><i class="fas fa-calendar"></i> 7 nights</span>
+                        </div>
+                    </div>
+                    
+                    <div class="deal-preview">
+                        <div class="deal-preview-header">
+                            <span class="deal-destination">Dubai</span>
+                            <span class="deal-badge">-45% OFF</span>
+                        </div>
+                        <div class="deal-price">£2,150</div>
+                        <div class="deal-details">
+                            <span><i class="fas fa-plane"></i> Emirates</span>
+                            <span><i class="fas fa-hotel"></i> Atlantis</span>
+                            <span><i class="fas fa-users"></i> Family of 4</span>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: var(--space-luxury-xl); color: rgba(255,255,255,0.7);">
+                        <i class="fas fa-sync fa-spin"></i>
+                        <span style="margin-left: var(--space-luxury-sm);">Live deals updating...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="features-container">
+            <div class="features-header">
+                <h2 class="features-title">How TravelAiGent Works</h2>
+                <p class="features-subtitle">
+                    Set your preferences once, and let our AI do the heavy lifting
+                </p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+                    <h3 class="feature-title">Create Your Profile</h3>
+                    <p class="feature-description">
+                        Tell us about your travel preferences, favorite destinations, 
+                        budget range, and travel group. Link your kids' school for 
+                        automatic holiday matching.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3 class="feature-title">AI Searches 24/7</h3>
+                    <p class="feature-description">
+                        Our AI continuously monitors prices across Expedia, Booking.com, 
+                        Skyscanner, and more. It learns your preferences and gets 
+                        smarter with each search.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <h3 class="feature-title">Get Perfect Matches</h3>
+                    <p class="feature-description">
+                        Receive curated deals scored by AI based on value, timing, 
+                        and your preferences. Book directly with our partners at 
+                        the best available prices.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2 class="cta-title">Ready to Save on Your Next Adventure?</h2>
+            <p class="cta-description">
+                Join thousands of smart travelers who save an average of 35% on their trips. 
+                Free to start, no credit card required.
+            </p>
+            <a href="/register" class="btn-primary" style="font-size: 1.2rem; padding: var(--space-luxury-lg) var(--space-luxury-3xl);">
+                <i class="fas fa-rocket"></i>
+                Start Your Free Account
+            </a>
+        </div>
+    </section>
+    
+    <script>
+        // Add scroll effect to navigation
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('homeNav');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

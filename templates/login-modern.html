@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to TravelAiGent - Your Personal Travel Concierge</title>
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Modern Styles -->
+    <link href="/static/modern-style.css" rel="stylesheet">
+    
+    <style>
+        /* Login-specific styles */
+        .login-container {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            overflow: hidden;
+        }
+        
+        .login-hero {
+            position: relative;
+            background: var(--gradient-luxury);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: var(--space-8);
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .login-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="travel" patternUnits="userSpaceOnUse" width="20" height="20"><circle cx="10" cy="10" r="1.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23travel)"/></svg>');
+            opacity: 0.6;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            max-width: 500px;
+        }
+        
+        .hero-title {
+            font-family: var(--font-family-display);
+            font-size: var(--text-5xl);
+            font-weight: 800;
+            color: white;
+            margin-bottom: var(--space-6);
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            line-height: 1.1;
+        }
+        
+        .hero-subtitle {
+            font-size: var(--text-xl);
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: var(--space-8);
+            line-height: 1.6;
+            font-weight: 400;
+        }
+        
+        .hero-features {
+            display: grid;
+            gap: var(--space-4);
+            text-align: left;
+            margin-bottom: var(--space-8);
+        }
+        
+        .hero-feature {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+        
+        .hero-feature i {
+            width: 24px;
+            text-align: center;
+            color: var(--gold-300);
+            font-size: var(--text-lg);
+        }
+        
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-6);
+            padding: var(--space-6);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .hero-stat {
+            text-align: center;
+        }
+        
+        .hero-stat-number {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: white;
+            display: block;
+            margin-bottom: var(--space-1);
+        }
+        
+        .hero-stat-label {
+            font-size: var(--text-sm);
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+        
+        .login-form-section {
+            background: rgba(255, 255, 255, 0.98);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: var(--space-8);
+            position: relative;
+        }
+        
+        .login-form-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, var(--ocean-100) 0%, transparent 70%);
+            opacity: 0.5;
+        }
+        
+        .login-form-container {
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: var(--space-8);
+        }
+        
+        .login-title {
+            font-family: var(--font-family-display);
+            font-size: var(--text-3xl);
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+        
+        .login-subtitle {
+            color: var(--gray-600);
+            font-size: var(--text-base);
+            font-weight: 500;
+        }
+        
+        .login-form {
+            display: grid;
+            gap: var(--space-6);
+        }
+        
+        .form-group-floating {
+            position: relative;
+        }
+        
+        .form-input-modern {
+            width: 100%;
+            padding: var(--space-5) var(--space-4);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-xl);
+            font-size: var(--text-base);
+            transition: all var(--transition-base);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        
+        .form-input-modern:focus {
+            outline: none;
+            border-color: var(--ocean-500);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            background: white;
+        }
+        
+        .form-label-modern {
+            position: absolute;
+            top: var(--space-5);
+            left: var(--space-4);
+            color: var(--gray-500);
+            font-size: var(--text-base);
+            font-weight: 500;
+            transition: all var(--transition-base);
+            pointer-events: none;
+            background: linear-gradient(to bottom, transparent 0%, white 15%, white 85%, transparent 100%);
+            padding: 0 var(--space-1);
+        }
+        
+        .form-input-modern:focus + .form-label-modern,
+        .form-input-modern:not(:placeholder-shown) + .form-label-modern {
+            top: -8px;
+            left: var(--space-3);
+            font-size: var(--text-sm);
+            color: var(--ocean-600);
+            font-weight: 600;
+        }
+        
+        .login-button {
+            width: 100%;
+            padding: var(--space-4) var(--space-6);
+            background: var(--gradient-ocean);
+            color: white;
+            border: none;
+            border-radius: var(--radius-xl);
+            font-family: var(--font-family-display);
+            font-size: var(--text-lg);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-luxury);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+            transition: left var(--transition-slow);
+        }
+        
+        .login-button:hover::before {
+            left: 100%;
+        }
+        
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .login-button:active {
+            transform: translateY(0);
+        }
+        
+        .login-button.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+        
+        .button-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+        }
+        
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--coral-700);
+            padding: var(--space-4);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            margin-bottom: var(--space-4);
+        }
+        
+        .security-notice {
+            margin-top: var(--space-6);
+            padding: var(--space-4);
+            background: var(--glass);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: center;
+        }
+        
+        .security-notice p {
+            color: var(--gray-600);
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-2);
+        }
+        
+        .demo-credentials {
+            font-family: var(--font-family-sans);
+            background: var(--gray-50);
+            padding: var(--space-3);
+            border-radius: var(--radius-base);
+            font-size: var(--text-sm);
+            color: var(--gray-700);
+        }
+        
+        .demo-credentials strong {
+            color: var(--gray-900);
+        }
+        
+        .demo-credentials code {
+            background: white;
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+            font-weight: 600;
+            color: var(--ocean-700);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .login-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+            }
+            
+            .login-hero {
+                padding: var(--space-6);
+                min-height: 40vh;
+            }
+            
+            .hero-title {
+                font-size: var(--text-4xl);
+            }
+            
+            .hero-subtitle {
+                font-size: var(--text-lg);
+            }
+            
+            .hero-stats {
+                grid-template-columns: repeat(3, 1fr);
+                gap: var(--space-4);
+                padding: var(--space-4);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .login-hero {
+                padding: var(--space-4);
+                min-height: 30vh;
+            }
+            
+            .hero-title {
+                font-size: var(--text-3xl);
+            }
+            
+            .hero-subtitle {
+                font-size: var(--text-base);
+                margin-bottom: var(--space-6);
+            }
+            
+            .hero-features {
+                display: none;
+            }
+            
+            .login-form-section {
+                padding: var(--space-6) var(--space-4);
+            }
+            
+            .login-title {
+                font-size: var(--text-2xl);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-stats {
+                grid-template-columns: repeat(3, 1fr);
+                gap: var(--space-3);
+                padding: var(--space-3);
+            }
+            
+            .hero-stat-number {
+                font-size: var(--text-lg);
+            }
+            
+            .hero-stat-label {
+                font-size: var(--text-xs);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Hero Section -->
+        <div class="login-hero">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    Welcome to<br>
+                    <span class="text-gradient-gold">TravelAiGent</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Your personal AI-powered travel concierge. Discover, plan, and book extraordinary journeys tailored just for you.
+                </p>
+                
+                <div class="hero-features">
+                    <div class="hero-feature">
+                        <i class="fas fa-magic"></i>
+                        <span>AI-Powered Travel Recommendations</span>
+                    </div>
+                    <div class="hero-feature">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Secure & Private Travel Planning</span>
+                    </div>
+                    <div class="hero-feature">
+                        <i class="fas fa-globe-americas"></i>
+                        <span>Worldwide Destination Coverage</span>
+                    </div>
+                    <div class="hero-feature">
+                        <i class="fas fa-clock"></i>
+                        <span>24/7 Deal Monitoring & Alerts</span>
+                    </div>
+                </div>
+                
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">50K+</span>
+                        <span class="hero-stat-label">Destinations</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">98%</span>
+                        <span class="hero-stat-label">Satisfaction</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">24/7</span>
+                        <span class="hero-stat-label">Monitoring</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Login Form Section -->
+        <div class="login-form-section">
+            <div class="login-form-container">
+                <div class="login-header">
+                    <h2 class="login-title">Sign In</h2>
+                    <p class="login-subtitle">Access your personal travel dashboard</p>
+                </div>
+                
+                {% if error %}
+                <div class="error-message animate-fade-in-scale">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>{{ error }}</span>
+                </div>
+                {% endif %}
+                
+                <form method="POST" class="login-form" id="loginForm">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    
+                    <div class="form-group-floating">
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            class="form-input-modern" 
+                            placeholder=" "
+                            required 
+                            autocomplete="username"
+                            value="{{ request.form.username or '' }}"
+                        >
+                        <label for="username" class="form-label-modern">
+                            <i class="fas fa-user"></i> Username
+                        </label>
+                    </div>
+                    
+                    <div class="form-group-floating">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="form-input-modern" 
+                            placeholder=" "
+                            required 
+                            autocomplete="current-password"
+                        >
+                        <label for="password" class="form-label-modern">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="login-button" id="loginButton">
+                        <span class="button-content">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span id="buttonText">Sign In</span>
+                        </span>
+                    </button>
+                </form>
+                
+                <div class="security-notice">
+                    <p>
+                        <i class="fas fa-shield-alt text-gradient-ocean"></i>
+                        <strong>Enterprise-grade security</strong> protects your travel data
+                    </p>
+                    <div class="demo-credentials">
+                        <strong>Demo Access:</strong><br>
+                        Username: <code>admin</code><br>
+                        Password: <code>changeme123!</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Enhanced login form handling
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('loginForm');
+            const button = document.getElementById('loginButton');
+            const buttonText = document.getElementById('buttonText');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            
+            // Auto-focus username field
+            usernameInput.focus();
+            
+            // Handle form submission
+            form.addEventListener('submit', function(e) {
+                // Show loading state
+                button.classList.add('loading');
+                buttonText.innerHTML = '<div class="loading-spinner"></div><span>Signing in...</span>';
+                button.disabled = true;
+                
+                // Let form submit naturally
+                // Reset after 5 seconds if still on page (error case)
+                setTimeout(() => {
+                    button.classList.remove('loading');
+                    buttonText.innerHTML = 'Sign In';
+                    button.disabled = false;
+                }, 5000);
+            });
+            
+            // Enhanced keyboard navigation
+            usernameInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    passwordInput.focus();
+                }
+            });
+            
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    form.submit();
+                }
+            });
+            
+            // Add subtle animations on input focus
+            [usernameInput, passwordInput].forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'scale(1.02)';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

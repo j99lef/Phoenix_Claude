@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Briefs - TravelAiGent</title>
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Luxury Concierge Design System -->
+    <link href="/static/luxury-concierge.css" rel="stylesheet">
+    
+    <!-- Additional fonts for luxury design -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Luxury Travel Concierge Header -->
+    <header class="luxury-header">
+        <div class="header-luxury-content">
+            <a href="/" class="luxury-brand">
+                <img src="/static/TravelAigent_logo_header.png" alt="TravelAiGent" class="brand-luxury-logo">
+                <span class="brand-luxury-text">TravelAiGent</span>
+                <span class="brand-version">v1.2.1</span>
+            </a>
+            
+            <nav class="luxury-nav">
+                <a href="/" class="luxury-nav-link">Dashboard</a>
+                <a href="/briefs" class="luxury-nav-link active">Travel Briefs</a>
+                <a href="/deals" class="luxury-nav-link">Deals</a>
+                <a href="/brief/new" class="luxury-nav-link">Profile Setup</a>
+            </nav>
+            
+            <div class="luxury-profile">
+                <div class="luxury-avatar">A</div>
+                <span>Admin</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content Container -->
+    <main class="luxury-section">
+        <div class="luxury-container">
+            <!-- Page Header -->
+            <div class="luxury-section-header">
+                <h1 class="luxury-section-title">Your Travel Briefs</h1>
+                <p class="luxury-section-subtitle">
+                    Manage your personalized travel search preferences and requirements
+                </p>
+            </div>
+            
+            <!-- Action Bar -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-luxury-2xl);">
+                <div class="luxury-stats-mini">
+                    <span class="luxury-stat-mini">
+                        <i class="fas fa-map-marked-alt"></i>
+                        {{ briefs|length }} Active Brief{{ 's' if briefs|length != 1 else '' }}
+                    </span>
+                </div>
+                <a href="/brief/new" class="btn-luxury-primary">
+                    <i class="fas fa-plus"></i>
+                    Create New Brief
+                </a>
+            </div>
+            
+            <!-- Briefs Grid -->
+            {% if briefs %}
+                <div class="luxury-grid">
+                    {% for brief in briefs %}
+                        <div class="luxury-card luxury-animate-scale">
+                            <div class="luxury-card-header">
+                                <h3 class="luxury-card-title">
+                                    <i class="fas fa-suitcase-rolling" style="color: var(--luxury-gold); margin-right: var(--space-luxury-sm);"></i>
+                                    {{ brief.departure_location }} → {{ brief.destination }}
+                                </h3>
+                                <div class="luxury-card-meta">
+                                    <span class="luxury-badge luxury-badge-primary">{{ brief.travelers }} Travelers</span>
+                                    <span class="luxury-badge luxury-badge-secondary">£{{ brief.budget_min }} - £{{ brief.budget_max }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="luxury-card-content">
+                                <div class="luxury-brief-details">
+                                    <div class="luxury-detail-item">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <span>{{ brief.departure_date.strftime('%B %d, %Y') if brief.departure_date else 'Date TBD' }}</span>
+                                    </div>
+                                    <div class="luxury-detail-item">
+                                        <i class="fas fa-bed"></i>
+                                        <span>{{ brief.accommodation_type }}</span>
+                                    </div>
+                                    <div class="luxury-detail-item">
+                                        <i class="fas fa-clock"></i>
+                                        <span>{{ brief.trip_length }} days</span>
+                                    </div>
+                                </div>
+                                
+                                {% if brief.interests %}
+                                    <div class="luxury-brief-interests">
+                                        <p class="luxury-text-muted">{{ brief.interests[:100] }}{% if brief.interests|length > 100 %}...{% endif %}</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="luxury-card-footer">
+                                <div class="luxury-card-actions">
+                                    <a href="/brief/{{ brief.id }}" class="btn-luxury-secondary btn-sm">
+                                        <i class="fas fa-eye"></i>
+                                        View Details
+                                    </a>
+                                    <a href="/brief/{{ brief.id }}/edit" class="btn-luxury-outline btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                        Edit
+                                    </a>
+                                </div>
+                                <div class="luxury-card-timestamp">
+                                    <i class="fas fa-clock"></i>
+                                    {{ brief.created_at.strftime('%b %d, %Y') if brief.created_at else 'Recently' }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <!-- Empty State -->
+                <div class="luxury-empty-state">
+                    <div class="luxury-empty-icon">
+                        <i class="fas fa-suitcase-rolling"></i>
+                    </div>
+                    <h3 class="luxury-empty-title">No Travel Briefs Yet</h3>
+                    <p class="luxury-empty-description">
+                        Create your first travel brief to start discovering amazing deals curated just for you.
+                    </p>
+                    <a href="/brief/new" class="btn-luxury-primary">
+                        <i class="fas fa-plus"></i>
+                        Create Your First Brief
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+    
+    <!-- Luxury Floating Action -->
+    <a href="/brief/new" class="luxury-floating-action" title="Create Travel Brief">
+        <i class="fas fa-plus"></i>
+    </a>
+    
+    <script>
+        // Enhanced luxury animations
+        document.addEventListener('DOMContentLoaded', () => {
+            // Intersection Observer for scroll animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('luxury-animate-fade-up');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            // Observe luxury cards
+            document.querySelectorAll('.luxury-card').forEach(card => {
+                observer.observe(card);
+            });
+            
+            // Add elegant loading complete indication
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+                document.body.style.transition = 'opacity 0.5s ease-in-out';
+            }, 100);
+        });
+        
+        // Elegant console signature
+        console.log('%c✨ TravelAiGent Travel Briefs - Luxury Collection', 
+                   'background: linear-gradient(135deg, #C9A96E 0%, #F7E7CE 100%); color: #2C2C2C; padding: 12px 24px; border-radius: 8px; font-weight: 600;');
+    </script>
+</body>
+</html>

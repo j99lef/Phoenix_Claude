@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flash Deal Hunter - TravelAiGent</title>
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Luxury Concierge Design System -->
+    <link href="/static/luxury-concierge.css" rel="stylesheet">
+    
+    <!-- Additional fonts for luxury design -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Flash Deal Hunter Styles */
+        .deals-hero {
+            background: linear-gradient(135deg, var(--luxury-obsidian) 0%, #1a1a1a 100%);
+            color: var(--luxury-white);
+            padding: var(--space-luxury-3xl) 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .deals-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="luxury-pattern" patternUnits="userSpaceOnUse" width="50" height="50"><circle cx="25" cy="25" r="2" fill="rgba(201,169,110,0.3)"/><path d="M0 25 Q25 20 50 25" stroke="rgba(201,169,110,0.2)" stroke-width="0.5" fill="none"/></pattern></defs><rect width="100" height="100" fill="url(%23luxury-pattern)"/></svg>');
+            opacity: 0.5;
+        }
+        
+        .deals-hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-luxury-2xl);
+            text-align: center;
+        }
+        
+        .deals-hero-title {
+            font-family: var(--font-luxury-display);
+            font-size: 3rem;
+            font-weight: 400;
+            margin-bottom: var(--space-luxury-md);
+            letter-spacing: -0.03em;
+        }
+        
+        .deals-hero-subtitle {
+            font-size: 1.15rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto var(--space-luxury-2xl);
+            line-height: 1.6;
+        }
+        
+        .flash-icon {
+            color: var(--luxury-gold);
+            animation: flash 2s infinite;
+        }
+        
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Quick Search Form */
+        .quick-search-container {
+            max-width: 1200px;
+            margin: -3rem auto 0;
+            padding: 0 var(--space-luxury-2xl);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .quick-search-card {
+            background: var(--luxury-white);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 24px;
+            padding: var(--space-luxury-2xl);
+            box-shadow: var(--shadow-luxury-dramatic);
+        }
+        
+        .search-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-luxury-lg);
+            margin-bottom: var(--space-luxury-xl);
+        }
+        
+        .search-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-luxury-sm);
+        }
+        
+        .search-form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .search-label {
+            font-weight: 600;
+            color: var(--luxury-obsidian);
+            font-size: 0.95rem;
+        }
+        
+        .search-input,
+        .search-select {
+            background: var(--luxury-ivory);
+            border: 2px solid var(--luxury-stone);
+            border-radius: 12px;
+            padding: var(--space-luxury-md);
+            font-size: 1rem;
+            transition: var(--transition-luxury);
+            outline: none;
+        }
+        
+        .search-input:focus,
+        .search-select:focus {
+            border-color: var(--luxury-gold);
+            background: var(--luxury-white);
+        }
+        
+        .traveler-select-group {
+            display: flex;
+            gap: var(--space-luxury-md);
+            flex-wrap: wrap;
+        }
+        
+        .traveler-checkbox {
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+            padding: var(--space-luxury-sm) var(--space-luxury-md);
+            background: var(--luxury-pearl);
+            border-radius: 24px;
+            cursor: pointer;
+            transition: var(--transition-luxury);
+        }
+        
+        .traveler-checkbox:hover {
+            background: var(--luxury-champagne);
+            transform: translateY(-2px);
+        }
+        
+        .traveler-checkbox input {
+            cursor: pointer;
+        }
+        
+        .traveler-checkbox input:checked + label {
+            color: var(--luxury-gold);
+            font-weight: 600;
+        }
+        
+        .search-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--space-luxury-lg);
+            border-top: 1px solid var(--luxury-stone);
+        }
+        
+        .search-button {
+            background: var(--gradient-luxury-gold);
+            color: var(--luxury-white);
+            border: none;
+            border-radius: 12px;
+            padding: var(--space-luxury-md) var(--space-luxury-2xl);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-luxury);
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+            font-size: 1.05rem;
+        }
+        
+        .search-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-luxury-elevated);
+        }
+        
+        /* How it works section */
+        .how-it-works {
+            background: var(--luxury-pearl);
+            padding: var(--space-luxury-3xl) 0;
+            margin: var(--space-luxury-3xl) 0;
+        }
+        
+        .how-it-works-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-luxury-2xl);
+            text-align: center;
+        }
+        
+        .how-it-works-title {
+            font-family: var(--font-luxury-display);
+            font-size: 2rem;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-2xl);
+        }
+        
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-luxury-2xl);
+        }
+        
+        .step-card {
+            text-align: center;
+        }
+        
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-luxury-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-luxury-md);
+            font-size: 2rem;
+            color: var(--luxury-white);
+        }
+        
+        .step-title {
+            font-weight: 600;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-sm);
+        }
+        
+        .step-description {
+            color: var(--luxury-charcoal);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        /* Results section */
+        .deals-results {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-luxury-2xl) var(--space-luxury-4xl);
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-luxury-2xl);
+        }
+        
+        .results-title {
+            font-family: var(--font-luxury-display);
+            font-size: 1.8rem;
+            color: var(--luxury-obsidian);
+        }
+        
+        .results-count {
+            color: var(--luxury-charcoal);
+            font-size: 0.95rem;
+        }
+        
+        .deals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--space-luxury-xl);
+        }
+        
+        /* Deal cards */
+        .deal-card {
+            background: var(--luxury-white);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        
+        .deal-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-color: var(--luxury-gold);
+        }
+        
+        .deal-header {
+            background: linear-gradient(135deg, var(--luxury-pearl) 0%, var(--luxury-ivory) 100%);
+            padding: var(--space-luxury-lg);
+            position: relative;
+        }
+        
+        .deal-destination {
+            font-family: var(--font-luxury-display);
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-xs);
+        }
+        
+        .deal-route {
+            color: var(--luxury-charcoal);
+            font-size: 0.9rem;
+        }
+        
+        .deal-score {
+            position: absolute;
+            top: var(--space-luxury-md);
+            right: var(--space-luxury-md);
+            background: var(--luxury-gold);
+            color: var(--luxury-white);
+            padding: var(--space-luxury-xs) var(--space-luxury-sm);
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        
+        .deal-body {
+            padding: var(--space-luxury-lg);
+        }
+        
+        .deal-price {
+            font-family: var(--font-luxury-display);
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--luxury-gold);
+            margin-bottom: var(--space-luxury-md);
+        }
+        
+        .deal-details {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-luxury-sm);
+            margin-bottom: var(--space-luxury-lg);
+        }
+        
+        .deal-detail {
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+            color: var(--luxury-charcoal);
+            font-size: 0.9rem;
+        }
+        
+        .deal-detail i {
+            color: var(--luxury-gold);
+            width: 16px;
+        }
+        
+        .deal-actions {
+            display: flex;
+            gap: var(--space-luxury-sm);
+        }
+        
+        .deal-button {
+            flex: 1;
+            padding: var(--space-luxury-sm) var(--space-luxury-md);
+            border: 2px solid var(--luxury-stone);
+            border-radius: 10px;
+            background: var(--luxury-white);
+            color: var(--luxury-obsidian);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-luxury);
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .deal-button.primary {
+            background: var(--gradient-luxury-gold);
+            color: var(--luxury-white);
+            border-color: var(--luxury-gold);
+        }
+        
+        .deal-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-luxury-subtle);
+        }
+        
+        /* Loading state */
+        .loading-container {
+            text-align: center;
+            padding: var(--space-luxury-4xl);
+        }
+        
+        .luxury-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--luxury-stone);
+            border-top: 4px solid var(--luxury-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto var(--space-luxury-lg);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: var(--space-luxury-4xl);
+        }
+        
+        .empty-icon {
+            width: 100px;
+            height: 100px;
+            background: var(--luxury-pearl);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-luxury-lg);
+            font-size: 2.5rem;
+            color: var(--luxury-gold);
+        }
+        
+        .empty-title {
+            font-family: var(--font-luxury-display);
+            font-size: 1.8rem;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-md);
+        }
+        
+        .empty-description {
+            color: var(--luxury-charcoal);
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        /* Twist on a Deal section */
+        .twist-section {
+            background: linear-gradient(135deg, var(--luxury-obsidian) 0%, #2a2a2a 100%);
+            color: var(--luxury-white);
+            padding: var(--space-luxury-2xl);
+            margin: var(--space-luxury-3xl) 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .twist-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--luxury-gold) 0%, transparent 70%);
+            opacity: 0.1;
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.1; }
+            50% { transform: scale(1.1); opacity: 0.2; }
+        }
+        
+        .twist-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .twist-title {
+            font-family: var(--font-luxury-display);
+            font-size: 2.5rem;
+            font-weight: 500;
+            margin-bottom: var(--space-luxury-md);
+            background: var(--gradient-luxury-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .twist-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: var(--space-luxury-2xl);
+            line-height: 1.6;
+        }
+        
+        .twist-button {
+            background: var(--gradient-luxury-gold);
+            color: var(--luxury-white);
+            border: none;
+            border-radius: 50px;
+            padding: var(--space-luxury-lg) var(--space-luxury-3xl);
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(201, 169, 110, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .twist-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .twist-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(201, 169, 110, 0.4);
+        }
+        
+        .twist-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .twist-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .discount-badge {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            padding: var(--space-luxury-xs) var(--space-luxury-sm);
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-left: var(--space-luxury-sm);
+            animation: shake 2s ease-in-out infinite;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+        
+        /* Twist deal results */
+        .twist-results {
+            display: none;
+            margin-top: var(--space-luxury-3xl);
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .twist-results-header {
+            text-align: center;
+            margin-bottom: var(--space-luxury-2xl);
+        }
+        
+        .twist-results-title {
+            font-family: var(--font-luxury-display);
+            font-size: 2rem;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-sm);
+        }
+        
+        .twist-deal-card {
+            background: var(--luxury-white);
+            border: 2px solid var(--luxury-gold);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .twist-deal-card::before {
+            content: '-50%';
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: #e74c3c;
+            color: white;
+            padding: var(--space-luxury-sm) var(--space-luxury-2xl);
+            transform: rotate(45deg);
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Dropdown Menu Styles */
+        .luxury-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: var(--luxury-white);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 12px;
+            box-shadow: var(--shadow-luxury-elevated);
+            min-width: 220px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 9999;
+        }
+        
+        .luxury-dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .luxury-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+            padding: var(--space-luxury-sm) var(--space-luxury-lg);
+            color: var(--luxury-obsidian);
+            text-decoration: none;
+            transition: var(--transition-luxury);
+        }
+        
+        .luxury-dropdown-item:hover {
+            background: var(--luxury-pearl);
+            color: var(--luxury-gold);
+        }
+        
+        .luxury-dropdown-item:first-child {
+            border-radius: 11px 11px 0 0;
+        }
+        
+        .luxury-dropdown-item:last-child {
+            border-radius: 0 0 11px 11px;
+        }
+        
+        .luxury-dropdown-divider {
+            height: 1px;
+            background: var(--luxury-stone);
+            margin: var(--space-luxury-xs) 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Luxury Travel Concierge Header -->
+    <header class="luxury-header">
+        <div class="header-luxury-content">
+            <a href="/" class="luxury-brand">
+                <img src="/static/TravelAigent_logo_header.png" alt="TravelAiGent" class="brand-luxury-logo">
+                <span class="brand-luxury-text">TravelAiGent</span>
+                <span class="brand-version">v1.2.1</span>
+            </a>
+            
+            <nav class="luxury-nav">
+                <a href="/" class="luxury-nav-link">Dashboard</a>
+                <a href="/profile" class="luxury-nav-link">Profile</a>
+                <a href="/briefs" class="luxury-nav-link">Travel Briefs</a>
+                <a href="/groups" class="luxury-nav-link">Travel Groups</a>
+                <a href="/deals" class="luxury-nav-link active">Deal Hunter</a>
+            </nav>
+            
+            <div class="luxury-profile dropdown">
+                <div class="luxury-profile-trigger" onclick="toggleProfileDropdown(event)">
+                    <div class="luxury-avatar">{{ (user.first_name[0] if user and user.first_name else user.username[0] if user and user.username else 'U') | upper }}</div>
+                    <span>{{ user.first_name if user and user.first_name else user.username if user else 'User' }}</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="luxury-dropdown-menu" id="profileDropdown">
+                    <a href="/profile" class="luxury-dropdown-item">
+                        <i class="fas fa-user"></i>
+                        Configure Profile
+                    </a>
+                    <a href="/briefs" class="luxury-dropdown-item">
+                        <i class="fas fa-suitcase"></i>
+                        My Travel Briefs
+                    </a>
+                    <a href="/account" class="luxury-dropdown-item">
+                        <i class="fas fa-cog"></i>
+                        Account Settings
+                    </a>
+                    <div class="luxury-dropdown-divider"></div>
+                    <a href="/logout" class="luxury-dropdown-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Log Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="deals-hero">
+        <div class="deals-hero-content">
+            <h1 class="deals-hero-title">
+                <i class="fas fa-bolt flash-icon"></i>
+                Flash Deal Hunter
+            </h1>
+            <p class="deals-hero-subtitle">
+                Skip the full travel brief and dive straight into today's hottest deals. 
+                Our AI searches live inventory across airlines and hotels to find exceptional 
+                value matched to your travel party.
+            </p>
+        </div>
+    </section>
+    
+    <!-- Quick Search Form -->
+    <div class="quick-search-container">
+        <div class="quick-search-card">
+            <form id="quickSearchForm" onsubmit="searchDeals(event)">
+                <div class="search-form-grid">
+                    <!-- Destination -->
+                    <div class="search-form-group">
+                        <label class="search-label">Where to?</label>
+                        <input type="text" class="search-input" name="destination" 
+                               placeholder="City, country, or region" required>
+                    </div>
+                    
+                    <!-- Departure Location -->
+                    <div class="search-form-group">
+                        <label class="search-label">From</label>
+                        <input type="text" class="search-input" name="departure" 
+                               value="London" placeholder="Departure city">
+                    </div>
+                    
+                    <!-- Travel Dates -->
+                    <div class="search-form-group">
+                        <label class="search-label">Departure Date</label>
+                        <input type="date" class="search-input" name="departure_date" required>
+                    </div>
+                    
+                    <div class="search-form-group">
+                        <label class="search-label">Return Date</label>
+                        <input type="date" class="search-input" name="return_date">
+                    </div>
+                    
+                    <!-- Budget -->
+                    <div class="search-form-group">
+                        <label class="search-label">Max Budget (£)</label>
+                        <input type="number" class="search-input" name="max_budget" 
+                               placeholder="3000" value="3000">
+                    </div>
+                    
+                    <!-- Search Type -->
+                    <div class="search-form-group">
+                        <label class="search-label">Looking for</label>
+                        <select class="search-select" name="search_type">
+                            <option value="flight_and_hotel">Flights + Hotels</option>
+                            <option value="flight_only">Flights Only</option>
+                            <option value="hotel_only">Hotels Only</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Who's Traveling -->
+                    <div class="search-form-group full-width">
+                        <label class="search-label">Who's traveling? (select all that apply)</label>
+                        <div class="traveler-select-group" id="travelerGroup">
+                            <!-- Will be populated with profile members -->
+                            <div class="traveler-checkbox">
+                                <input type="checkbox" id="traveler_me" name="travelers" value="Me" checked>
+                                <label for="traveler_me">Me</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Accommodation Preferences -->
+                    <div class="search-form-group full-width" id="accommodationPrefs">
+                        <label class="search-label">Accommodation preferences</label>
+                        <div class="traveler-select-group">
+                            <div class="traveler-checkbox">
+                                <input type="checkbox" name="accommodation" value="5-star" checked>
+                                <label>5 Star</label>
+                            </div>
+                            <div class="traveler-checkbox">
+                                <input type="checkbox" name="accommodation" value="4-star" checked>
+                                <label>4 Star</label>
+                            </div>
+                            <div class="traveler-checkbox">
+                                <input type="checkbox" name="accommodation" value="boutique">
+                                <label>Boutique</label>
+                            </div>
+                            <div class="traveler-checkbox">
+                                <input type="checkbox" name="accommodation" value="resort">
+                                <label>Resort</label>
+                            </div>
+                            <div class="traveler-checkbox">
+                                <input type="checkbox" name="accommodation" value="all-inclusive">
+                                <label>All-Inclusive</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="search-actions">
+                    <div class="results-count" id="searchStatus">
+                        Ready to search amazing deals
+                    </div>
+                    <button type="submit" class="search-button">
+                        <i class="fas fa-search"></i>
+                        Search Deals Now
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- How it Works -->
+    <section class="how-it-works">
+        <div class="how-it-works-content">
+            <h2 class="how-it-works-title">How Flash Deal Hunter Works</h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-icon">
+                        <i class="fas fa-search-location"></i>
+                    </div>
+                    <h3 class="step-title">1. Quick Search</h3>
+                    <p class="step-description">
+                        Enter your destination and travel dates. 
+                        Select who's traveling from your saved profiles.
+                    </p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3 class="step-title">2. AI Analysis</h3>
+                    <p class="step-description">
+                        Our AI searches live inventory and scores deals 
+                        based on value, timing, and your preferences.
+                    </p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-icon">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <h3 class="step-title">3. Curated Results</h3>
+                    <p class="step-description">
+                        See only the best deals ranked by AI score. 
+                        Book directly or save for later consideration.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Twist on a Deal Section -->
+    <section class="twist-section">
+        <div class="twist-content">
+            <h2 class="twist-title">Twist on a Deal</h2>
+            <p class="twist-subtitle">
+                Feeling adventurous? Let our AI surprise you with incredible deals at 
+                <strong>50% OFF or more!</strong> Simply select your travel group and hit the button 
+                for randomly selected destinations with unbeatable prices.
+            </p>
+            
+            <div style="margin-bottom: var(--space-luxury-xl);">
+                <select class="luxury-select" id="twistGroupSelect" style="max-width: 300px; margin: 0 auto; display: block; background: rgba(255,255,255,0.1); color: var(--luxury-white); border-color: var(--luxury-gold);">
+                    <option value="solo">Just Me</option>
+                    <!-- Groups will be loaded here -->
+                </select>
+            </div>
+            
+            <button class="twist-button" onclick="getTwistDeals()">
+                <i class="fas fa-dice"></i>
+                Get Lucky Deals
+                <span class="discount-badge">-50%</span>
+            </button>
+        </div>
+    </section>
+    
+    <!-- Twist Results (hidden by default) -->
+    <section class="twist-results" id="twistResults">
+        <div class="twist-results-header">
+            <h3 class="twist-results-title">🎲 Your Lucky Deals Are Here!</h3>
+            <p style="color: var(--luxury-charcoal);">These exclusive deals are available for the next 24 hours only</p>
+        </div>
+        <div class="deals-grid" id="twistDealsContainer">
+            <!-- Twist deals will appear here -->
+        </div>
+    </section>
+    
+    <!-- Results Section -->
+    <section class="deals-results">
+        <div class="results-header">
+            <h2 class="results-title">Flash Deals</h2>
+            <div class="results-count" id="resultsCount">
+                <!-- Will be updated with search results -->
+            </div>
+        </div>
+        
+        <div id="dealsContainer">
+            <!-- Initial empty state -->
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3 class="empty-title">Start Your Search</h3>
+                <p class="empty-description">
+                    Fill in the quick search form above to discover amazing travel deals 
+                    personalized for your travel party.
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <script>
+        // Profile dropdown
+        function toggleProfileDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.classList.toggle('show');
+        }
+        
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('profileDropdown');
+            const trigger = document.querySelector('.luxury-profile-trigger');
+            
+            if (dropdown && trigger && !trigger.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+        
+        // Load user profile data
+        async function loadUserProfile() {
+            try {
+                const response = await fetch('/api/profile');
+                if (response.ok) {
+                    const profile = await response.json();
+                    populateTravelers(profile);
+                    
+                    // Also load travel groups for twist feature
+                    loadTravelGroups();
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+        
+        // Load travel groups for twist dropdown
+        async function loadTravelGroups() {
+            try {
+                const response = await fetch('/api/groups');
+                if (response.ok) {
+                    const groups = await response.json();
+                    const select = document.getElementById('twistGroupSelect');
+                    
+                    // Add group options
+                    groups.forEach(group => {
+                        const option = document.createElement('option');
+                        option.value = group.id;
+                        option.textContent = `${group.group_name} (${group.members.length} travelers)`;
+                        option.dataset.members = JSON.stringify(group.members);
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading groups:', error);
+            }
+        }
+        
+        // Populate travelers from profile
+        function populateTravelers(profile) {
+            const travelerGroup = document.getElementById('travelerGroup');
+            
+            // Add family members if any
+            if (profile.adults_count > 1 || profile.children_ages) {
+                // Add partner
+                if (profile.adults_count > 1) {
+                    const partnerDiv = document.createElement('div');
+                    partnerDiv.className = 'traveler-checkbox';
+                    partnerDiv.innerHTML = `
+                        <input type="checkbox" id="traveler_partner" name="travelers" value="Partner">
+                        <label for="traveler_partner">Partner</label>
+                    `;
+                    travelerGroup.appendChild(partnerDiv);
+                }
+                
+                // Add children
+                if (profile.children_ages && profile.children_ages.length > 0) {
+                    profile.children_ages.forEach((age, index) => {
+                        const childDiv = document.createElement('div');
+                        childDiv.className = 'traveler-checkbox';
+                        childDiv.innerHTML = `
+                            <input type="checkbox" id="traveler_child_${index}" name="travelers" value="Child ${index + 1} (age ${age})">
+                            <label for="traveler_child_${index}">Child ${index + 1}</label>
+                        `;
+                        travelerGroup.appendChild(childDiv);
+                    });
+                }
+            }
+            
+            // Add "Whole Family" option if there are family members
+            if (profile.adults_count > 1 || profile.children_ages) {
+                const familyDiv = document.createElement('div');
+                familyDiv.className = 'traveler-checkbox';
+                familyDiv.innerHTML = `
+                    <input type="checkbox" id="traveler_family" name="travelers" value="Whole Family">
+                    <label for="traveler_family">Whole Family</label>
+                `;
+                travelerGroup.appendChild(familyDiv);
+            }
+        }
+        
+        // Search deals
+        async function searchDeals(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            const searchButton = form.querySelector('.search-button');
+            const container = document.getElementById('dealsContainer');
+            
+            // Show loading state
+            searchButton.disabled = true;
+            searchButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching...';
+            
+            container.innerHTML = `
+                <div class="loading-container">
+                    <div class="luxury-spinner"></div>
+                    <p>Searching for the best deals...</p>
+                </div>
+            `;
+            
+            try {
+                // Build search parameters
+                const params = new URLSearchParams();
+                const destination = formData.get('destination') || '';
+                params.set('destination', destination);
+                params.set('min_score', '7');
+                params.set('max_price', formData.get('max_budget') || '10000');
+                params.set('limit', '20');
+                
+                console.log('Searching deals with params:', params.toString());
+                
+                const response = await fetch(`/api/deals?${params}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const deals = await response.json();
+                
+                console.log('Received deals:', deals);
+                displayDeals(deals);
+                
+            } catch (error) {
+                console.error('Search error:', error);
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h3 class="empty-title">Search Error</h3>
+                        <p class="empty-description">
+                            Unable to search deals. Please try again.
+                        </p>
+                    </div>
+                `;
+            } finally {
+                searchButton.disabled = false;
+                searchButton.innerHTML = '<i class="fas fa-search"></i> Search Deals Now';
+            }
+        }
+        
+        // Display deals
+        function displayDeals(deals) {
+            const container = document.getElementById('dealsContainer');
+            const resultsCount = document.getElementById('resultsCount');
+            
+            if (!deals || deals.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-calendar-times"></i>
+                        </div>
+                        <h3 class="empty-title">No Deals Found</h3>
+                        <p class="empty-description">
+                            Try adjusting your search criteria or dates for more options.
+                        </p>
+                    </div>
+                `;
+                resultsCount.textContent = '0 deals found';
+                return;
+            }
+            
+            resultsCount.textContent = `${deals.length} amazing deals found`;
+            
+            const dealsHTML = deals.map(deal => `
+                <div class="deal-card">
+                    <div class="deal-header">
+                        <div class="deal-destination">${deal.destination || deal.Destination || 'Unknown'}</div>
+                        <div class="deal-route">
+                            <i class="fas fa-plane"></i>
+                            ${deal.origin || 'LON'} → ${deal.destination_code || deal.Destination_Code || '???'}
+                        </div>
+                        <div class="deal-score">
+                            ${deal.ai_score || deal.AI_Score || 'N/A'}/10
+                        </div>
+                    </div>
+                    <div class="deal-body">
+                        <div class="deal-price">
+                            £${deal.total_price || deal.Total_Price || '???'}
+                        </div>
+                        <div class="deal-details">
+                            <div class="deal-detail">
+                                <i class="fas fa-calendar"></i>
+                                ${formatDate(deal.departure_date || deal.Departure_Date)}
+                            </div>
+                            <div class="deal-detail">
+                                <i class="fas fa-hotel"></i>
+                                ${deal.hotel_name || deal.Hotel_Name || 'Flight Only'}
+                            </div>
+                            <div class="deal-detail">
+                                <i class="fas fa-plane"></i>
+                                ${deal.airline || deal.Airline || 'Various Airlines'}
+                            </div>
+                        </div>
+                        <div class="deal-actions">
+                            <button class="deal-button" onclick="saveDeal('${deal.id || deal.Deal_ID}')">
+                                <i class="fas fa-bookmark"></i>
+                                Save
+                            </button>
+                            <a href="${deal.booking_url || '#'}" target="_blank" class="deal-button primary" onclick="trackDealClick('${deal.id || deal.Deal_ID}')">
+                                <i class="fas fa-external-link-alt"></i>
+                                View on ${deal.provider || 'Partner'}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = `<div class="deals-grid">${dealsHTML}</div>`;
+        }
+        
+        // Format date
+        function formatDate(dateStr) {
+            if (!dateStr) return 'Flexible';
+            try {
+                const date = new Date(dateStr);
+                return date.toLocaleDateString('en-GB', { 
+                    day: 'numeric', 
+                    month: 'short', 
+                    year: 'numeric' 
+                });
+            } catch {
+                return dateStr;
+            }
+        }
+        
+        // Save deal
+        function saveDeal(dealId) {
+            console.log('Saving deal:', dealId);
+            // Implement save functionality
+        }
+        
+        // Track deal click
+        function trackDealClick(dealId) {
+            console.log('User clicked on deal:', dealId);
+            // In a real app, this would track analytics
+            // The actual redirection happens via the anchor tag
+        }
+        
+        // Get Twist deals - random 50% off deals
+        async function getTwistDeals() {
+            const button = event.target.closest('.twist-button');
+            const container = document.getElementById('twistDealsContainer');
+            const resultsSection = document.getElementById('twistResults');
+            const groupSelect = document.getElementById('twistGroupSelect');
+            
+            // Show loading state
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Finding Lucky Deals...';
+            
+            // Random destinations for surprise factor
+            const surpriseDestinations = [
+                'Barcelona', 'Dubai', 'Tokyo', 'New York', 'Bali', 
+                'Paris', 'Rome', 'Bangkok', 'Amsterdam', 'Istanbul',
+                'Lisbon', 'Prague', 'Singapore', 'Sydney', 'Miami'
+            ];
+            
+            // Pick 3 random destinations
+            const selectedDestinations = [];
+            for (let i = 0; i < 3; i++) {
+                const randomIndex = Math.floor(Math.random() * surpriseDestinations.length);
+                selectedDestinations.push(surpriseDestinations[randomIndex]);
+                surpriseDestinations.splice(randomIndex, 1);
+            }
+            
+            try {
+                // Simulate finding deals (in real app, this would call backend)
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Generate mock twist deals with 50% discount
+                const twistDeals = selectedDestinations.map((dest, index) => ({
+                    id: `twist_${Date.now()}_${index}`,
+                    destination: dest,
+                    destination_code: dest.substring(0, 3).toUpperCase(),
+                    origin: 'LON',
+                    original_price: Math.floor(Math.random() * 800) + 600,
+                    departure_date: getRandomFutureDate(),
+                    hotel_name: getRandomHotel(),
+                    airline: getRandomAirline(),
+                    ai_score: Math.floor(Math.random() * 2) + 8
+                }));
+                
+                // Display twist deals
+                const dealsHTML = twistDeals.map(deal => {
+                    const discountedPrice = Math.floor(deal.original_price * 0.5);
+                    return `
+                        <div class="deal-card twist-deal-card">
+                            <div class="deal-header">
+                                <div class="deal-destination">${deal.destination}</div>
+                                <div class="deal-route">
+                                    <i class="fas fa-plane"></i>
+                                    ${deal.origin} → ${deal.destination_code}
+                                </div>
+                                <div class="deal-score">
+                                    ${deal.ai_score}/10
+                                </div>
+                            </div>
+                            <div class="deal-body">
+                                <div style="text-decoration: line-through; color: var(--luxury-charcoal); font-size: 1.2rem;">
+                                    £${deal.original_price}
+                                </div>
+                                <div class="deal-price">
+                                    £${discountedPrice}
+                                </div>
+                                <div class="deal-details">
+                                    <div class="deal-detail">
+                                        <i class="fas fa-calendar"></i>
+                                        ${formatDate(deal.departure_date)}
+                                    </div>
+                                    <div class="deal-detail">
+                                        <i class="fas fa-hotel"></i>
+                                        ${deal.hotel_name}
+                                    </div>
+                                    <div class="deal-detail">
+                                        <i class="fas fa-plane"></i>
+                                        ${deal.airline}
+                                    </div>
+                                    <div class="deal-detail" style="color: #e74c3c; font-weight: 600;">
+                                        <i class="fas fa-fire"></i>
+                                        Limited time offer!
+                                    </div>
+                                </div>
+                                <div class="deal-actions">
+                                    <button class="deal-button" onclick="saveDeal('${deal.id}')">
+                                        <i class="fas fa-bookmark"></i>
+                                        Save
+                                    </button>
+                                    <a href="https://www.skyscanner.com/transport/flights/lon/${deal.destination_code.toLowerCase()}/" target="_blank" class="deal-button primary">
+                                        <i class="fas fa-external-link-alt"></i>
+                                        Find on Skyscanner
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                container.innerHTML = dealsHTML;
+                resultsSection.style.display = 'block';
+                
+                // Scroll to results
+                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                
+            } catch (error) {
+                console.error('Error getting twist deals:', error);
+                alert('Unable to find twist deals. Please try again.');
+            } finally {
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-dice"></i> Get Lucky Deals <span class="discount-badge">-50%</span>';
+            }
+        }
+        
+        // Helper functions for twist deals
+        function getRandomFutureDate() {
+            const start = new Date();
+            start.setDate(start.getDate() + 7);
+            const end = new Date();
+            end.setDate(end.getDate() + 90);
+            return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+        }
+        
+        function getRandomHotel() {
+            const hotels = [
+                'Grand Plaza Hotel', 'Luxury Beach Resort', 'City Center Suites', 
+                'Boutique Hotel & Spa', 'Royal Palace Hotel', 'Sunset Villa Resort'
+            ];
+            return hotels[Math.floor(Math.random() * hotels.length)];
+        }
+        
+        function getRandomAirline() {
+            const airlines = [
+                'British Airways', 'Emirates', 'Singapore Airlines', 
+                'Qatar Airways', 'Lufthansa', 'Air France'
+            ];
+            return airlines[Math.floor(Math.random() * airlines.length)];
+        }
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserProfile();
+            
+            // Set minimum dates
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelector('input[name="departure_date"]').setAttribute('min', today);
+            document.querySelector('input[name="return_date"]').setAttribute('min', today);
+            
+            // Toggle accommodation preferences based on search type
+            document.querySelector('select[name="search_type"]').addEventListener('change', (e) => {
+                const accommodationPrefs = document.getElementById('accommodationPrefs');
+                accommodationPrefs.style.display = e.target.value === 'flight_only' ? 'none' : 'block';
+            });
+        });
+    </script>
+</body>
+</html>

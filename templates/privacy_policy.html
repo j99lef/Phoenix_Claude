@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - TravelAiGent</title>
+    <link href="/static/luxury-concierge.css" rel="stylesheet">
+    <style>
+        .privacy-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .privacy-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .privacy-section {
+            margin-bottom: 2rem;
+        }
+        
+        .privacy-section h2 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        
+        .privacy-section p, .privacy-section li {
+            line-height: 1.6;
+            color: #666;
+        }
+        
+        .gdpr-rights {
+            background: #f5f5f5;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+        
+        .contact-info {
+            background: #e8f4f8;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="privacy-container">
+        <div class="privacy-header">
+            <h1>Privacy Policy</h1>
+            <p>Last updated: {{ current_date }}</p>
+        </div>
+        
+        <div class="privacy-section">
+            <h2>1. Introduction</h2>
+            <p>TravelAiGent ("we", "our", or "us") is committed to protecting your privacy and complying with the General Data Protection Regulation (GDPR) and other applicable data protection laws. This Privacy Policy explains how we collect, use, share, and protect your personal information.</p>
+        </div>
+        
+        <div class="privacy-section">
+            <h2>2. Data Controller</h2>
+            <p>TravelAiGent is the data controller responsible for your personal data. You can contact us at:</p>
+            <div class="contact-info">
+                <p><strong>Email:</strong> privacy@travelaigent.com<br>
+                <strong>Address:</strong> [Your Company Address]</p>
+            </div>
+        </div>
+        
+        <div class="privacy-section">
+            <h2>3. Information We Collect</h2>
+            <p>We collect the following categories of personal data:</p>
+            <ul>
+                <li><strong>Account Information:</strong> Username, email address, password (encrypted), name, phone number</li>
+                <li><strong>Travel Preferences:</strong> Home airports, preferred airlines, dietary restrictions, travel style, accommodation preferences</li>
+                <li><strong>Travel Data:</strong> Travel briefs, destinations, dates, budget, group members</li>
+                <li><strong>Technical Data:</strong> IP address, browser type, device information, login times</li>
+                <li><strong>Usage Data:</strong> How you interact with our services, features used, searches performed</li>
+            </ul>
+        </div>
+        
+        <div class="privacy-section">
+            <h2>4. Legal Basis for Processing</h2>
+            <p>We process your personal data based on:</p>
+            <ul>
+                <li><strong>Contract:</strong> To provide our travel search and planning services</li>
+                <li><strong>Consent:</strong> For marketing communications and optional features</li>
+                <li><strong>Legitimate Interests:</strong> To improve our services and ensure security</li>
+                <li><strong>Legal Obligations:</strong> To comply with applicable laws and regulations</li>
+            </ul>
+        </div>
+        
+        <div class="privacy-section">
+            <h2>5. How We Use Your Data</h2>
+            <p>We use your personal data to:</p>
+            <ul>
+                <li>Provide personalized travel search and recommendations</li>
+                <li>Manage your account and travel groups</li>
+                <li>Send service notifications about your travel briefs</li>
+                <li>Improve our services and develop new features</li>
+                <li>Ensure the security of our platform</li>
+                <li>Comply with legal obligations</li>
+            </ul>
+        </div>
+        
+        <div class="privacy-section">
+            <h2>6. Data Sharing</h2>
+            <p>We may share your data with:</p>
+            <ul>
+                <li><strong>Service Providers:</strong> Amadeus (flight data), OpenAI (AI analysis), AWS (hosting)</li>
+                <li><strong>Legal Requirements:</strong> When required by law or to protect our rights</li>
+                <li><strong>Business Transfers:</strong> In case of merger, acquisition, or sale of assets</li>
+            </ul>
+            <p>We do NOT sell your personal data to third parties.</p>
+        </div>
+        
+        <div class="privacy-section">
+            <h2>7. Data Retention</h2>
+            <p>We retain your personal data for:</p>
+            <ul>
+                <li><strong>Account Data:</strong> As long as your account is active</li>
+                <li><strong>Travel Briefs:</strong> 2 years after last activity</li>
+                <li><strong>Technical Logs:</strong> 90 days</li>
+            </ul>
+            <p>You can request deletion of your data at any time (see Your Rights below).</p>
+        </div>
+        
+        <div class="gdpr-rights">
+            <h2>8. Your GDPR Rights</h2>
+            <p>Under GDPR, you have the following rights:</p>
+            <ul>
+                <li><strong>Access:</strong> Request a copy of your personal data</li>
+                <li><strong>Rectification:</strong> Correct inaccurate data</li>
+                <li><strong>Erasure:</strong> Request deletion of your data ("right to be forgotten")</li>
+                <li><strong>Portability:</strong> Receive your data in a portable format</li>
+                <li><strong>Restriction:</strong> Limit how we process your data</li>
+                <li><strong>Objection:</strong> Object to certain processing activities</li>
+                <li><strong>Withdraw Consent:</strong> Withdraw consent at any time</li>
+            </ul>
+            <p>To exercise these rights, please contact us at privacy@travelaigent.com or use the tools in your account settings.</p>
+        </div>
+        
+        <div class="privacy-section">
+            <h2>9. Data Security</h2>
+            <p>We implement appropriate technical and organizational measures to protect your data:</p>
+            <ul>
+                <li>Encryption of passwords using Argon2</li>
+                <li>HTTPS encryption for all data transfers</li>
+                <li>Regular security audits and updates</li>
+                <li>Access controls and authentication</li>
+                <li>Secure data storage on AWS infrastructure</li>
+            </ul>
+        </div>
+        
+        <div class="privacy-section">
+            <h2>10. International Transfers</h2>
+            <p>Your data may be transferred to and processed in countries outside the EEA. We ensure appropriate safeguards are in place, including:</p>
+            <ul>
+                <li>Standard Contractual Clauses with service providers</li>
+                <li>Adequacy decisions where applicable</li>
+            </ul>
+        </div>
+        
+        <div class="privacy-section">
+            <h2>11. Children's Privacy</h2>
+            <p>Our services are not intended for children under 16. We do not knowingly collect data from children under 16.</p>
+        </div>
+        
+        <div class="privacy-section">
+            <h2>12. Updates to This Policy</h2>
+            <p>We may update this Privacy Policy from time to time. We will notify you of significant changes via email or through our platform.</p>
+        </div>
+        
+        <div class="privacy-section">
+            <h2>13. Contact Us</h2>
+            <p>For any questions about this Privacy Policy or your personal data, please contact:</p>
+            <div class="contact-info">
+                <p><strong>Data Protection Officer</strong><br>
+                Email: privacy@travelaigent.com<br>
+                Address: [Your DPO Address]</p>
+            </div>
+        </div>
+        
+        <div class="privacy-section">
+            <h2>14. Supervisory Authority</h2>
+            <p>You have the right to lodge a complaint with your local data protection supervisory authority if you believe we have not complied with applicable data protection laws.</p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 3rem;">
+            <a href="/" class="btn btn-primary">Back to Home</a>
+        </div>
+    </div>
+    
+    <script>
+        // Set current date
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentDate = new Date().toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            document.querySelectorAll('{{ current_date }}').forEach(el => {
+                el.textContent = currentDate;
+            });
+        });
+    </script>
+</body>
+</html>

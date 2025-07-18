@@ -1,0 +1,354 @@
+<!-- Package Details Modal Template -->
+<div class="modal fade" id="packageDetailsModal" tabindex="-1" aria-labelledby="packageDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="packageDetailsModalLabel">
+                    <i class="fas fa-suitcase-rolling me-2"></i>
+                    <span id="modal-destination">Travel Package</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Package Overview -->
+                    <div class="col-12 mb-4">
+                        <div class="package-overview">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h3 id="modal-package-title" class="mb-2">Barcelona Family Escape</h3>
+                                    <p class="text-muted mb-0" id="modal-package-subtitle">October Half Term • 7 nights</p>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <div class="ai-score-badge" id="modal-ai-score">
+                                        <i class="fas fa-robot me-1"></i>
+                                        <span>AI Score: 9.2/10</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <!-- Flight Details -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="detail-card h-100">
+                            <h5 class="detail-card-title">
+                                <i class="fas fa-plane me-2 text-primary"></i>Flight Details
+                            </h5>
+                            <div class="detail-content">
+                                <div class="detail-item">
+                                    <span class="detail-label">Departure:</span>
+                                    <span class="detail-value" id="modal-departure-date">25 Oct 2025, 08:30</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Return:</span>
+                                    <span class="detail-value" id="modal-return-date">1 Nov 2025, 15:45</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">From:</span>
+                                    <span class="detail-value" id="modal-departure-airport">London Heathrow (LHR)</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Airline:</span>
+                                    <span class="detail-value" id="modal-airline">British Airways</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Flight Time:</span>
+                                    <span class="detail-value" id="modal-flight-duration">2h 15m</span>
+                                </div>
+                                <div class="price-highlight">
+                                    <span class="price-label">Flight Price:</span>
+                                    <span class="price-value" id="modal-flight-price">£680</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Hotel Details -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="detail-card h-100">
+                            <h5 class="detail-card-title">
+                                <i class="fas fa-hotel me-2 text-success"></i>Accommodation
+                            </h5>
+                            <div class="detail-content">
+                                <div class="hotel-header mb-3">
+                                    <h6 class="hotel-name" id="modal-hotel-name">Hotel Arts Barcelona</h6>
+                                    <div class="hotel-rating" id="modal-hotel-rating">
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <i class="fas fa-star text-warning"></i>
+                                        <span class="ms-2">5 Star</span>
+                                    </div>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Room Type:</span>
+                                    <span class="detail-value" id="modal-room-type">Deluxe Family Room</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Check-in:</span>
+                                    <span class="detail-value" id="modal-checkin">25 Oct 2025, 15:00</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Check-out:</span>
+                                    <span class="detail-value" id="modal-checkout">1 Nov 2025, 11:00</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Amenities:</span>
+                                    <div class="amenities-list" id="modal-amenities">
+                                        <span class="amenity-tag">Pool</span>
+                                        <span class="amenity-tag">WiFi</span>
+                                        <span class="amenity-tag">Family Friendly</span>
+                                        <span class="amenity-tag">Restaurant</span>
+                                    </div>
+                                </div>
+                                <div class="price-highlight">
+                                    <span class="price-label">Hotel Price:</span>
+                                    <span class="price-value" id="modal-hotel-price">£1,420</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI Analysis -->
+                <div class="row">
+                    <div class="col-12 mb-4">
+                        <div class="detail-card">
+                            <h5 class="detail-card-title">
+                                <i class="fas fa-brain me-2 text-info"></i>AI Analysis & Recommendations
+                            </h5>
+                            <div class="ai-analysis" id="modal-ai-analysis">
+                                <p class="analysis-text">This package offers exceptional value for a family Barcelona experience. The hotel provides premium 5-star amenities in a prime beachfront location, while the flights offer convenient departure times perfect for families with children.</p>
+                                
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <h6 class="text-success">Key Highlights:</h6>
+                                        <ul class="analysis-list" id="modal-pros">
+                                            <li>5-star beachfront hotel</li>
+                                            <li>Family-friendly departure times</li>
+                                            <li>Premium location in Barcelona</li>
+                                            <li>Excellent amenities for children</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-warning">Considerations:</h6>
+                                        <ul class="analysis-list" id="modal-cons">
+                                            <li>Premium pricing reflects quality</li>
+                                            <li>Peak season dates</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Package Total -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="package-total-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h4 class="total-label">Total Package Price</h4>
+                                    <p class="total-subtitle">For family of 4 • All taxes included</p>
+                                </div>
+                                <div class="total-price-container">
+                                    <span class="total-price" id="modal-total-price">£2,100</span>
+                                    <div class="savings-badge" id="modal-savings">
+                                        <i class="fas fa-tag me-1"></i>Save £150 vs booking separately
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Close
+                </button>
+                <button type="button" class="btn btn-info" onclick="copyDealDetails()">
+                    <i class="fas fa-copy me-2"></i>Copy Details
+                </button>
+                <button type="button" class="btn btn-warning" onclick="runManualSearch()">
+                    <i class="fas fa-search me-2"></i>Find Similar
+                </button>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary" onclick="bookFlightDirect()">
+                        <i class="fas fa-plane me-2"></i>Book Flight
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="bookHotelDirect()">
+                        <i class="fas fa-hotel me-2"></i>Book Hotel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.detail-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    border: 1px solid #e9ecef;
+}
+
+.detail-card-title {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.detail-content {
+    color: #6c757d;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.detail-value {
+    color: #212529;
+    font-weight: 600;
+}
+
+.price-highlight {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.price-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.price-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #28a745;
+}
+
+.hotel-header {
+    padding-bottom: 16px;
+    border-bottom: 2px solid #f8f9fa;
+}
+
+.hotel-name {
+    color: #2c3e50;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.hotel-rating {
+    color: #ffc107;
+}
+
+.amenities-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.amenity-tag {
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.ai-score-badge {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.package-total-card {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 24px;
+    border-radius: 12px;
+    margin-top: 16px;
+}
+
+.total-label {
+    color: white;
+    margin-bottom: 4px;
+}
+
+.total-subtitle {
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 0;
+    font-size: 0.9rem;
+}
+
+.total-price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+}
+
+.savings-badge {
+    background: rgba(255,255,255,0.2);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    margin-top: 8px;
+    display: inline-block;
+}
+
+.analysis-text {
+    color: #6c757d;
+    line-height: 1.6;
+    margin-bottom: 16px;
+}
+
+.analysis-list {
+    padding-left: 0;
+    list-style: none;
+}
+
+.analysis-list li {
+    padding: 4px 0;
+    position: relative;
+    padding-left: 20px;
+}
+
+.analysis-list li:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #28a745;
+    font-weight: bold;
+}
+</style>

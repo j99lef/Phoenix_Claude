@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ brief.destination }} - Travel Brief - TravelAiGent</title>
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Luxury Concierge Design System -->
+    <link href="/static/luxury-concierge.css" rel="stylesheet">
+    
+    <!-- Additional fonts for luxury design -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Brief Detail Page Styles */
+        .brief-detail-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-luxury-2xl);
+        }
+        
+        .brief-hero {
+            background: linear-gradient(135deg, var(--luxury-obsidian) 0%, #1a1a1a 100%);
+            color: var(--luxury-white);
+            padding: var(--space-luxury-4xl) 0;
+            margin-bottom: var(--space-luxury-3xl);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .brief-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="luxury-pattern" patternUnits="userSpaceOnUse" width="50" height="50"><circle cx="25" cy="25" r="2" fill="rgba(201,169,110,0.3)"/><path d="M0 25 Q25 20 50 25" stroke="rgba(201,169,110,0.2)" stroke-width="0.5" fill="none"/></pattern></defs><rect width="100" height="100" fill="url(%23luxury-pattern)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .brief-hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        
+        .brief-title {
+            font-family: var(--font-luxury-display);
+            font-size: 3rem;
+            font-weight: 400;
+            margin-bottom: var(--space-luxury-md);
+            letter-spacing: -0.02em;
+        }
+        
+        .brief-route {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: var(--space-luxury-2xl);
+        }
+        
+        .brief-meta-row {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-luxury-2xl);
+            flex-wrap: wrap;
+        }
+        
+        .brief-meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+            font-size: 0.95rem;
+        }
+        
+        .brief-meta-item i {
+            color: var(--luxury-gold);
+            font-size: 1.1rem;
+        }
+        
+        /* Activity Stats */
+        .activity-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-luxury-xl);
+            margin-bottom: var(--space-luxury-3xl);
+        }
+        
+        .activity-stat-card {
+            background: var(--luxury-white);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 20px;
+            padding: var(--space-luxury-xl);
+            text-align: center;
+            transition: var(--transition-luxury);
+        }
+        
+        .activity-stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-luxury-elevated);
+        }
+        
+        .activity-stat-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-luxury-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-luxury-md);
+            font-size: 1.5rem;
+            color: var(--luxury-white);
+        }
+        
+        .activity-stat-number {
+            font-family: var(--font-luxury-display);
+            font-size: 2.5rem;
+            font-weight: 500;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-xs);
+        }
+        
+        .activity-stat-label {
+            color: var(--luxury-charcoal);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.85rem;
+        }
+        
+        .activity-stat-description {
+            color: var(--luxury-bronze);
+            font-size: 0.9rem;
+            margin-top: var(--space-luxury-sm);
+        }
+        
+        /* Brief Details */
+        .brief-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--space-luxury-2xl);
+            margin-bottom: var(--space-luxury-3xl);
+        }
+        
+        .detail-card {
+            background: var(--luxury-white);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        
+        .detail-card-header {
+            background: var(--luxury-pearl);
+            padding: var(--space-luxury-lg);
+            border-bottom: 1px solid var(--luxury-stone);
+        }
+        
+        .detail-card-title {
+            font-family: var(--font-luxury-display);
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: var(--luxury-obsidian);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+        }
+        
+        .detail-card-title i {
+            color: var(--luxury-gold);
+        }
+        
+        .detail-card-body {
+            padding: var(--space-luxury-lg);
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-luxury-sm) 0;
+            border-bottom: 1px solid var(--luxury-stone);
+        }
+        
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            color: var(--luxury-charcoal);
+            font-weight: 500;
+        }
+        
+        .detail-value {
+            color: var(--luxury-obsidian);
+            font-weight: 600;
+        }
+        
+        .budget-display {
+            background: var(--luxury-champagne);
+            padding: var(--space-luxury-lg);
+            border-radius: 12px;
+            text-align: center;
+            margin: var(--space-luxury-md) 0;
+        }
+        
+        .budget-amount {
+            font-family: var(--font-luxury-display);
+            font-size: 2rem;
+            font-weight: 500;
+            color: var(--luxury-obsidian);
+        }
+        
+        .budget-label {
+            color: var(--luxury-bronze);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: var(--space-luxury-md);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .action-button {
+            padding: var(--space-luxury-md) var(--space-luxury-xl);
+            border: 2px solid var(--luxury-stone);
+            border-radius: 12px;
+            background: var(--luxury-white);
+            color: var(--luxury-obsidian);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition-luxury);
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+        }
+        
+        .action-button:hover {
+            border-color: var(--luxury-gold);
+            background: var(--luxury-gold);
+            color: var(--luxury-white);
+            transform: translateY(-2px);
+        }
+        
+        .action-button.primary {
+            background: var(--gradient-luxury-gold);
+            color: var(--luxury-white);
+            border-color: var(--luxury-gold);
+        }
+        
+        .action-button.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-luxury-elevated);
+        }
+        
+        /* Status indicators */
+        .status-active {
+            color: #10b981;
+        }
+        
+        .status-archived {
+            color: var(--luxury-bronze);
+        }
+        
+        .priority-high {
+            color: #ef4444;
+        }
+        
+        .priority-medium {
+            color: var(--luxury-gold);
+        }
+        
+        .priority-low {
+            color: var(--luxury-silver);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .brief-title {
+                font-size: 2rem;
+            }
+            
+            .brief-meta-row {
+                flex-direction: column;
+                gap: var(--space-luxury-md);
+            }
+            
+            .activity-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .brief-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Luxury Travel Concierge Header -->
+    <header class="luxury-header">
+        <div class="header-luxury-content">
+            <a href="/" class="luxury-brand">
+                <img src="/static/TravelAigent_logo_header.png" alt="TravelAiGent" class="brand-luxury-logo">
+                <span class="brand-luxury-text">TravelAiGent</span>
+                <span class="brand-version">v1.2.1</span>
+            </a>
+            
+            <nav class="luxury-nav">
+                <a href="/" class="luxury-nav-link">Dashboard</a>
+                <a href="/profile" class="luxury-nav-link">Profile</a>
+                <a href="/briefs" class="luxury-nav-link">Travel Briefs</a>
+                <a href="/groups" class="luxury-nav-link">Travel Groups</a>
+                <a href="/deals" class="luxury-nav-link">Deals</a>
+            </nav>
+            
+            <div class="luxury-profile">
+                <div class="luxury-avatar">{{ (user.first_name[0] if user and user.first_name else user.username[0] if user and user.username else 'U') | upper }}</div>
+                <span>{{ user.first_name if user and user.first_name else user.username if user else 'User' }}</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="brief-detail-container">
+        <!-- Brief Hero Section -->
+        <section class="brief-hero">
+            <div class="brief-hero-content">
+                <h1 class="brief-title">{{ brief.destination }}</h1>
+                <div class="brief-route">
+                    <i class="fas fa-plane-departure"></i>
+                    From {{ brief.departure_location }}
+                </div>
+                <div class="brief-meta-row">
+                    <div class="brief-meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>{{ brief.departure_date.strftime('%B %d, %Y') if brief.departure_date else 'Flexible dates' }}</span>
+                    </div>
+                    <div class="brief-meta-item">
+                        <i class="fas fa-users"></i>
+                        <span>{{ brief.travelers }}</span>
+                    </div>
+                    <div class="brief-meta-item">
+                        <i class="fas fa-flag"></i>
+                        <span class="priority-{{ (brief.priority or 'medium')|lower }}">{{ (brief.priority or 'Medium')|title }} Priority</span>
+                    </div>
+                    <div class="brief-meta-item">
+                        <i class="fas fa-circle"></i>
+                        <span class="status-{{ activity_stats.search_status|lower }}">{{ activity_stats.search_status }}</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Activity Stats -->
+        <section class="activity-stats">
+            <div class="activity-stat-card">
+                <div class="activity-stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="activity-stat-number">{{ activity_stats.hours_active }}</div>
+                <div class="activity-stat-label">Hours Active</div>
+                <div class="activity-stat-description">
+                    Search running for {{ activity_stats.days_active }} day{{ 's' if activity_stats.days_active != 1 else '' }}
+                </div>
+            </div>
+            
+            <div class="activity-stat-card">
+                <div class="activity-stat-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="activity-stat-number">{{ activity_stats.estimated_scans }}</div>
+                <div class="activity-stat-label">Estimated Scans</div>
+                <div class="activity-stat-description">
+                    AI searches every 30 minutes
+                </div>
+            </div>
+            
+            <div class="activity-stat-card">
+                <div class="activity-stat-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="activity-stat-number">24/7</div>
+                <div class="activity-stat-label">AI Monitoring</div>
+                <div class="activity-stat-description">
+                    Continuous deal discovery
+                </div>
+            </div>
+            
+            <div class="activity-stat-card">
+                <div class="activity-stat-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="activity-stat-number">{{ brief.date_flexibility or 2 }}</div>
+                <div class="activity-stat-label">Days Flexible</div>
+                <div class="activity-stat-description">
+                    Date range flexibility
+                </div>
+            </div>
+        </section>
+
+        <!-- Brief Details -->
+        <section class="brief-details">
+            <!-- Travel Details -->
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <h3 class="detail-card-title">
+                        <i class="fas fa-plane"></i>
+                        Travel Details
+                    </h3>
+                </div>
+                <div class="detail-card-body">
+                    <div class="detail-item">
+                        <span class="detail-label">Departure</span>
+                        <span class="detail-value">{{ brief.departure_location }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Destination</span>
+                        <span class="detail-value">{{ brief.destination }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Departure Date</span>
+                        <span class="detail-value">{{ brief.departure_date.strftime('%B %d, %Y') if brief.departure_date else 'Flexible' }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Return Date</span>
+                        <span class="detail-value">{{ brief.return_date.strftime('%B %d, %Y') if brief.return_date else 'Flexible' }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Trip Length</span>
+                        <span class="detail-value">{{ brief.trip_length|int }} days</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Budget & Preferences -->
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <h3 class="detail-card-title">
+                        <i class="fas fa-pound-sign"></i>
+                        Budget & Preferences
+                    </h3>
+                </div>
+                <div class="detail-card-body">
+                    <div class="budget-display">
+                        <div class="budget-amount">£{{ "{:,}".format(brief.budget_min) }} - £{{ "{:,}".format(brief.budget_max) }}</div>
+                        <div class="budget-label">Total Budget</div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Travelers</span>
+                        <span class="detail-value">{{ brief.travelers }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Accommodation</span>
+                        <span class="detail-value">{{ brief.accommodation_type }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Priority</span>
+                        <span class="detail-value priority-{{ (brief.priority or 'medium')|lower }}">{{ (brief.priority or 'Medium')|title }}</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Special Requirements -->
+        {% if brief.interests %}
+        <section class="detail-card" style="margin-bottom: var(--space-luxury-3xl);">
+            <div class="detail-card-header">
+                <h3 class="detail-card-title">
+                    <i class="fas fa-star"></i>
+                    Special Requirements & AI Instructions
+                </h3>
+            </div>
+            <div class="detail-card-body">
+                <p style="color: var(--luxury-charcoal); line-height: 1.6; margin: 0;">{{ brief.interests }}</p>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Found Deals Section -->
+        <section class="detail-card" style="margin-bottom: var(--space-luxury-3xl);">
+            <div class="detail-card-header">
+                <h3 class="detail-card-title">
+                    <i class="fas fa-gem"></i>
+                    Discovered Deals
+                </h3>
+            </div>
+            <div class="detail-card-body">
+                <div id="dealsContainer" style="min-height: 100px;">
+                    <div style="text-align: center; padding: 2rem;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--luxury-gold); margin-bottom: 1rem;"></i>
+                        <p style="color: var(--luxury-charcoal);">Searching for deals...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Action Buttons -->
+        <section class="action-buttons">
+            <a href="/briefs" class="action-button">
+                <i class="fas fa-arrow-left"></i>
+                Back to Briefs
+            </a>
+            <a href="/brief/{{ brief.id }}/edit" class="action-button">
+                <i class="fas fa-edit"></i>
+                Edit Brief
+            </a>
+            <a href="/api/run-search" class="action-button primary" onclick="triggerSearch(event)">
+                <i class="fas fa-search"></i>
+                Trigger New Search
+            </a>
+        </section>
+    </main>
+    
+    <script>
+        // Trigger manual search
+        async function triggerSearch(event) {
+            event.preventDefault();
+            const button = event.target.closest('.action-button');
+            const originalText = button.innerHTML;
+            
+            try {
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching...';
+                button.style.pointerEvents = 'none';
+                
+                const response = await fetch('/api/run-search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    button.innerHTML = '<i class="fas fa-check"></i> Search Started!';
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                        button.style.pointerEvents = 'auto';
+                    }, 3000);
+                } else {
+                    throw new Error(result.error || 'Failed to start search');
+                }
+            } catch (error) {
+                console.error('Search error:', error);
+                button.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.style.pointerEvents = 'auto';
+                }, 3000);
+            }
+        }
+        
+        // Add smooth animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.activity-stat-card, .detail-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, index * 100);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                observer.observe(card);
+            });
+        });
+        
+        // Store deals data globally for access in bookDeal function
+        let dealsData = [];
+        
+        // Load deals for this brief
+        async function loadDeals() {
+            const briefId = {{ brief.id }};
+            const container = document.getElementById('dealsContainer');
+            
+            try {
+                const response = await fetch(`/api/briefs/${briefId}/deals`);
+                const deals = await response.json();
+                dealsData = deals; // Store for later use
+                
+                if (deals.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-deals">
+                            <i class="fas fa-search"></i>
+                            <h3>No deals found yet</h3>
+                            <p>We're actively searching for the best deals matching your criteria. Check back soon!</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = deals.map(deal => `
+                        <div class="deal-card">
+                            <div class="deal-header">
+                                <div>
+                                    <div class="deal-title">${deal.destination_name || deal.destination}</div>
+                                    <div class="deal-subtitle">${deal.airline || 'Multiple Airlines'} ${deal.hotel_name ? '+ ' + deal.hotel_name : ''}</div>
+                                    ${deal.provider ? `<div class="deal-provider">via ${deal.provider}</div>` : ''}
+                                </div>
+                                <div class="deal-price">
+                                    <div class="deal-price-amount">£${deal.total_price.toLocaleString()}</div>
+                                    <div class="deal-price-label">${deal.type === 'package' ? 'Total Package' : 'Per Person'}</div>
+                                </div>
+                            </div>
+                            
+                            <div class="deal-details">
+                                <div class="deal-detail-item">
+                                    <i class="fas fa-calendar"></i>
+                                    ${new Date(deal.departure_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - 
+                                    ${deal.return_date ? new Date(deal.return_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : 'One Way'}
+                                </div>
+                                <div class="deal-detail-item">
+                                    <i class="fas fa-clock"></i>
+                                    ${deal.duration || (deal.duration_nights + ' nights')}
+                                </div>
+                                <div class="deal-detail-item">
+                                    <i class="fas fa-plane"></i>
+                                    ${deal.stops === 0 ? 'Direct' : deal.stops + ' Stop' + (deal.stops > 1 ? 's' : '')}
+                                </div>
+                                ${deal.hotel_rating ? `
+                                    <div class="deal-detail-item">
+                                        <i class="fas fa-star"></i>
+                                        ${deal.hotel_rating} Star Hotel
+                                    </div>
+                                ` : ''}
+                            </div>
+                            
+                            <div class="deal-actions">
+                                <button class="deal-action-btn secondary" onclick="viewDealDetails('${deal.id}')">
+                                    <i class="fas fa-info-circle"></i>
+                                    View Details
+                                </button>
+                                <button class="deal-action-btn primary" onclick="bookDeal('${deal.id}')">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    View Deal
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading deals:', error);
+                container.innerHTML = `
+                    <div class="no-deals">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Error loading deals</h3>
+                        <p>Please try refreshing the page.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        function viewDealDetails(dealId) {
+            // TODO: Show deal details modal
+            alert('Deal details coming soon!');
+        }
+        
+        function bookDeal(dealId) {
+            // Find the deal
+            const deal = dealsData.find(d => d.id == dealId);
+            if (deal && deal.booking_url) {
+                // Open external booking partner in new tab
+                window.open(deal.booking_url, '_blank');
+            } else {
+                // Fallback to a search URL if no direct booking link
+                const destination = deal ? deal.destination_name || deal.destination : 'destination';
+                const searchUrl = `https://www.skyscanner.com/transport/flights/lon/${destination}/`;
+                window.open(searchUrl, '_blank');
+            }
+        }
+        
+        // Load deals when page loads
+        loadDeals();
+        
+        // Refresh deals every 30 seconds
+        setInterval(loadDeals, 30000);
+    </script>
+
+    <style>
+        /* Deal Cards */
+        .deal-card {
+            background: var(--luxury-ivory);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 16px;
+            padding: var(--space-luxury-lg);
+            margin-bottom: var(--space-luxury-md);
+            transition: var(--transition-luxury);
+        }
+        
+        .deal-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-luxury-elevated);
+            border-color: var(--luxury-gold);
+        }
+        
+        .deal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-luxury-md);
+        }
+        
+        .deal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--luxury-obsidian);
+            margin-bottom: 0.25rem;
+        }
+        
+        .deal-subtitle {
+            color: var(--luxury-charcoal);
+            font-size: 0.95rem;
+        }
+        
+        .deal-provider {
+            color: var(--luxury-gold);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-top: 0.25rem;
+        }
+        
+        .deal-price {
+            text-align: right;
+        }
+        
+        .deal-price-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--luxury-gold);
+        }
+        
+        .deal-price-label {
+            font-size: 0.85rem;
+            color: var(--luxury-charcoal);
+        }
+        
+        .deal-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-luxury-md);
+            margin-bottom: var(--space-luxury-lg);
+        }
+        
+        .deal-detail-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+            color: var(--luxury-charcoal);
+            font-size: 0.9rem;
+        }
+        
+        .deal-detail-item i {
+            color: var(--luxury-gold);
+            width: 20px;
+        }
+        
+        .deal-actions {
+            display: flex;
+            gap: var(--space-luxury-md);
+            justify-content: flex-end;
+        }
+        
+        .deal-action-btn {
+            padding: var(--space-luxury-sm) var(--space-luxury-lg);
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition-luxury);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-luxury-xs);
+            border: none;
+        }
+        
+        .deal-action-btn.primary {
+            background: var(--gradient-luxury-gold);
+            color: var(--luxury-white);
+        }
+        
+        .deal-action-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-luxury-elevated);
+        }
+        
+        .deal-action-btn.secondary {
+            background: var(--luxury-white);
+            color: var(--luxury-obsidian);
+            border: 1px solid var(--luxury-stone);
+        }
+        
+        .deal-action-btn.secondary:hover {
+            background: var(--luxury-pearl);
+            border-color: var(--luxury-gold);
+        }
+        
+        .no-deals {
+            text-align: center;
+            padding: var(--space-luxury-3xl);
+            color: var(--luxury-charcoal);
+        }
+        
+        .no-deals i {
+            font-size: 3rem;
+            color: var(--luxury-stone);
+            margin-bottom: var(--space-luxury-md);
+            display: block;
+        }
+    </style>
+</body>
+</html>

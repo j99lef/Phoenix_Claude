@@ -1,0 +1,1 @@
+web: gunicorn -w 4 -b 0.0.0.0:$PORT "travel_aigent:create_app()"

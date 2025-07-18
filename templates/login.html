@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelAiGent — Future of Travel</title>
+    
+    <!-- Preload Critical Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Luxury Concierge Design System -->
+    <link href="/static/luxury-concierge.css" rel="stylesheet">
+    
+    <!-- Additional fonts for luxury design -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Luxury Login Page Enhancements */
+        .luxury-login-container {
+            min-height: 100vh;
+            background: var(--gradient-luxury-depth);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-luxury-xl);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .back-to-home {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: var(--luxury-white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .back-to-home:hover {
+            color: var(--luxury-gold);
+            transform: translateX(-4px);
+        }
+        
+        .luxury-login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="luxury-login-pattern" patternUnits="userSpaceOnUse" width="60" height="60"><circle cx="30" cy="30" r="1.5" fill="rgba(201,169,110,0.08)"/><path d="M10 40 Q30 35 50 40" stroke="rgba(201,169,110,0.05)" stroke-width="1" fill="none"/></pattern></defs><rect width="100" height="100" fill="url(%23luxury-login-pattern)"/></svg>');
+            opacity: 0.4;
+        }
+        
+        .luxury-login-card {
+            position: relative;
+            z-index: 10;
+            width: min(90vw, 480px);
+            background: var(--luxury-white);
+            border-radius: 24px;
+            border: 1px solid var(--luxury-stone);
+            box-shadow: var(--shadow-luxury-dramatic);
+            overflow: hidden;
+            animation: luxuryLoginEntry 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes luxuryLoginEntry {
+            0% {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .luxury-login-header {
+            padding: var(--space-luxury-4xl) var(--space-luxury-2xl) var(--space-luxury-2xl);
+            text-align: center;
+            background: var(--gradient-luxury-neutral);
+            border-bottom: 1px solid var(--luxury-stone);
+        }
+        
+        .luxury-login-title {
+            font-family: var(--font-luxury-display);
+            font-size: 2.25rem;
+            font-weight: 400;
+            color: var(--luxury-obsidian);
+            margin-bottom: var(--space-luxury-sm);
+            letter-spacing: -0.02em;
+        }
+        
+        .luxury-login-subtitle {
+            color: var(--luxury-charcoal);
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+        
+        .luxury-login-content {
+            padding: var(--space-luxury-2xl);
+        }
+        
+        .luxury-error {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            border-radius: 12px;
+            padding: var(--space-luxury-md);
+            margin-bottom: var(--space-luxury-lg);
+            color: #dc2626;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+        }
+        
+        .luxury-login-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-luxury-lg);
+        }
+        
+        .luxury-input-group {
+            position: relative;
+        }
+        
+        .luxury-input {
+            width: 100%;
+            background: var(--luxury-ivory);
+            border: 2px solid var(--luxury-stone);
+            border-radius: 12px;
+            padding: var(--space-luxury-lg);
+            font-size: 1rem;
+            font-family: var(--font-luxury-body);
+            color: var(--luxury-obsidian);
+            transition: var(--transition-luxury);
+            outline: none;
+        }
+        
+        .luxury-input:focus {
+            border-color: var(--luxury-gold);
+            background: var(--luxury-white);
+            box-shadow: 0 0 0 4px rgba(201, 169, 110, 0.15);
+            transform: translateY(-1px);
+        }
+        
+        .luxury-input::placeholder {
+            color: var(--luxury-charcoal);
+            opacity: 0.7;
+        }
+        
+        .luxury-login-button {
+            width: 100%;
+            background: var(--gradient-luxury-gold);
+            color: var(--luxury-white);
+            border: none;
+            border-radius: 12px;
+            padding: var(--space-luxury-lg);
+            font-family: var(--font-luxury-body);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-luxury);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.02em;
+        }
+        
+        .luxury-login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-luxury-elevated);
+        }
+        
+        .luxury-login-button:active {
+            transform: translateY(0);
+        }
+        
+        .luxury-demo-section {
+            margin-top: var(--space-luxury-xl);
+            padding: var(--space-luxury-lg);
+            background: var(--luxury-champagne);
+            border-radius: 12px;
+            border: 1px solid rgba(201, 169, 110, 0.2);
+            text-align: center;
+        }
+        
+        .luxury-demo-title {
+            color: var(--luxury-bronze);
+            font-weight: 600;
+            margin-bottom: var(--space-luxury-sm);
+            font-size: 0.95rem;
+            letter-spacing: 0.02em;
+        }
+        
+        .luxury-demo-credentials {
+            color: var(--luxury-obsidian);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .luxury-demo-code {
+            background: rgba(44, 44, 44, 0.1);
+            padding: var(--space-luxury-xs) var(--space-luxury-sm);
+            border-radius: 6px;
+            font-family: var(--font-luxury-body);
+            font-weight: 600;
+            color: var(--luxury-bronze);
+            font-size: 0.85rem;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .luxury-login-container {
+                padding: var(--space-luxury-lg);
+            }
+            
+            .luxury-login-card {
+                width: 100%;
+            }
+            
+            .luxury-login-header {
+                padding: var(--space-luxury-2xl) var(--space-luxury-lg) var(--space-luxury-lg);
+            }
+            
+            .luxury-login-title {
+                font-size: 2rem;
+            }
+            
+            .luxury-login-content {
+                padding: var(--space-luxury-lg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-to-home">
+        <i class="fas fa-arrow-left"></i>
+        Back to Home
+    </a>
+    
+    <!-- Luxury Login Container -->
+    <div class="luxury-login-container">
+        <div class="luxury-login-card">
+            <!-- Login Header -->
+            <div class="luxury-login-header">
+                <h1 class="luxury-login-title">
+                    <img src="/static/TravelAigent_logo_header.png" alt="TravelAiGent" style="height: 1.2em; vertical-align: middle; margin-right: 0.3em;">
+                    TravelAiGent
+                </h1>
+                <p class="luxury-login-subtitle">
+                    Your personal travel concierge awaits
+                </p>
+            </div>
+            
+            <!-- Login Content -->
+            <div class="luxury-login-content">
+                {% if error %}
+                <div class="luxury-error">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>{{ error }}</span>
+                </div>
+                {% endif %}
+                
+                <form method="POST" class="luxury-login-form" id="luxuryLoginForm">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    
+                    <div class="luxury-input-group">
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            class="luxury-input" 
+                            placeholder="Username"
+                            required 
+                            autocomplete="username"
+                            value="{{ request.form.username or '' }}"
+                        >
+                    </div>
+                    
+                    <div class="luxury-input-group">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="luxury-input" 
+                            placeholder="Password"
+                            required 
+                            autocomplete="current-password"
+                        >
+                    </div>
+                    
+                    <button type="submit" class="luxury-login-button" id="luxuryLoginButton">
+                        <span id="buttonText">Access Concierge</span>
+                    </button>
+                </form>
+                
+                <div style="text-align: center; margin-top: var(--space-luxury-xl); color: var(--luxury-charcoal);">
+                    Don't have an account? <a href="/register" style="color: var(--luxury-gold); text-decoration: none; font-weight: 600;">Create one</a>
+                </div>
+                
+                <div class="luxury-demo-section">
+                    <div class="luxury-demo-title">✨ Quick Demo Access</div>
+                    <div class="luxury-demo-credentials">
+                        Try: <span class="luxury-demo-code">demo</span> / <span class="luxury-demo-code">demo</span><br>
+                        Or: <span class="luxury-demo-code">admin</span> / <span class="luxury-demo-code">admin</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // LUXURY TRAVEL CONCIERGE LOGIN
+        class LuxuryTravelLogin {
+            constructor() {
+                this.initializeLuxuryLogin();
+                this.setupElegantInteractions();
+                this.setupAccessibilityFeatures();
+            }
+            
+            // Initialize luxury login experience
+            initializeLuxuryLogin() {
+                // Auto-focus username input
+                setTimeout(() => {
+                    document.getElementById('username')?.focus();
+                }, 300);
+                
+                // Setup form handling
+                this.setupFormHandling();
+            }
+            
+            // Setup elegant form interactions
+            setupElegantInteractions() {
+                const inputs = document.querySelectorAll('.luxury-input');
+                
+                inputs.forEach(input => {
+                    // Enhanced focus effects
+                    input.addEventListener('focus', () => {
+                        input.style.transform = 'translateY(-1px)';
+                    });
+                    
+                    input.addEventListener('blur', () => {
+                        input.style.transform = 'translateY(0)';
+                    });
+                    
+                    // Elegant key navigation
+                    input.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            this.handleEnterKey(input);
+                        }
+                    });
+                    
+                    // Input validation feedback
+                    input.addEventListener('input', () => {
+                        this.validateInput(input);
+                    });
+                });
+                
+                // Button hover enhancements
+                const button = document.getElementById('luxuryLoginButton');
+                if (button) {
+                    button.addEventListener('mouseenter', () => {
+                        button.style.transform = 'translateY(-2px)';
+                    });
+                    
+                    button.addEventListener('mouseleave', () => {
+                        button.style.transform = 'translateY(0)';
+                    });
+                }
+            }
+            
+            // Handle Enter key navigation
+            handleEnterKey(currentInput) {
+                const form = document.getElementById('luxuryLoginForm');
+                const inputs = Array.from(form.querySelectorAll('.luxury-input'));
+                const currentIndex = inputs.indexOf(currentInput);
+                
+                if (currentIndex < inputs.length - 1) {
+                    inputs[currentIndex + 1].focus();
+                } else {
+                    form.submit();
+                }
+            }
+            
+            // Validate input with elegant feedback
+            validateInput(input) {
+                const value = input.value.trim();
+                
+                if (value.length > 0) {
+                    input.style.borderColor = 'var(--luxury-gold)';
+                } else {
+                    input.style.borderColor = 'var(--luxury-stone)';
+                }
+            }
+            
+            // Setup sophisticated form handling
+            setupFormHandling() {
+                const form = document.getElementById('luxuryLoginForm');
+                const button = document.getElementById('luxuryLoginButton');
+                const buttonText = document.getElementById('buttonText');
+                
+                if (!form || !button || !buttonText) return;
+                
+                form.addEventListener('submit', (e) => {
+                    // Elegant loading state
+                    button.style.background = 'var(--luxury-silver)';
+                    button.style.cursor = 'not-allowed';
+                    buttonText.textContent = 'Accessing...';
+                    button.disabled = true;
+                    
+                    // Reset after timeout (for error cases)
+                    setTimeout(() => {
+                        button.style.background = 'var(--gradient-luxury-gold)';
+                        button.style.cursor = 'pointer';
+                        buttonText.textContent = 'Access Concierge';
+                        button.disabled = false;
+                    }, 8000);
+                });
+            }
+            
+            // Setup accessibility features
+            setupAccessibilityFeatures() {
+                // Escape key to clear focus
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        document.activeElement?.blur();
+                    }
+                });
+                
+                // High contrast mode detection
+                if (window.matchMedia('(prefers-contrast: high)').matches) {
+                    document.documentElement.style.setProperty('--luxury-gold', '#B8860B');
+                    document.documentElement.style.setProperty('--luxury-stone', '#666666');
+                }
+                
+                // Reduced motion preferences
+                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        * {
+                            animation-duration: 0.01ms !important;
+                            transition-duration: 0.1ms !important;
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+                
+                // Focus visible enhancement
+                this.enhanceFocusVisible();
+            }
+            
+            // Enhance focus visible for accessibility
+            enhanceFocusVisible() {
+                const focusableElements = document.querySelectorAll('input, button');
+                
+                focusableElements.forEach(element => {
+                    element.addEventListener('focus', (e) => {
+                        if (e.target.matches(':focus-visible')) {
+                            e.target.style.outline = '2px solid var(--luxury-gold)';
+                            e.target.style.outlineOffset = '2px';
+                        }
+                    });
+                    
+                    element.addEventListener('blur', (e) => {
+                        e.target.style.outline = '';
+                        e.target.style.outlineOffset = '';
+                    });
+                });
+            }
+        }
+        
+        // Initialize the luxury login experience
+        document.addEventListener('DOMContentLoaded', () => {
+            new LuxuryTravelLogin();
+            
+            // Elegant page load completion
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+                document.body.style.transition = 'opacity 0.5s ease-in-out';
+            }, 100);
+        });
+        
+        // Elegant console signature
+        console.log('%c✨ TravelAiGent Luxury Concierge Login', 
+                   'background: linear-gradient(135deg, #C9A96E 0%, #F7E7CE 100%); color: #2C2C2C; padding: 10px 20px; border-radius: 8px; font-weight: 600;');
+    </script>
+</body>
+</html>

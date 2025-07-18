@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelAiGent Dashboard - Your Personal Travel Concierge</title>
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Luxury Concierge Design System -->
+    <link href="/static/luxury-concierge.css" rel="stylesheet">
+    
+    <!-- Additional fonts for luxury design -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Profile Dropdown Styles */
+        .luxury-profile {
+            position: relative;
+        }
+        
+        .luxury-profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
+            cursor: pointer;
+            padding: var(--space-luxury-sm) var(--space-luxury-md);
+            border-radius: 50px;
+            transition: var(--transition-luxury);
+        }
+        
+        .luxury-profile-trigger:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .luxury-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: var(--luxury-white);
+            border: 1px solid var(--luxury-stone);
+            border-radius: 12px;
+            box-shadow: var(--shadow-luxury-elevated);
+            min-width: 220px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 9999;
+        }
+        
+        .luxury-dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .luxury-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-md);
+            padding: var(--space-luxury-md) var(--space-luxury-lg);
+            color: var(--luxury-obsidian);
+            text-decoration: none;
+            transition: var(--transition-luxury);
+            font-size: 0.95rem;
+        }
+        
+        .luxury-dropdown-item:first-child {
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .luxury-dropdown-item:last-child {
+            border-radius: 0 0 12px 12px;
+        }
+        
+        .luxury-dropdown-item:hover {
+            background: var(--luxury-pearl);
+            color: var(--luxury-gold);
+        }
+        
+        .luxury-dropdown-item i {
+            width: 20px;
+            text-align: center;
+            color: var(--luxury-gold);
+        }
+        
+        .luxury-dropdown-divider {
+            height: 1px;
+            background: var(--luxury-stone);
+            margin: var(--space-luxury-xs) 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Luxury Travel Concierge Header -->
+    <header class="luxury-header">
+        <div class="header-luxury-content">
+            <a href="/" class="luxury-brand">
+                <img src="/static/TravelAigent_logo_header.png" alt="TravelAiGent" class="brand-luxury-logo">
+                <span class="brand-luxury-text">TravelAiGent</span>
+                <span class="brand-version">v1.2.1</span>
+            </a>
+            
+            <nav class="luxury-nav">
+                <a href="/" class="luxury-nav-link">Dashboard</a>
+                <a href="/profile" class="luxury-nav-link">Profile</a>
+                <a href="/briefs" class="luxury-nav-link">Travel Briefs</a>
+                <a href="/groups" class="luxury-nav-link">Travel Groups</a>
+                <a href="/deals" class="luxury-nav-link">Deals</a>
+            </nav>
+            
+            <div class="luxury-profile dropdown">
+                <div class="luxury-profile-trigger" onclick="toggleProfileDropdown(event)">
+                    <div class="luxury-avatar">{{ (user.first_name[0] if user and user.first_name else user.username[0] if user and user.username else 'U') | upper }}</div>
+                    <span>{{ user.first_name if user and user.first_name else user.username if user else 'User' }}</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="luxury-dropdown-menu" id="profileDropdown">
+                    <a href="/profile" class="luxury-dropdown-item">
+                        <i class="fas fa-user"></i>
+                        Configure Profile
+                    </a>
+                    <a href="/briefs" class="luxury-dropdown-item">
+                        <i class="fas fa-suitcase"></i>
+                        My Travel Briefs
+                    </a>
+                    <a href="/account" class="luxury-dropdown-item">
+                        <i class="fas fa-cog"></i>
+                        Account Settings
+                    </a>
+                    <div class="luxury-dropdown-divider"></div>
+                    <a href="/logout" class="luxury-dropdown-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Log Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Luxury Hero Section -->
+    <section class="luxury-hero">
+        <div class="luxury-hero-content luxury-animate-fade-up">
+            <h1 class="luxury-hero-title">
+                Welcome to your personal 
+                <em>Travel Concierge</em>
+            </h1>
+            <p class="luxury-hero-subtitle">
+                Discover extraordinary journeys crafted exclusively for discerning travelers. 
+                Your AI concierge is curating the world's finest travel experiences.
+            </p>
+            <div class="luxury-cta-group">
+                <a href="/brief/new" class="btn-luxury-primary">
+                    <i class="fas fa-plus"></i>
+                    Create Travel Brief
+                </a>
+                <a href="/deals" class="btn-luxury-secondary">
+                    <i class="fas fa-search"></i>
+                    Explore Curated Deals
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Main Content Container -->
+    <main class="luxury-section">
+        <div class="luxury-container">
+            <!-- Luxury Stats Overview -->
+            <section class="luxury-stats-grid">
+                <div class="luxury-stat-card luxury-animate-scale">
+                    <div class="luxury-stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <span class="luxury-stat-number" id="last-check">Loading...</span>
+                    <div class="luxury-stat-label">Last System Check</div>
+                    <div class="luxury-stat-description">Concierge monitoring active</div>
+                </div>
+                
+                <div class="luxury-stat-card luxury-animate-scale">
+                    <div class="luxury-stat-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <span class="luxury-stat-number" id="active-briefs">{{ briefs_count or 0 }}</span>
+                    <div class="luxury-stat-label">Travel Briefs</div>
+                    <div class="luxury-stat-description">Personalized searches</div>
+                </div>
+                
+                <div class="luxury-stat-card luxury-animate-scale">
+                    <div class="luxury-stat-icon">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <span class="luxury-stat-number" id="total-deals">0</span>
+                    <div class="luxury-stat-label">Curated Deals</div>
+                    <div class="luxury-stat-description">Exclusive opportunities</div>
+                </div>
+                
+                <div class="luxury-stat-card luxury-animate-scale">
+                    <div class="luxury-stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <span class="luxury-stat-number" id="recommendations">0</span>
+                    <div class="luxury-stat-label">Recommendations</div>
+                    <div class="luxury-stat-description">Tailored for you</div>
+                </div>
+            </section>
+            <!-- Travel Briefs Section -->
+            <div class="luxury-section-header">
+                <h2 class="luxury-section-title">Your Travel Portfolio</h2>
+                <p class="luxury-section-subtitle">
+                    Curated travel briefs and exclusive opportunities crafted by your personal concierge
+                </p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-luxury-4xl); margin-bottom: var(--space-luxury-4xl);">
+                <!-- Main Travel Briefs -->
+                <section class="luxury-card">
+                    <div class="luxury-card-header">
+                        <h3 class="luxury-card-title">
+                            <i class="fas fa-map-marked-alt" style="color: var(--luxury-gold); margin-right: var(--space-luxury-sm);"></i>
+                            Your Travel Briefs
+                        </h3>
+                        <p class="luxury-card-subtitle">Personalized travel search preferences</p>
+                    </div>
+                    
+                    <div class="luxury-card-content" id="briefsContainer">
+                        {% if recent_briefs %}
+                            {% for brief in recent_briefs %}
+                                <div class="luxury-brief-preview" style="padding: var(--space-luxury-lg); margin-bottom: var(--space-luxury-md); border-radius: 12px; background: var(--luxury-pearl); border: 1px solid var(--luxury-stone);">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-luxury-sm);">
+                                        <h4 style="font-family: var(--font-luxury-display); font-size: 1.1rem; color: var(--luxury-obsidian); margin: 0;">
+                                            {{ brief.departure_location }} → {{ brief.destination }}
+                                        </h4>
+                                        <span style="color: var(--luxury-gold); font-weight: 600; font-size: 0.9rem;">
+                                            £{{ brief.budget_min }} - £{{ brief.budget_max }}
+                                        </span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: var(--space-luxury-md); margin-bottom: var(--space-luxury-sm);">
+                                        <span style="color: var(--luxury-charcoal); font-size: 0.9rem;">
+                                            <i class="fas fa-users" style="margin-right: var(--space-luxury-xs);"></i>
+                                            {{ brief.travelers }}
+                                        </span>
+                                        <span style="color: var(--luxury-charcoal); font-size: 0.9rem;">
+                                            <i class="fas fa-bed" style="margin-right: var(--space-luxury-xs);"></i>
+                                            {{ brief.accommodation_type }}
+                                        </span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span style="color: var(--luxury-charcoal); font-size: 0.8rem;">
+                                            Created {{ brief.created_at.strftime('%b %d') if brief.created_at else 'Recently' }}
+                                        </span>
+                                        <a href="/brief/{{ brief.id }}/edit" class="btn-luxury-outline btn-sm">
+                                            <i class="fas fa-edit"></i>
+                                            Edit
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <div style="text-align: center; padding: var(--space-luxury-lg) 0;">
+                                <a href="/briefs" class="btn-luxury-secondary">
+                                    <i class="fas fa-eye"></i>
+                                    View All Briefs
+                                </a>
+                            </div>
+                        {% else %}
+                            <div style="text-align: center; padding: var(--space-luxury-4xl) var(--space-luxury-xl);">
+                                <div style="font-size: 3rem; color: var(--luxury-gold); margin-bottom: var(--space-luxury-lg);">
+                                    <i class="fas fa-suitcase-rolling"></i>
+                                </div>
+                                <h4 style="font-family: var(--font-luxury-display); font-size: 1.5rem; color: var(--luxury-obsidian); margin-bottom: var(--space-luxury-sm);">
+                                    Ready for your next luxury escape?
+                                </h4>
+                                <p style="color: var(--luxury-charcoal); margin-bottom: var(--space-luxury-xl); line-height: 1.6;">
+                                    Create your first travel brief to unlock a world of extraordinary experiences 
+                                    curated exclusively for discerning travelers like yourself.
+                                </p>
+                                <a href="/brief/new" class="btn-luxury-primary">
+                                    <i class="fas fa-plus"></i>
+                                    Create Your First Brief
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </section>
+                
+                <!-- Concierge Services Sidebar -->
+                <aside>
+                    <div class="luxury-card" style="margin-bottom: var(--space-luxury-xl);">
+                        <div class="luxury-card-header">
+                            <h3 class="luxury-card-title">Concierge Services</h3>
+                        </div>
+                        <div class="luxury-card-content">
+                            <a href="/briefs/new" class="btn-luxury-primary" style="margin-bottom: var(--space-luxury-md);">
+                                <i class="fas fa-plus"></i>
+                                New Travel Brief
+                            </a>
+                            
+                            <a href="/deals" class="btn-luxury-secondary" style="margin-bottom: var(--space-luxury-md);">
+                                <i class="fas fa-search"></i>
+                                Browse Curated Deals
+                            </a>
+                            
+                            <a href="/settings" class="btn-luxury-secondary">
+                                <i class="fas fa-cog"></i>
+                                Preferences
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="luxury-card">
+                        <div class="luxury-card-header">
+                            <h3 class="luxury-card-title">Recent Activity</h3>
+                        </div>
+                        <div class="luxury-card-content">
+                            <div style="display: flex; align-items: center; gap: var(--space-luxury-md); padding: var(--space-luxury-md); margin-bottom: var(--space-luxury-sm); border-radius: 8px; background: var(--luxury-pearl);">
+                                <div style="width: 40px; height: 40px; background: var(--gradient-luxury-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                                    <i class="fas fa-concierge-bell"></i>
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600; color: var(--luxury-obsidian); font-size: 0.9rem;">Concierge activated</div>
+                                    <div style="color: var(--luxury-charcoal); font-size: 0.8rem;">Just now</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; gap: var(--space-luxury-md); padding: var(--space-luxury-md); margin-bottom: var(--space-luxury-sm); border-radius: 8px; background: var(--luxury-pearl);">
+                                <div style="width: 40px; height: 40px; background: var(--gradient-luxury-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600; color: var(--luxury-obsidian); font-size: 0.9rem;">Secure environment ready</div>
+                                    <div style="color: var(--luxury-charcoal); font-size: 0.8rem;">Today</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; gap: var(--space-luxury-md); padding: var(--space-luxury-md); border-radius: 8px; background: var(--luxury-pearl);">
+                                <div style="width: 40px; height: 40px; background: var(--gradient-luxury-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                                    <i class="fas fa-globe"></i>
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600; color: var(--luxury-obsidian); font-size: 0.9rem;">Global network connected</div>
+                                    <div style="color: var(--luxury-charcoal); font-size: 0.8rem;">Today</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Luxury Floating Action -->
+    <a href="/brief/new" class="luxury-floating-action" title="Create Travel Brief">
+        <i class="fas fa-plus"></i>
+    </a>
+    
+    <script>
+        // Profile dropdown functionality
+        function toggleProfileDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.classList.toggle('show');
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('profileDropdown');
+            const trigger = document.querySelector('.luxury-profile-trigger');
+            
+            if (!trigger.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+        
+        // LUXURY TRAVEL CONCIERGE DASHBOARD
+        class LuxuryTravelDashboard {
+            constructor() {
+                this.initializeLuxuryExperience();
+                this.setupElegantAnimations();
+                this.startConciergeMonitoring();
+            }
+            
+            // Initialize luxury dashboard experience
+            initializeLuxuryExperience() {
+                this.updateTimeDisplay();
+                setInterval(() => this.updateTimeDisplay(), 30000); // Update every 30 seconds
+                
+                // Initialize dashboard stats with elegant animation
+                setTimeout(() => {
+                    this.animateStatisticsEntry();
+                }, 500);
+                
+                // Setup header scroll effects
+                this.setupHeaderEffects();
+            }
+            
+            // Update time display with luxury formatting
+            updateTimeDisplay() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+                const element = document.getElementById('last-check');
+                if (element) {
+                    element.textContent = timeString;
+                }
+            }
+            
+            // Animate statistics with elegant transitions
+            animateStatisticsEntry() {
+                const stats = [
+                    { id: 'active-briefs', value: 0 },
+                    { id: 'total-deals', value: 0 },
+                    { id: 'recommendations', value: 0 }
+                ];
+                
+                stats.forEach((stat, index) => {
+                    setTimeout(() => {
+                        this.animateCountUp(stat.id, stat.value);
+                    }, index * 200);
+                });
+            }
+            
+            // Elegant count up animation
+            animateCountUp(elementId, targetValue) {
+                const element = document.getElementById(elementId);
+                if (!element) return;
+                
+                const duration = 1500;
+                const startTime = performance.now();
+                const startValue = 0;
+                
+                const animate = (currentTime) => {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    // Elegant easing function
+                    const easedProgress = progress * (2 - progress);
+                    const currentValue = Math.floor(startValue + (targetValue - startValue) * easedProgress);
+                    
+                    element.textContent = currentValue;
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    }
+                };
+                
+                requestAnimationFrame(animate);
+            }
+            
+            // Setup elegant header effects
+            setupHeaderEffects() {
+                const header = document.querySelector('.luxury-header');
+                if (!header) return;
+                
+                let lastScroll = 0;
+                
+                window.addEventListener('scroll', () => {
+                    const currentScroll = window.pageYOffset;
+                    
+                    if (currentScroll > 100) {
+                        header.classList.add('scrolled');
+                    } else {
+                        header.classList.remove('scrolled');
+                    }
+                    
+                    lastScroll = currentScroll;
+                }, { passive: true });
+            }
+            
+            // Setup sophisticated animations
+            setupElegantAnimations() {
+                // Intersection Observer for scroll animations
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('luxury-animate-fade-up');
+                        }
+                    });
+                }, { threshold: 0.1 });
+                
+                // Observe luxury cards
+                document.querySelectorAll('.luxury-card, .luxury-stat-card').forEach(card => {
+                    observer.observe(card);
+                });
+                
+                // Add elegant hover effects
+                this.setupHoverEffects();
+            }
+            
+            // Setup sophisticated hover effects
+            setupHoverEffects() {
+                const cards = document.querySelectorAll('.luxury-card, .luxury-stat-card');
+                cards.forEach(card => {
+                    card.addEventListener('mouseenter', (e) => {
+                        this.createElegantHoverEffect(e.target);
+                    });
+                });
+                
+                // Button hover enhancements
+                const buttons = document.querySelectorAll('.btn-luxury-primary, .btn-luxury-secondary');
+                buttons.forEach(button => {
+                    button.addEventListener('mouseenter', (e) => {
+                        this.enhanceButtonHover(e.target);
+                    });
+                });
+            }
+            
+            // Create elegant hover effect
+            createElegantHoverEffect(element) {
+                element.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            }
+            
+            // Enhance button hover
+            enhanceButtonHover(button) {
+                button.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            }
+            
+            // Start concierge monitoring
+            startConciergeMonitoring() {
+                // Simulate concierge activity with subtle indicators
+                setInterval(() => {
+                    this.updateConciergeStatus();
+                }, 60000); // Update every minute
+            }
+            
+            // Update concierge status
+            updateConciergeStatus() {
+                // Subtle status updates for luxury experience
+                console.log('✨ Concierge monitoring active - curating luxury travel experiences');
+            }
+        }
+        
+        // Initialize the luxury dashboard experience
+        document.addEventListener('DOMContentLoaded', () => {
+            new LuxuryTravelDashboard();
+            
+            // Add subtle loading complete indication
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+                document.body.style.transition = 'opacity 0.5s ease-in-out';
+            }, 100);
+        });
+        
+        // Elegant console signature
+        console.log('%c✨ TravelAiGent Luxury Concierge - Sophisticated Travel Experience', 
+                   'background: linear-gradient(135deg, #C9A96E 0%, #F7E7CE 100%); color: #2C2C2C; padding: 12px 24px; border-radius: 8px; font-weight: 600; font-family: "Playfair Display", serif;');
+        
+        // Accessibility and performance optimizations
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            // Disable animations for users who prefer reduced motion
+            const style = document.createElement('style');
+            style.textContent = `
+                * {
+                    animation-duration: 0.01ms !important;
+                    animation-iteration-count: 1 !important;
+                    transition-duration: 0.01ms !important;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    </script>
+</body>
+</html>

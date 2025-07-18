@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelAiGent Dashboard - Your Personal Travel Concierge</title>
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Modern Styles -->
+    <link href="/static/modern-style.css" rel="stylesheet">
+    
+    <style>
+        /* Dashboard-specific styles */
+        .dashboard-container {
+            min-height: 100vh;
+            background: var(--gradient-luxury);
+            background-attachment: fixed;
+        }
+        
+        .dashboard-main {
+            padding: var(--space-6) 0;
+        }
+        
+        .welcome-section {
+            background: var(--glass-luxury);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-8);
+            margin-bottom: var(--space-8);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="travel-dashboard" patternUnits="userSpaceOnUse" width="30" height="30"><circle cx="15" cy="15" r="2" fill="rgba(255,255,255,0.05)"/><path d="M5 25 Q15 20 25 25" stroke="rgba(255,255,255,0.03)" stroke-width="1" fill="none"/></pattern></defs><rect width="100" height="100" fill="url(%23travel-dashboard)"/></svg>');
+            opacity: 0.7;
+        }
+        
+        .welcome-content {
+            position: relative;
+            z-index: 10;
+        }
+        
+        .welcome-title {
+            font-family: var(--font-family-display);
+            font-size: var(--text-4xl);
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-4);
+        }
+        
+        .welcome-subtitle {
+            font-size: var(--text-lg);
+            color: var(--gray-600);
+            margin-bottom: var(--space-6);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .welcome-actions {
+            display: flex;
+            gap: var(--space-4);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+        
+        .stat-card-modern {
+            background: var(--card-luxury);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-6);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition-luxury);
+        }
+        
+        .stat-card-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-ocean);
+        }
+        
+        .stat-card-modern:nth-child(2)::before {
+            background: var(--gradient-sunset);
+        }
+        
+        .stat-card-modern:nth-child(3)::before {
+            background: var(--gradient-gold);
+        }
+        
+        .stat-card-modern:nth-child(4)::before {
+            background: linear-gradient(135deg, var(--primary-500) 0%, var(--ocean-500) 100%);
+        }
+        
+        .stat-card-modern:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-luxury);
+        }
+        
+        .stat-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto var(--space-4);
+            background: var(--gradient-ocean);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-2xl);
+            color: white;
+        }
+        
+        .stat-card-modern:nth-child(2) .stat-icon {
+            background: var(--gradient-sunset);
+        }
+        
+        .stat-card-modern:nth-child(3) .stat-icon {
+            background: var(--gradient-gold);
+        }
+        
+        .stat-card-modern:nth-child(4) .stat-icon {
+            background: linear-gradient(135deg, var(--primary-500) 0%, var(--ocean-500) 100%);
+        }
+        
+        .stat-number {
+            font-size: var(--text-3xl);
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: var(--text-base);
+            font-weight: 600;
+            color: var(--gray-600);
+            margin-bottom: var(--space-1);
+        }
+        
+        .stat-sublabel {
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+        }
+        
+        .section-header {
+            margin-bottom: var(--space-6);
+        }
+        
+        .section-title {
+            font-family: var(--font-family-display);
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+        
+        .section-subtitle {
+            font-size: var(--text-base);
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-8);
+            margin-bottom: var(--space-8);
+        }
+        
+        .briefs-section {
+            background: var(--glass-luxury);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-6);
+            position: relative;
+        }
+        
+        .quick-actions {
+            background: var(--glass-luxury);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-6);
+        }
+        
+        .action-button {
+            width: 100%;
+            background: var(--gradient-ocean);
+            color: white;
+            border: none;
+            border-radius: var(--radius-xl);
+            padding: var(--space-4) var(--space-6);
+            font-family: var(--font-family-display);
+            font-size: var(--text-base);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            margin-bottom: var(--space-4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+        }
+        
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .action-button.secondary {
+            background: var(--glass);
+            color: var(--ocean-700);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .action-button.secondary:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+        
+        .brief-card-grid {
+            display: grid;
+            gap: var(--space-4);
+        }
+        
+        .brief-card-luxury {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-xl);
+            padding: var(--space-5);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all var(--transition-base);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .brief-card-luxury::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gradient-ocean);
+        }
+        
+        .brief-card-luxury:hover {
+            transform: translateX(8px);
+            box-shadow: var(--shadow-lg);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .brief-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-3);
+        }
+        
+        .brief-destinations {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+        
+        .brief-status {
+            background: var(--ocean-100);
+            color: var(--ocean-700);
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            font-size: var(--text-xs);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .brief-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-3);
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+        }
+        
+        .brief-meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .brief-meta-item i {
+            color: var(--ocean-500);
+            width: 16px;
+            text-align: center;
+        }
+        
+        .empty-state-luxury {
+            text-align: center;
+            padding: var(--space-12) var(--space-6);
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: var(--radius-xl);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+        }
+        
+        .empty-icon {
+            font-size: var(--text-6xl);
+            color: var(--gray-300);
+            margin-bottom: var(--space-4);
+        }
+        
+        .empty-title {
+            font-family: var(--font-family-display);
+            font-size: var(--text-xl);
+            font-weight: 600;
+            color: var(--gray-600);
+            margin-bottom: var(--space-2);
+        }
+        
+        .empty-description {
+            color: var(--gray-500);
+            margin-bottom: var(--space-6);
+            line-height: 1.6;
+        }
+        
+        .floating-action {
+            position: fixed;
+            bottom: var(--space-8);
+            right: var(--space-8);
+            width: 64px;
+            height: 64px;
+            background: var(--gradient-luxury);
+            border-radius: var(--radius-full);
+            border: none;
+            color: white;
+            font-size: var(--text-xl);
+            cursor: pointer;
+            box-shadow: var(--shadow-luxury);
+            transition: all var(--transition-base);
+            z-index: 40;
+        }
+        
+        .floating-action:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-2xl);
+        }
+        
+        /* Recent Activity Section */
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-3);
+            background: rgba(255, 255, 255, 0.5);
+            transition: all var(--transition-base);
+        }
+        
+        .activity-item:hover {
+            background: rgba(255, 255, 255, 0.8);
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-ocean);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: var(--text-sm);
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 600;
+            color: var(--gray-900);
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-1);
+        }
+        
+        .activity-time {
+            color: var(--gray-500);
+            font-size: var(--text-xs);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: var(--space-6);
+            }
+            
+            .stats-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-main {
+                padding: var(--space-4) 0;
+            }
+            
+            .welcome-section {
+                padding: var(--space-6);
+                margin-bottom: var(--space-6);
+            }
+            
+            .welcome-title {
+                font-size: var(--text-3xl);
+            }
+            
+            .welcome-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .stats-overview {
+                grid-template-columns: 1fr;
+                gap: var(--space-4);
+            }
+            
+            .floating-action {
+                bottom: var(--space-6);
+                right: var(--space-6);
+                width: 56px;
+                height: 56px;
+                font-size: var(--text-lg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Modern Header -->
+        <header class="travel-header">
+            <div class="header-content">
+                <div class="brand-logo">
+                    <img src="/static/TravelAigent_logo_header.png" alt="TravelAiGent" class="brand-luxury-logo" style="height: 1.5em; vertical-align: middle; margin-right: 0.3em;">
+                    <span class="font-display">TravelAiGent</span>
+                </div>
+                
+                <nav class="nav-menu">
+                    <a href="#" class="nav-link">Dashboard</a>
+                    <a href="/briefs" class="nav-link">Travel Briefs</a>
+                    <a href="/deals" class="nav-link">Deals</a>
+                </nav>
+                
+                <div class="user-profile">
+                    <div class="user-avatar">A</div>
+                    <span class="font-medium">Admin</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Dashboard Main Content -->
+        <main class="dashboard-main">
+            <div class="container">
+                <!-- Welcome Section -->
+                <section class="welcome-section animate-fade-in-up">
+                    <div class="welcome-content">
+                        <h1 class="welcome-title">
+                            Welcome back to your 
+                            <span class="text-gradient-ocean">TravelAiGent</span>
+                        </h1>
+                        <p class="welcome-subtitle">
+                            Your personal AI travel concierge is monitoring the world for your perfect getaway. 
+                            Discover amazing deals and create unforgettable memories.
+                        </p>
+                        <div class="welcome-actions">
+                            <button class="btn-luxury">
+                                <i class="fas fa-plus"></i>
+                                Create Travel Brief
+                            </button>
+                            <button class="btn-secondary">
+                                <i class="fas fa-search"></i>
+                                Explore Deals
+                            </button>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Stats Overview -->
+                <section class="stats-overview">
+                    <div class="stat-card-modern animate-fade-in-scale">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <span class="stat-number" id="last-check">Loading...</span>
+                        <div class="stat-label">Last System Check</div>
+                        <div class="stat-sublabel">Monitoring active deals</div>
+                    </div>
+                    
+                    <div class="stat-card-modern animate-fade-in-scale">
+                        <div class="stat-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <span class="stat-number" id="active-briefs">0</span>
+                        <div class="stat-label">Active Travel Briefs</div>
+                        <div class="stat-sublabel">Searches in progress</div>
+                    </div>
+                    
+                    <div class="stat-card-modern animate-fade-in-scale">
+                        <div class="stat-icon">
+                            <i class="fas fa-gem"></i>
+                        </div>
+                        <span class="stat-number" id="total-deals">0</span>
+                        <div class="stat-label">Deals Discovered</div>
+                        <div class="stat-sublabel">AI-analyzed opportunities</div>
+                    </div>
+                    
+                    <div class="stat-card-modern animate-fade-in-scale">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="stat-number" id="recommendations">0</span>
+                        <div class="stat-label">Recommendations</div>
+                        <div class="stat-sublabel">Curated for you</div>
+                    </div>
+                </section>
+                
+                <!-- Main Content Grid -->
+                <div class="content-grid">
+                    <!-- Travel Briefs Section -->
+                    <section class="briefs-section">
+                        <div class="section-header">
+                            <h2 class="section-title">
+                                <i class="fas fa-map-marked-alt text-gradient-ocean"></i>
+                                Your Travel Briefs
+                            </h2>
+                            <p class="section-subtitle">Active travel searches and preferences</p>
+                        </div>
+                        
+                        <div class="brief-card-grid" id="briefsContainer">
+                            <!-- Briefs will be loaded here -->
+                            <div class="empty-state-luxury">
+                                <div class="empty-icon">
+                                    <i class="fas fa-suitcase-rolling"></i>
+                                </div>
+                                <h3 class="empty-title">Ready for your next adventure?</h3>
+                                <p class="empty-description">
+                                    Create your first travel brief to start discovering amazing deals 
+                                    and personalized recommendations from around the world.
+                                </p>
+                                <button class="btn-luxury">
+                                    <i class="fas fa-plus"></i>
+                                    Create Your First Brief
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Quick Actions & Recent Activity -->
+                    <aside class="quick-actions">
+                        <div class="section-header">
+                            <h3 class="section-title">Quick Actions</h3>
+                        </div>
+                        
+                        <button class="action-button">
+                            <i class="fas fa-plus"></i>
+                            New Travel Brief
+                        </button>
+                        
+                        <button class="action-button secondary">
+                            <i class="fas fa-search"></i>
+                            Browse Deals
+                        </button>
+                        
+                        <button class="action-button secondary">
+                            <i class="fas fa-cog"></i>
+                            Settings
+                        </button>
+                        
+                        <div class="section-header" style="margin-top: var(--space-6);">
+                            <h3 class="section-title">Recent Activity</h3>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-plane"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">System monitoring started</div>
+                                <div class="activity-time">Just now</div>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Security features enabled</div>
+                                <div class="activity-time">Today</div>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">TravelAiGent deployed</div>
+                                <div class="activity-time">Today</div>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Floating Action Button -->
+        <button class="floating-action" title="Create Travel Brief">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+    
+    <script>
+        // Modern dashboard functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update current time
+            updateLastCheck();
+            setInterval(updateLastCheck, 30000); // Update every 30 seconds
+            
+            // Load dashboard data
+            loadDashboardStats();
+            loadTravelBriefs();
+            
+            // Add event listeners
+            setupEventListeners();
+            
+            // Add staggered animations
+            addStaggeredAnimations();
+        });
+        
+        function updateLastCheck() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            document.getElementById('last-check').textContent = timeString;
+        }
+        
+        function loadDashboardStats() {
+            // Simulate loading stats
+            setTimeout(() => {
+                document.getElementById('active-briefs').textContent = '0';
+                document.getElementById('total-deals').textContent = '0';
+                document.getElementById('recommendations').textContent = '0';
+            }, 500);
+        }
+        
+        function loadTravelBriefs() {
+            // In a real implementation, this would fetch from your API
+            const briefsContainer = document.getElementById('briefsContainer');
+            
+            // For now, show empty state
+            // This will be populated when briefs are created
+        }
+        
+        function setupEventListeners() {
+            // Create brief buttons
+            const createBriefButtons = document.querySelectorAll('[data-action="create-brief"], .btn-luxury');
+            createBriefButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    window.location.href = '/briefs/new';
+                });
+            });
+            
+            // Browse deals button
+            const browseDealsButtons = document.querySelectorAll('[data-action="browse-deals"]');
+            browseDealsButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    window.location.href = '/deals';
+                });
+            });
+            
+            // Floating action button
+            const floatingAction = document.querySelector('.floating-action');
+            floatingAction.addEventListener('click', () => {
+                window.location.href = '/briefs/new';
+            });
+        }
+        
+        function addStaggeredAnimations() {
+            const cards = document.querySelectorAll('.stat-card-modern');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 100}ms`;
+            });
+        }
+        
+        // Status indicator animation
+        function updateStatusIndicator() {
+            const indicators = document.querySelectorAll('.status-indicator');
+            indicators.forEach(indicator => {
+                indicator.style.animation = 'pulse 2s infinite';
+            });
+        }
+        
+        updateStatusIndicator();
+    </script>
+</body>
+</html>
