@@ -39,23 +39,12 @@ def profile():  # type: ignore[return-value]
 def travel_groups():  # type: ignore[return-value]
     """Travel groups management page."""
     try:
-        # Get current user (for now using username from session)
-        username = request.args.get('username', 'admin')
-        user = User.query.filter_by(username=username).first()
+        # Get current user
+        from auth import auth
+        user = auth.get_current_user()
         
         if not user:
-            # Create default user if doesn't exist
-            user = User(
-                username=username,
-                email=f"{username}@travelaigent.com",
-                password_hash="temp_hash",
-                first_name="",
-                last_name="",
-                adults_count=2,
-                travel_style="luxury"
-            )
-            db.session.add(user)
-            db.session.commit()
+            return redirect(url_for('auth.login'))
         
         return render_template("groups.html", user=user)
     except Exception as exc:  # noqa: BLE001
@@ -142,22 +131,11 @@ def api_profile():  # type: ignore[return-value]
 def account():  # type: ignore[return-value]
     """Account settings page."""
     try:
-        username = request.args.get('username', 'admin')
-        user = User.query.filter_by(username=username).first()
+        from auth import auth
+        user = auth.get_current_user()
         
         if not user:
-            # Create default user if doesn't exist
-            user = User(
-                username=username,
-                email=f"{username}@travelaigent.com",
-                password_hash="temp_hash",
-                first_name="",
-                last_name="",
-                adults_count=2,
-                travel_style="luxury"
-            )
-            db.session.add(user)
-            db.session.commit()
+            return redirect(url_for('auth.login'))
         
         return render_template("account.html", user=user)
     except Exception as exc:  # noqa: BLE001

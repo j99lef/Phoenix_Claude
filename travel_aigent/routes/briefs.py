@@ -68,8 +68,8 @@ def brief_detail(brief_id: str):  # type: ignore[return-value]
     from flask import session
     try:
         # Get current user
-        username = session.get('username', 'user')
-        user = User.query.filter_by(username=username).first()
+        from auth import auth
+        user = auth.get_current_user()
         
         # Get brief from database
         brief = TravelBrief.query.get_or_404(brief_id)
@@ -127,8 +127,8 @@ def brief_detail(brief_id: str):  # type: ignore[return-value]
 def new_brief():  # type: ignore[return-value]
     """Create a new travel brief."""
     from flask import session
-    username = session.get('username', 'user')
-    user = User.query.filter_by(username=username).first()
+    from auth import auth
+    user = auth.get_current_user()
     return render_template("brief_form.html", brief=None, mode="create", user=user)
 
 

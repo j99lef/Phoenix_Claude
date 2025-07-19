@@ -882,6 +882,9 @@
             const submitText = document.getElementById('submitText');
             const originalText = submitText.textContent;
             
+            // Update travelers field before submission
+            updateTravelersField();
+            
             // Show loading state
             submitButton.disabled = true;
             submitText.textContent = 'Saving...';
@@ -1036,12 +1039,12 @@
             });
             
             const travelersField = document.getElementById('travelers_hidden');
-            travelersField.value = travelers.join(', ') || 'No travelers added';
+            travelersField.value = travelers.length > 0 ? travelers.join(', ') : '2 Adults';
         }
         
         function initializeTravelers() {
             const existingTravelers = "{{ brief.Travelers or brief.travelers if brief else '' }}";
-            if (existingTravelers && existingTravelers.trim() && existingTravelers !== 'No travelers added') {
+            if (existingTravelers && existingTravelers.trim() && existingTravelers !== '2 Adults') {
                 // Parse existing travelers or add default
                 addTraveler();
                 const firstInput = document.querySelector('.traveler-item input[type="text"]');
