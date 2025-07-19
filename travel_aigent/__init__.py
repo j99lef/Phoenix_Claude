@@ -128,6 +128,7 @@ def create_app(config_overrides=None):
     from .routes.profile import bp as profile_bp  # pylint: disable=import-outside-toplevel
     from .routes.groups import groups_bp  # pylint: disable=import-outside-toplevel
     from .routes.schools import schools  # pylint: disable=import-outside-toplevel
+    from .routes.people import bp as people_bp  # pylint: disable=import-outside-toplevel
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(status_bp)
@@ -136,6 +137,7 @@ def create_app(config_overrides=None):
     app.register_blueprint(profile_bp)
     app.register_blueprint(groups_bp)
     app.register_blueprint(schools)
+    app.register_blueprint(people_bp)
 
     return app
 

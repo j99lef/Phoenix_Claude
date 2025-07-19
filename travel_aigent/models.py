@@ -209,6 +209,82 @@ class Deal(db.Model):
         }
 
 
+class Person(db.Model):
+    """Reusable person profiles that can be added to multiple groups"""
+    __tablename__ = 'people'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    first_name = db.Column(db.String(100), nullable=False)
+    last_name = db.Column(db.String(100))
+    nickname = db.Column(db.String(50))  # For display purposes
+    date_of_birth = db.Column(db.Date)
+    person_type = db.Column(db.String(20), default='adult')  # adult, child, senior, infant
+    
+    # Additional info
+    passport_number = db.Column(db.String(50))
+    passport_expiry = db.Column(db.Date)
+    dietary_restrictions = db.Column(db.Text)
+    medical_notes = db.Column(db.Text)
+    
+    # Timestamps
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    user = db.relationship('User', backref='people', lazy=True)
+    
+    def to_dict(self):
+        """Convert person to dictionary"""
+        from datetime import date
+        age = None
+        if self.date_of_birth:
+            today = date.today()
+            age = today.year - self.date_of_birth.year - ((today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day))
+        
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'nickname': self.nickname,
+            'full_name': f"{self.first_name} {self.last_name or ''}".strip(),
+            'display_name': self.nickname or self.first_name,
+            'date_of_birth': self.date_of_birth.isoformat() if self.date_of_birth else None,
+            'age': age,
+            'person_type': self.person_type,
+            'passport_number': self.passport_number,
+            'passport_expiry': self.passport_expiry.isoformat() if self.passport_expiry else None,
+            'dietary_restrictions': self.dietary_restrictions,
+            'medical_notes': self.medical_notes,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+        }
+
+
+class GroupMember(db.Model):
+    """Association table for people in groups"""
+    __tablename__ = 'group_members'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    group_id = db.Column(db.Integer, db.ForeignKey('travel_groups.id'), nullable=False)
+    person_id = db.Column(db.Integer, db.ForeignKey('people.id'), nullable=False)
+    role = db.Column(db.String(50))  # primary, spouse, child, friend, etc.
+    
+    # Relationships
+    group = db.relationship('TravelGroup', backref='group_members', lazy=True)
+    person = db.relationship('Person', backref='group_memberships', lazy=True)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'group_id': self.group_id,
+            'person_id': self.person_id,
+            'role': self.role,
+            'person': self.person.to_dict() if self.person else None
+        }
+
+
 class TravelGroup(db.Model):
     """Travel group model for managing different travel configurations"""
     __tablename__ = 'travel_groups'
@@ -217,9 +293,10 @@ class TravelGroup(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     group_name = db.Column(db.String(100), nullable=False)
     group_type = db.Column(db.String(50))  # individual, family, friends, custom
+    is_primary = db.Column(db.Boolean, default=False)  # Mark as primary group
     
-    # Group members stored as JSON
-    members = db.Column(db.Text, nullable=False)  # JSON array of {name, type, age, dob}
+    # Group members stored as JSON (legacy - will migrate to GroupMember)
+    members = db.Column(db.Text, nullable=False, default='[]')  # JSON array of {name, type, age, dob}
     
     # Timestamps
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

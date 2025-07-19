@@ -148,3 +148,34 @@ def delete_group(group_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
+
+@groups_bp.route('/api/groups/<int:group_id>/set-primary', methods=['POST'])
+@require_auth
+def set_primary_group(group_id):
+    """Set a group as the primary group"""
+    username = session.get('username', 'admin')
+    
+    try:
+        # Get user from database
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        
+        # Find the group
+        group = TravelGroup.query.filter_by(id=group_id, user_id=user.id).first()
+        if not group:
+            return jsonify({'error': 'Group not found'}), 404
+        
+        # Clear all other primary flags for this user
+        TravelGroup.query.filter_by(user_id=user.id).update({'is_primary': False})
+        
+        # Set this group as primary
+        group.is_primary = True
+        db.session.commit()
+        
+        return jsonify({'message': 'Primary group updated'}), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500

@@ -683,12 +683,11 @@
                 
                 <div class="form-grid">
                     <div class="form-group full-width">
-                        <label class="form-label">Primary Group Type</label>
-                        <select class="form-select" name="primary_group_type" id="primary_group_type" onchange="updatePrimaryGroupFields()">
-                            <option value="solo">Solo Traveler</option>
-                            <option value="couple">Couple</option>
-                            <option value="family">Family</option>
-                            <option value="custom">Custom Group</option>
+                        <label class="form-label">Primary Travel Group</label>
+                        <select class="form-select" name="primary_group_id" id="primary_group_id" onchange="updatePrimaryGroupSelection()">
+                            <option value="">Select or create a primary group</option>
+                            <option value="new">+ Create New Group</option>
+                            <!-- Existing groups will be populated here -->
                         </select>
                     </div>
                     
@@ -853,7 +852,7 @@
                     <!-- School profiles will be loaded here -->
                 </div>
                 
-                <button type="button" class="save-button" onclick="document.getElementById('schoolModal').classList.add('show')" id="addSchoolBtn">
+                <button type="button" class="save-button" onclick="showAddSchoolModal()" id="addSchoolBtn">
                     <i class="fas fa-plus"></i>
                     Add School/Council
                 </button>
@@ -977,6 +976,16 @@
     <script src="/static/uk-schools-database.js"></script>
     <script src="/static/common.js"></script>
     <script>
+        // Make school modal function globally accessible
+        window.showAddSchoolModal = function() {
+            const modal = document.getElementById('schoolModal');
+            if (modal) {
+                modal.classList.add('show');
+                setTimeout(() => {
+                    document.getElementById('schoolSearch')?.focus();
+                }, 100);
+            }
+        };
         async function saveProfile(event) {
             event.preventDefault();
             
@@ -1036,6 +1045,7 @@
         
         // Travel Groups Management
         let groups = [];
+        let people = [];
         let memberCounter = 0;
         
         // Calculate age from date of birth
@@ -1077,9 +1087,74 @@
                 if (response.ok) {
                     groups = await response.json();
                     displayGroups();
+                    populatePrimaryGroupDropdown();
                 }
             } catch (error) {
                 console.error('Error loading groups:', error);
+            }
+        }
+        
+        function populatePrimaryGroupDropdown() {
+            const select = document.getElementById('primary_group_id');
+            if (!select) return;
+            
+            // Clear existing options except first two
+            while (select.options.length > 2) {
+                select.remove(2);
+            }
+            
+            // Add existing groups
+            groups.forEach(group => {
+                const option = document.createElement('option');
+                option.value = group.id;
+                option.textContent = `${group.group_name} (${group.group_type})`;
+                if (group.is_primary) {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            });
+        }
+        
+        function updatePrimaryGroupSelection() {
+            const select = document.getElementById('primary_group_id');
+            const value = select.value;
+            
+            if (value === 'new') {
+                // Show the create group modal
+                showAddGroupModal();
+                select.value = '';
+            } else if (value) {
+                // Set this group as primary
+                setPrimaryGroup(parseInt(value));
+            }
+        }
+        
+        async function setPrimaryGroup(groupId) {
+            try {
+                const response = await fetch(`/api/groups/${groupId}/set-primary`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                if (response.ok) {
+                    // Update local data
+                    groups.forEach(g => {
+                        g.is_primary = g.id === groupId;
+                    });
+                    
+                    // Show success notification
+                    const notification = document.getElementById('successNotification');
+                    notification.textContent = 'Primary group updated!';
+                    notification.classList.add('show');
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                }
+            } catch (error) {
+                console.error('Error setting primary group:', error);
+                alert('Failed to set primary group');
             }
         }
         
