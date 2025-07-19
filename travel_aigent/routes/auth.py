@@ -4,19 +4,13 @@ from __future__ import annotations
 import logging
 from datetime import datetime
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 
 from auth import auth
-
-# Rate limiter instance
-limiter = Limiter(key_func=get_remote_address)
 
 bp = Blueprint("auth", __name__)
 
 
 @bp.route("/login", methods=["GET", "POST"])
-@limiter.limit("5 per minute")
 def login():  # type: ignore[return-value]
     """Login page and authentication."""
     if request.method == "GET":
@@ -95,7 +89,6 @@ def register_page():  # type: ignore[return-value]
 
 
 @bp.route("/api/register", methods=["POST"])
-@limiter.limit("3 per hour")
 def register():  # type: ignore[return-value]
     """Register a new user."""
     try:
@@ -170,7 +163,6 @@ def forgot_password_page():  # type: ignore[return-value]
 
 
 @bp.route("/api/password-reset", methods=["POST"])
-@limiter.limit("3 per hour")
 def request_password_reset():  # type: ignore[return-value]
     """Request a password reset email."""
     try:
