@@ -118,7 +118,8 @@ def create_app(config_overrides: dict[str, Any] | None = None) -> Flask:
     # Simple health check route
     @app.route('/health')
     def health_check():
-        return {'status': 'healthy', 'app': 'TravelAiGent'}, 200
+        from flask import jsonify
+        return jsonify({'status': 'healthy', 'app': 'TravelAiGent'}), 200
 
     # ---------------------------------------------------------------------
     # Register blueprints

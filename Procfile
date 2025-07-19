@@ -1,1 +1,1 @@
-web: gunicorn -w 4 -b 0.0.0.0:${PORT:-8000} "travel_aigent:create_app()"
+web: gunicorn --bind 0.0.0.0:$PORT --workers 4 --timeout 120 --access-logfile - --error-logfile - --log-level info "travel_aigent:create_app()"
