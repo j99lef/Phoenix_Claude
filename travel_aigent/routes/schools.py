@@ -11,8 +11,9 @@ schools = Blueprint('schools', __name__)
 def get_user_schools():
     """Get all schools/councils for the current user"""
     try:
-        username = session.get('username', 'admin')
-        user = User.query.filter_by(username=username).first()
+        from auth import auth
+        user = auth.get_current_user()
+        
         if not user:
             return jsonify({'error': 'User not found'}), 404
             
@@ -26,8 +27,9 @@ def get_user_schools():
 def add_user_school():
     """Add a new school/council for the current user"""
     try:
-        username = session.get('username', 'admin')
-        user = User.query.filter_by(username=username).first()
+        from auth import auth
+        user = auth.get_current_user()
+        
         if not user:
             return jsonify({'error': 'User not found'}), 404
             
@@ -79,8 +81,9 @@ def add_user_school():
 def delete_user_school(school_id):
     """Delete a school/council for the current user"""
     try:
-        username = session.get('username', 'admin')
-        user = User.query.filter_by(username=username).first()
+        from auth import auth
+        user = auth.get_current_user()
+        
         if not user:
             return jsonify({'error': 'User not found'}), 404
             
@@ -106,8 +109,9 @@ def delete_user_school(school_id):
 def update_user_school(school_id):
     """Update a school/council for the current user"""
     try:
-        username = session.get('username', 'admin')
-        user = User.query.filter_by(username=username).first()
+        from auth import auth
+        user = auth.get_current_user()
+        
         if not user:
             return jsonify({'error': 'User not found'}), 404
             
