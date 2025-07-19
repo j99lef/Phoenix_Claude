@@ -117,15 +117,9 @@ class SimpleAuth:
         from travel_aigent.models import User
         user = User.query.filter_by(username=username).first()
         
-        # If no user found (e.g., admin from env vars), create a placeholder
+        # If no user found, return None - they need to be in database
         if not user:
-            user = type('User', (), {
-                'username': username,
-                'first_name': username.capitalize() if username != 'admin' else 'Admin',
-                'last_name': '',
-                'email': f'{username}@travelaigent.com',
-                'id': 0
-            })()
+            return None
             
         return user
     
