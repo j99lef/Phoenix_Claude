@@ -115,6 +115,12 @@ def create_app(config_overrides: dict[str, Any] | None = None) -> Flask:
         return response
 
     # ---------------------------------------------------------------------
+    # Simple health check route
+    @app.route('/health')
+    def health_check():
+        return {'status': 'healthy', 'app': 'TravelAiGent'}, 200
+
+    # ---------------------------------------------------------------------
     # Register blueprints
     # ---------------------------------------------------------------------
     from .routes.status import bp as status_bp  # pylint: disable=import-outside-toplevel
