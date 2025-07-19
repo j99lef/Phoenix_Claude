@@ -2,7 +2,6 @@
 
 Prefer running `python cli.py web` or `python -m travel_aigent`.
 This thin wrapper delegates to the new application factory."""
-from __future__ import annotations
 import os
 
 from travel_aigent import create_app

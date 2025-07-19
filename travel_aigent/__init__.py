@@ -1,11 +1,8 @@
 """Travel AiGent package initialization and Flask app factory."""
-from __future__ import annotations
-
 import logging
 import os
 import secrets
 from pathlib import Path
-from typing import Any
 
 from flask import Flask
 from flask_limiter import Limiter
@@ -18,7 +15,7 @@ from auth import init_auth
 # Application Factory
 # ----------------------------------------------------------------------------
 
-def create_app(config_overrides: dict[str, Any] | None = None) -> Flask:
+def create_app(config_overrides=None):
     """Create and configure a Flask application instance.
 
     Parameters
