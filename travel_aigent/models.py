@@ -20,6 +20,7 @@ class User(db.Model):
     first_name = db.Column(db.String(50))
     last_name = db.Column(db.String(50))
     phone = db.Column(db.String(20))
+    whatsapp_number = db.Column(db.String(20))  # For WhatsApp notifications
     
     # Travel Preferences
     home_airports = db.Column(db.Text)  # JSON string of preferred airports

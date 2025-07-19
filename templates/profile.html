@@ -673,6 +673,17 @@
                         <input type="tel" class="form-input" name="phone" 
                                value="{{ user.phone or '' }}" placeholder="+1 (555) 123-4567">
                     </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">WhatsApp Number</label>
+                        <input type="tel" class="form-input" name="whatsapp_number" 
+                               value="{{ user.whatsapp_number or user.phone or '' }}" 
+                               placeholder="+1 (555) 123-4567">
+                        <small style="color: var(--luxury-charcoal); font-size: 0.875rem;">
+                            <i class="fab fa-whatsapp" style="color: #25D366;"></i>
+                            Optional: Receive instant deal alerts via WhatsApp
+                        </small>
+                    </div>
                 </div>
             </section>
             
