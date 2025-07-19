@@ -37,10 +37,14 @@ def login():  # type: ignore[return-value]
                 return jsonify({"error": error_msg}), 400
             return render_template("login.html", error=error_msg), 400
         
-        # Authenticate - TEMPORARY: Allow demo access for testing
-        if (username.lower() in ['admin', 'demo', 'test'] and 
-            password in ['admin', 'demo', 'test', 'changeme123!', '123']) or auth.authenticate(username, password):
-            auth.login(username)
+        # Authenticate user
+        if auth.authenticate(username, password):
+            # Get user from database to get user_id
+            from ..models import User
+            user = User.query.filter_by(username=username).first()
+            user_id = user.id if user else None
+            
+            auth.login(username, user_id)
             logging.info(f"Successful login for user: {username}")
             
             if request.is_json:

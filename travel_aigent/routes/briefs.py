@@ -42,8 +42,8 @@ def index():  # type: ignore[return-value]
     if 'authenticated' in session and session['authenticated']:
         try:
             # Get current user
-            username = session.get('username', 'user')
-            user = User.query.filter_by(username=username).first()
+            from auth import auth
+            user = auth.get_current_user()
             
             # Get stats for dashboard
             briefs_count = TravelBrief.query.count()

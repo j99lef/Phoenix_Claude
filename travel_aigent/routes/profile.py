@@ -21,23 +21,12 @@ bp = Blueprint("profile", __name__)
 def profile():  # type: ignore[return-value]
     """User profile page."""
     try:
-        # Get current user (for now using username from session)
-        username = request.args.get('username', 'admin')
-        user = User.query.filter_by(username=username).first()
+        # Get current user
+        from auth import auth
+        user = auth.get_current_user()
         
         if not user:
-            # Create default user if doesn't exist
-            user = User(
-                username=username,
-                email=f"{username}@travelaigent.com",
-                password_hash="temp_hash",
-                first_name="",
-                last_name="",
-                adults_count=2,
-                travel_style="luxury"
-            )
-            db.session.add(user)
-            db.session.commit()
+            return redirect(url_for('auth.login'))
         
         return render_template("profile.html", user=user)
     except Exception as exc:  # noqa: BLE001

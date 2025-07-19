@@ -1047,7 +1047,7 @@
                 
                 console.log('Searching deals with params:', params.toString());
                 
-                const response = await fetch(`/api/deals?${params}`);
+                const response = await fetch(`/api/deals/search?${params}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

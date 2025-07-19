@@ -14,8 +14,8 @@ bp = Blueprint("deals", __name__)
 @require_auth
 def deals_list():
     """Display deals list page"""
-    username = session.get('username', 'user')
-    user = User.query.filter_by(username=username).first()
+    from auth import auth
+    user = auth.get_current_user()
     return render_template("deals_list.html", user=user)
 
 
@@ -62,26 +62,83 @@ def get_deals():
         return jsonify({"error": "Failed to fetch deals"}), 500
 
 
-@bp.route("/api/deals/search")
+@bp.route("/api/deals/search", methods=["GET", "POST"])
 @require_auth
 def search_deals():
-    """Search for new deals based on travel briefs"""
+    """Search for new deals - either from briefs or quick search"""
     try:
-        username = session.get('username', 'user')
-        user = User.query.filter_by(username=username).first()
+        from auth import auth
+        user = auth.get_current_user()
         
         if not user:
             return jsonify({"error": "User not found"}), 404
         
-        # Get active briefs for the user
-        active_briefs = TravelBrief.query.filter_by(
-            user_id=user.id,
-            status='active'
-        ).all()
+        # Check if this is a quick search (has destination parameter)
+        destination = request.args.get('destination')
+        if destination:
+            # Quick search - create some sample deals for now
+            # In production, this would call Amadeus API directly
+            sample_deals = []
+            
+            # Create sample flight + hotel package deals
+            destinations_map = {
+                'paris': {'code': 'PAR', 'name': 'Paris', 'country': 'France'},
+                'barcelona': {'code': 'BCN', 'name': 'Barcelona', 'country': 'Spain'},
+                'rome': {'code': 'ROM', 'name': 'Rome', 'country': 'Italy'},
+                'london': {'code': 'LON', 'name': 'London', 'country': 'UK'},
+                'dubai': {'code': 'DXB', 'name': 'Dubai', 'country': 'UAE'}
+            }
+            
+            dest_info = destinations_map.get(destination.lower(), 
+                                           {'code': destination.upper()[:3], 
+                                            'name': destination.title(), 
+                                            'country': 'Europe'})
+            
+            # Create 3-5 sample deals
+            import random
+            from datetime import datetime, timedelta
+            
+            for i in range(random.randint(3, 5)):
+                departure_date = datetime.now() + timedelta(days=random.randint(30, 90))
+                return_date = departure_date + timedelta(days=random.randint(5, 10))
+                base_price = random.randint(800, 2500)
+                
+                deal = {
+                    'id': f'quick-{i}',
+                    'title': f'{dest_info["name"]} Luxury Escape - {random.choice(["5 Star Hotel", "Boutique Resort", "Premium Suite"])}',
+                    'description': f'Exclusive package deal to {dest_info["name"]} including flights and luxury accommodation',
+                    'destination': dest_info['code'],
+                    'departure_location': 'LON',
+                    'departure_date': departure_date.isoformat(),
+                    'return_date': return_date.isoformat(),
+                    'price': base_price,
+                    'original_price': int(base_price * 1.2),
+                    'discount_percentage': 20,
+                    'type': 'package',
+                    'hotel_name': random.choice([f'{dest_info["name"]} Grand Hotel', f'The Luxury {dest_info["name"]}', f'{dest_info["name"]} Palace']),
+                    'hotel_rating': random.choice(['4', '5']),
+                    'match_score': random.randint(75, 95),
+                    'provider': 'TravelAiGent Exclusive',
+                    'booking_url': '#',
+                    'status': 'active'
+                }
+                sample_deals.append(deal)
+            
+            return jsonify(sample_deals)
+        
+        # Otherwise, search based on travel briefs
+        # Get active briefs for the user  
+        if hasattr(user, 'id') and user.id:
+            active_briefs = TravelBrief.query.filter_by(
+                user_id=user.id,
+                status='active'
+            ).all()
+        else:
+            active_briefs = []
         
         if not active_briefs:
             return jsonify({
-                "message": "No active travel briefs found",
+                "message": "No active travel briefs found. Create a travel brief to start finding deals!",
                 "deals_found": 0
             })
         

@@ -71,9 +71,9 @@ def create_app(config_overrides=None):
     app.config["SESSION_COOKIE_HTTPONLY"] = True
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
     
-    # Fix for Railway deployment
-    app.config["SESSION_PERMANENT"] = False
-    app.config["PERMANENT_SESSION_LIFETIME"] = 3600
+    # Session configuration for persistent login
+    app.config["SESSION_PERMANENT"] = True
+    app.config["PERMANENT_SESSION_LIFETIME"] = 86400  # 24 hours
 
     if config_overrides:
         app.config.update(config_overrides)

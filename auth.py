@@ -104,6 +104,31 @@ class SimpleAuth:
         
         return True
     
+    def get_current_user(self):
+        """Get current user object, creating placeholder if needed."""
+        if not self.is_authenticated():
+            return None
+            
+        username = session.get('username')
+        if not username:
+            return None
+            
+        # Try to get user from database
+        from travel_aigent.models import User
+        user = User.query.filter_by(username=username).first()
+        
+        # If no user found (e.g., admin from env vars), create a placeholder
+        if not user:
+            user = type('User', (), {
+                'username': username,
+                'first_name': username.capitalize() if username != 'admin' else 'Admin',
+                'last_name': '',
+                'email': f'{username}@travelaigent.com',
+                'id': 0
+            })()
+            
+        return user
+    
     def require_auth(self, f):
         """Decorator to require authentication for routes."""
         @wraps(f)
