@@ -10,6 +10,7 @@ from flask_limiter.util import get_remote_address
 from logger import setup_logging
 from .models import db
 from auth import init_auth
+from version import VERSION_FULL, get_version_info
 
 # ----------------------------------------------------------------------------
 # Application Factory
@@ -40,6 +41,10 @@ def create_app(config_overrides=None):
     # ---------------------------------------------------------------------
     # Core configuration
     # ---------------------------------------------------------------------
+    # Set application version
+    app.config['VERSION'] = VERSION_FULL
+    app.config['VERSION_INFO'] = get_version_info()
+    
     # Secure secret key generation
     secret_key = os.environ.get("FLASK_SECRET_KEY")
     if not secret_key:
@@ -98,8 +103,13 @@ def create_app(config_overrides=None):
 
     with app.app_context():
         db.create_all()
-        logging.info("Database tables created successfully")
+        logging.info(f"Database tables created successfully - TravelAiGent {VERSION_FULL}")
         
+    # Make version available to all templates
+    @app.context_processor
+    def inject_version():
+        return {'app_version': VERSION_FULL}
+    
     # Security headers
     @app.after_request
     def security_headers(response):
@@ -116,7 +126,11 @@ def create_app(config_overrides=None):
     @app.route('/health')
     def health_check():
         from flask import jsonify
-        return jsonify({'status': 'healthy', 'app': 'TravelAiGent'}), 200
+        return jsonify({
+            'status': 'healthy', 
+            'app': 'TravelAiGent',
+            'version': VERSION_FULL
+        }), 200
 
     # ---------------------------------------------------------------------
     # Register blueprints

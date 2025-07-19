@@ -5,9 +5,10 @@ import logging
 from datetime import datetime
 from typing import TypedDict
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, current_app
 
 from travel_agent import TravelAgent
+from version import get_version_info, get_version_string, VERSION_FULL
 
 bp = Blueprint("status", __name__)
 
@@ -82,7 +83,16 @@ def health_check():  # type: ignore[return-value]
     return jsonify({
         "status": "healthy",
         "service": "TravelAiGent",
-        "version": "1.2.1",
+        "version": VERSION_FULL,
         "database": db_status,
         "timestamp": datetime.now().isoformat()
     }), 200
+
+
+@bp.route("/api/version")
+def get_version():  # type: ignore[return-value]
+    """Get detailed version information."""
+    version_info = get_version_info()
+    version_info['timestamp'] = datetime.now().isoformat()
+    version_info['environment'] = current_app.config.get('ENV', 'production')
+    return jsonify(version_info), 200

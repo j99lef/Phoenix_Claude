@@ -1,6 +1,7 @@
 """Database models for Travel AiGent system"""
 import os
-from datetime import datetime
+import secrets
+from datetime import datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy
 
 # Initialize db without explicit model class to avoid registry conflicts
@@ -353,3 +354,41 @@ class UserSchool(db.Model):
 
 
 # Booking model removed - TravelAiGent is a deal finder that redirects to external booking partners
+
+
+class PasswordResetToken(db.Model):
+    """Password reset tokens for secure password recovery"""
+    __tablename__ = 'password_reset_tokens'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    token = db.Column(db.String(64), unique=True, nullable=False)
+    expires_at = db.Column(db.DateTime, nullable=False)
+    used = db.Column(db.Boolean, default=False)
+    
+    # Timestamps
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    user = db.relationship('User', backref='password_reset_tokens', lazy=True)
+    
+    @classmethod
+    def create_token(cls, user_id):
+        """Create a new password reset token"""
+        token = secrets.token_urlsafe(32)
+        expires_at = datetime.utcnow() + timedelta(hours=1)  # Token expires in 1 hour
+        
+        reset_token = cls(
+            user_id=user_id,
+            token=token,
+            expires_at=expires_at
+        )
+        
+        db.session.add(reset_token)
+        db.session.commit()
+        
+        return reset_token
+    
+    def is_valid(self):
+        """Check if token is still valid"""
+        return not self.used and datetime.utcnow() < self.expires_at

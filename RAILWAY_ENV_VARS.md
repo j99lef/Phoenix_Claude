@@ -21,11 +21,10 @@ FLASK_ENV=production
 DATABASE_URL=postgresql://...
 ```
 
-### 4. Optional: Email Notifications
+### 4. Email Notifications (Gmail)
 ```
-EMAIL_SERVICE=sendgrid
-SENDGRID_API_KEY=your-sendgrid-key
-FROM_EMAIL=noreply@yourdomain.com
+GMAIL_USERNAME=your-email@gmail.com
+GMAIL_APP_PASSWORD=your-app-specific-password
 ```
 
 ### 5. Optional: Telegram Notifications

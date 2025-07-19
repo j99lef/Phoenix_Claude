@@ -7,7 +7,8 @@ from flask import Blueprint, render_template, request, jsonify, redirect, url_fo
 from argon2 import PasswordHasher
 
 from auth import auth
-from ..models import db, User
+from ..models import db, User, PasswordResetToken
+from ..services.notifications import notification_service
 
 bp = Blueprint("auth", __name__)
 
@@ -180,17 +181,68 @@ def request_password_reset():  # type: ignore[return-value]
         user = User.query.filter_by(email=email).first()
         
         # Always return success to prevent email enumeration
-        # In production, you would send an email here
         if user:
-            # TODO: Generate reset token and send email
-            # For now, just log the request
-            logging.info(f"Password reset requested for: {email}")
+            # Create reset token
+            reset_token = PasswordResetToken.create_token(user.id)
             
-            # In a real implementation:
-            # 1. Generate a secure token
-            # 2. Store token with expiration
-            # 3. Send email with reset link
-            # 4. Create reset confirmation page
+            # Generate reset URL
+            reset_url = f"{request.host_url}reset-password?token={reset_token.token}"
+            
+            # Send email
+            subject = "Reset Your TravelAiGent Password"
+            html_content = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #C9A96E;">Password Reset Request</h2>
+                
+                <p style="color: #666; font-size: 16px;">
+                    Hi {user.first_name or 'there'},
+                </p>
+                
+                <p style="color: #666; font-size: 16px;">
+                    We received a request to reset your TravelAiGent password. Click the button below to create a new password:
+                </p>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="{reset_url}" style="display: inline-block; background: #C9A96E; color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px;">
+                        Reset Password
+                    </a>
+                </div>
+                
+                <p style="color: #666; font-size: 14px;">
+                    Or copy and paste this link into your browser:<br>
+                    <a href="{reset_url}" style="color: #C9A96E;">{reset_url}</a>
+                </p>
+                
+                <p style="color: #999; font-size: 14px; margin-top: 30px;">
+                    This link will expire in 1 hour for security reasons.
+                </p>
+                
+                <p style="color: #999; font-size: 14px;">
+                    If you didn't request this password reset, please ignore this email. Your password won't be changed.
+                </p>
+            </div>
+            """
+            
+            text_content = f"""
+            Hi {user.first_name or 'there'},
+            
+            We received a request to reset your TravelAiGent password.
+            
+            Reset your password here: {reset_url}
+            
+            This link will expire in 1 hour.
+            
+            If you didn't request this password reset, please ignore this email.
+            """
+            
+            notification_service.send_email(
+                to_email=user.email,
+                subject=subject,
+                html_content=html_content,
+                text_content=text_content
+            )
+            
+            logging.info(f"Password reset email sent to: {email}")
         
         return jsonify({
             "message": "If an account exists with this email, password reset instructions have been sent."
@@ -199,6 +251,66 @@ def request_password_reset():  # type: ignore[return-value]
     except Exception as exc:  # noqa: BLE001
         logging.exception("Password reset error: %s", exc)
         return jsonify({"error": "Failed to process password reset request"}), 500
+
+
+@bp.route("/reset-password")
+def reset_password_page():  # type: ignore[return-value]
+    """Password reset page."""
+    token = request.args.get('token')
+    if not token:
+        return render_template("error.html", error="Invalid password reset link"), 400
+    return render_template("reset_password.html", token=token)
+
+
+@bp.route("/api/reset-password", methods=["POST"])
+def reset_password():  # type: ignore[return-value]
+    """Reset password with valid token."""
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+            
+        token = data.get("token")
+        new_password = data.get("password")
+        
+        if not token or not new_password:
+            return jsonify({"error": "Token and new password are required"}), 400
+        
+        # Find and validate token
+        reset_token = PasswordResetToken.query.filter_by(token=token).first()
+        
+        if not reset_token or not reset_token.is_valid():
+            return jsonify({"error": "Invalid or expired reset token"}), 400
+        
+        # Validate password strength
+        if len(new_password) < 8:
+            return jsonify({"error": "Password must be at least 8 characters"}), 400
+        if not any(c.isupper() for c in new_password):
+            return jsonify({"error": "Password must contain uppercase letter"}), 400
+        if not any(c.islower() for c in new_password):
+            return jsonify({"error": "Password must contain lowercase letter"}), 400
+        if not any(c.isdigit() for c in new_password):
+            return jsonify({"error": "Password must contain number"}), 400
+        
+        # Update user password
+        user = reset_token.user
+        ph = PasswordHasher()
+        user.password_hash = ph.hash(new_password)
+        
+        # Mark token as used
+        reset_token.used = True
+        
+        db.session.commit()
+        
+        logging.info(f"Password reset successful for user: {user.username}")
+        
+        return jsonify({
+            "message": "Password reset successful. You can now login with your new password."
+        }), 200
+        
+    except Exception as exc:  # noqa: BLE001
+        logging.exception("Password reset error: %s", exc)
+        return jsonify({"error": "Failed to reset password"}), 500
 
 
 @bp.route("/health")
