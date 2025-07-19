@@ -45,9 +45,16 @@ def index():  # type: ignore[return-value]
             from auth import auth
             user = auth.get_current_user()
             
-            # Get stats for dashboard
-            briefs_count = TravelBrief.query.count()
-            recent_briefs = TravelBrief.query.order_by(TravelBrief.created_at.desc()).limit(3).all()
+            # Get stats for dashboard - filter by user
+            if user and hasattr(user, 'id') and user.id > 0:
+                # Regular user - filter by user_id
+                briefs_count = TravelBrief.query.filter_by(user_id=user.id).count()
+                recent_briefs = TravelBrief.query.filter_by(user_id=user.id).order_by(TravelBrief.created_at.desc()).limit(3).all()
+            else:
+                # Admin user or no valid user - show all briefs for now
+                # TODO: Consider if admin should see all briefs or none
+                briefs_count = 0
+                recent_briefs = []
             
             return render_template("index.html", 
                                  briefs_count=briefs_count,
@@ -138,9 +145,17 @@ def briefs_list():  # type: ignore[return-value]
     """List all travel briefs."""
     from flask import session
     try:
-        username = session.get('username', 'user')
-        user = User.query.filter_by(username=username).first()
-        briefs = TravelBrief.query.all()
+        # Get current user properly
+        from auth import auth
+        user = auth.get_current_user()
+        
+        # Get briefs for the current user
+        if user and hasattr(user, 'id') and user.id > 0:
+            briefs = TravelBrief.query.filter_by(user_id=user.id).order_by(TravelBrief.created_at.desc()).all()
+        else:
+            # Admin or invalid user - show no briefs
+            briefs = []
+            
         return render_template("briefs_list.html", briefs=briefs, user=user)
     except Exception as exc:  # noqa: BLE001
         logging.exception("Error loading briefs list: %s", exc)
@@ -185,8 +200,16 @@ def edit_brief(brief_id: str):  # type: ignore[return-value]
 @require_auth
 def get_briefs():  # type: ignore[return-value]
     try:
-        # Get briefs from database
-        briefs = TravelBrief.query.all()
+        # Get current user
+        from auth import auth
+        user = auth.get_current_user()
+        
+        # Get briefs from database filtered by user
+        if user and hasattr(user, 'id') and user.id > 0:
+            briefs = TravelBrief.query.filter_by(user_id=user.id).order_by(TravelBrief.created_at.desc()).all()
+        else:
+            briefs = []
+            
         briefs_data = [brief.to_dict() for brief in briefs]
         return jsonify(briefs_data)
     except Exception as exc:  # noqa: BLE001
@@ -343,10 +366,17 @@ def test_notification():  # type: ignore[return-value]
 
 @bp.route("/api/briefs", methods=["POST"])
 @limiter.limit("10 per hour")
+@require_auth
 def create_brief():  # type: ignore[return-value]
     """Create a new travel brief."""
     agent = _get_agent()
     try:
+        # Get current user
+        from auth import auth
+        user = auth.get_current_user()
+        if not user or not hasattr(user, 'id') or user.id == 0:
+            return jsonify({"error": "Valid user required to create briefs"}), 403
+        
         # Get and validate JSON data
         data = request.get_json()
         if not data:
@@ -378,6 +408,7 @@ def create_brief():  # type: ignore[return-value]
         
         # Create database record
         new_brief = TravelBrief(
+            user_id=user.id,  # Associate with current user
             departure_location=validated_data["departure_location"],
             destination=validated_data["destinations"],
             departure_date=departure_date,

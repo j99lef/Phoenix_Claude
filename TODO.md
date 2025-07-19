@@ -65,6 +65,22 @@
 9. 🔄 **Verify all links** - Need to test all pages systematically
 10. 🔄 **Profile persistence** - Need to test group member saving/recall
 
+### Critical Issues (HIGH PRIORITY)
+
+11. ✅ **Fix Deals & Deal Hunter functionality** - FIXED!
+    - ROOT CAUSE FOUND: travel_agent.py wasn't saving deals to database
+    - FIXED: Added save_deal_to_database() method to travel_agent.py
+    - FIXED: Updated process_travel_brief to save all deals to database
+    - Amadeus API IS configured correctly on Railway
+    - Deals will now be saved and displayed properly
+    - Build 15 includes this critical fix
+
+12. 🚨 **Fix Schools/Council section** - BROKEN FUNCTIONALITY
+    - School holiday integration not working
+    - Council selection not functioning
+    - Term dates not being applied to searches
+    - Need complete overhaul of this feature
+
 ### Key Changes Made
 
 - Enhanced authentication system with proper session management

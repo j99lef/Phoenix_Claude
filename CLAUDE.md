@@ -1,3 +1,8 @@
+# Project Context
+This is the TravelAiGent project - AI-powered travel deal finder.
+Project Path: /Users/admin/Library/CloudStorage/GoogleDrive-jonlefley@gmail.com/My Drive/Personal/TravelAiGent/TravelAiGent
+Current Version: v1.2.0+build.13
+
 Standard Workflow
 1. First think through the problem, read the codebase for relevant files, and write a plan to todo.md.
 2. The plan should have a list of todo items that you can check off as you complete them

@@ -75,6 +75,111 @@ class TravelAgent:
         except Exception as e:
             logging.error(f"Error in deal search cycle: {e}")
     
+    def save_deal_to_database(self, deal_data, brief_dict, analysis=None):
+        """Save a deal to the database"""
+        try:
+            from travel_aigent.models import db, Deal, TravelBrief
+            from datetime import datetime
+            import app
+            
+            with app.app.app_context():
+                # Get the brief from database
+                brief_id = brief_dict.get('Brief_ID')
+                if not brief_id:
+                    logging.error("No brief ID provided")
+                    return
+                    
+                brief = TravelBrief.query.get(int(brief_id))
+                if not brief:
+                    logging.error(f"Brief {brief_id} not found in database")
+                    return
+                
+                # Parse deal data based on type
+                deal_type = deal_data.get('type', 'package')
+                
+                if 'flight' in deal_type:
+                    deal = Deal(
+                        brief_id=brief.id,
+                        user_id=brief.user_id,
+                        title=f"Flight to {deal_data.get('destination', 'Unknown')}",
+                        description=f"{deal_data.get('airline', 'Airline')} flight from {deal_data.get('origin')} to {deal_data.get('destination')}",
+                        price=float(deal_data.get('total_price', 0)),
+                        original_price=float(deal_data.get('total_price', 0)) * 1.2,
+                        currency=deal_data.get('currency', 'GBP'),
+                        provider=deal_data.get('airline', 'Amadeus'),
+                        booking_url=deal_data.get('booking_url', '#'),
+                        destination=deal_data.get('destination', ''),
+                        departure_date=datetime.strptime(deal_data.get('departure_date'), '%Y-%m-%d') if deal_data.get('departure_date') else None,
+                        return_date=datetime.strptime(deal_data.get('return_date'), '%Y-%m-%d') if deal_data.get('return_date') else None,
+                        airline=deal_data.get('airline'),
+                        flight_duration=deal_data.get('duration'),
+                        type='flight',
+                        match_score=int(analysis.get('score', 7) * 10) if analysis else 70,
+                        status='active'
+                    )
+                elif 'hotel' in deal_type:
+                    deal = Deal(
+                        brief_id=brief.id,
+                        user_id=brief.user_id,
+                        title=deal_data.get('hotel_name', 'Hotel Deal'),
+                        description=deal_data.get('description', 'Hotel accommodation'),
+                        price=float(deal_data.get('total_price', 0)),
+                        original_price=float(deal_data.get('total_price', 0)) * 1.15,
+                        currency=deal_data.get('currency', 'GBP'),
+                        provider=deal_data.get('provider', 'Amadeus'),
+                        booking_url=deal_data.get('booking_url', '#'),
+                        destination=deal_data.get('destination', ''),
+                        hotel_name=deal_data.get('hotel_name'),
+                        hotel_rating=deal_data.get('rating'),
+                        type='hotel',
+                        match_score=int(analysis.get('score', 7) * 10) if analysis else 70,
+                        status='active'
+                    )
+                else:  # Package or other
+                    deal = Deal(
+                        brief_id=brief.id,
+                        user_id=brief.user_id,
+                        title=deal_data.get('title', f"Travel Package to {deal_data.get('destination', 'Unknown')}"),
+                        description=deal_data.get('description', 'Complete travel package with flights and hotel'),
+                        price=float(deal_data.get('total_price', 0)),
+                        original_price=float(deal_data.get('original_price', deal_data.get('total_price', 0)) * 1.1),
+                        currency=deal_data.get('currency', 'GBP'),
+                        provider=deal_data.get('provider', 'Amadeus'),
+                        booking_url=deal_data.get('booking_url', '#'),
+                        destination=deal_data.get('destination', ''),
+                        departure_date=datetime.strptime(deal_data.get('departure_date'), '%Y-%m-%d') if deal_data.get('departure_date') else None,
+                        return_date=datetime.strptime(deal_data.get('return_date'), '%Y-%m-%d') if deal_data.get('return_date') else None,
+                        type='package',
+                        match_score=int(analysis.get('score', 7) * 10) if analysis else 70,
+                        status='active'
+                    )
+                
+                # Add discount percentage
+                if deal.original_price > 0:
+                    deal.discount_percentage = int(((deal.original_price - deal.price) / deal.original_price) * 100)
+                
+                # Save to database
+                db.session.add(deal)
+                db.session.commit()
+                
+                logging.info(f"Saved deal to database: {deal.title} (ID: {deal.id})")
+                
+                # Send notification if high score
+                if brief.user and analysis and analysis.get('score', 0) >= 8:
+                    try:
+                        from travel_aigent.services.notifications import notification_service
+                        notification_service.send_deal_notification(brief.user, deal, brief)
+                        logging.info(f"Sent notification for high-score deal {deal.id}")
+                    except Exception as e:
+                        logging.error(f"Failed to send notification: {e}")
+                        
+        except Exception as e:
+            logging.error(f"Error saving deal to database: {e}")
+            try:
+                db.session.rollback()
+            except:
+                pass
+    
     def process_travel_brief(self, brief):
         """Process individual travel brief"""
         brief_id = brief.get('Brief_ID', 'Unknown')
@@ -111,6 +216,9 @@ class TravelAgent:
                     # Log the deal regardless of score
                     self.sheets.log_deal(deal, analysis, brief)
                     self.stats['total_deals_found'] += 1
+                    
+                    # Save deal to database
+                    self.save_deal_to_database(deal, brief, analysis)
                     
                     # Send alert if score is high enough
                     if analysis.get('score', 0) >= config.MIN_SCORE_FOR_ALERT:
