@@ -8,7 +8,6 @@ from pathlib import Path
 from typing import Any
 
 from flask import Flask
-from flask_wtf.csrf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from logger import setup_logging
@@ -71,8 +70,6 @@ def create_app(config_overrides: dict[str, Any] | None = None) -> Flask:
     }
     
     # Security configuration
-    app.config["WTF_CSRF_TIME_LIMIT"] = 3600  # 1 hour CSRF token timeout
-    app.config["WTF_CSRF_ENABLED"] = False  # Temporarily disabled for debugging
     app.config["SESSION_COOKIE_SECURE"] = True if os.environ.get("FLASK_ENV") == "production" else False
     app.config["SESSION_COOKIE_HTTPONLY"] = True
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
@@ -90,8 +87,7 @@ def create_app(config_overrides: dict[str, Any] | None = None) -> Flask:
     db.init_app(app)
     setup_logging()
     
-    # Initialize security extensions
-    csrf = CSRFProtect(app)
+    # CSRF protection disabled for now
     
     # Initialize authentication
     init_auth(app)
