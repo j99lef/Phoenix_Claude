@@ -31,8 +31,9 @@ def migrate_database():
         if 'travel_groups' in existing_tables:
             columns = [col['name'] for col in inspector.get_columns('travel_groups')]
             if 'is_primary' not in columns:
+                from sqlalchemy import text
                 with db.engine.connect() as conn:
-                    conn.execute('ALTER TABLE travel_groups ADD COLUMN is_primary BOOLEAN DEFAULT FALSE')
+                    conn.execute(text('ALTER TABLE travel_groups ADD COLUMN is_primary BOOLEAN DEFAULT FALSE'))
                     conn.commit()
                 print("✅ Added 'is_primary' column to travel_groups table")
             else:
