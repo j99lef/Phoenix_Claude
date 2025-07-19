@@ -181,6 +181,7 @@ def request_password_reset():  # type: ignore[return-value]
         email = data["email"].lower().strip()
         
         # Find user by email
+        from ..models import db, User
         user = User.query.filter_by(email=email).first()
         
         # Always return success to prevent email enumeration
