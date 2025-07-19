@@ -367,7 +367,9 @@
         
         /* Add Group Modal */
         .modal-overlay {
-            display: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             position: fixed;
             top: 0;
             left: 0;
@@ -375,14 +377,15 @@
             bottom: 0;
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(5px);
-            z-index: 1100;
-            transition: opacity 0.3s ease;
+            z-index: 9999;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
         
         .modal-overlay.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            visibility: visible;
+            opacity: 1;
         }
         
         .modal-content {
@@ -850,7 +853,7 @@
                     <!-- School profiles will be loaded here -->
                 </div>
                 
-                <button type="button" class="save-button" onclick="showAddSchoolModal()">
+                <button type="button" class="save-button" onclick="document.getElementById('schoolModal').classList.add('show')" id="addSchoolBtn">
                     <i class="fas fa-plus"></i>
                     Add School/Council
                 </button>
@@ -1336,27 +1339,51 @@
         }
         
         function showAddSchoolModal() {
-            console.log('Opening school modal...');
-            document.getElementById('schoolModal').classList.add('show');
-            document.getElementById('schoolSearch').focus();
+            console.log('showAddSchoolModal called');
             
-            // Test if the API is available
-            fetch('/api/schools')
-                .then(response => {
-                    if (!response.ok) {
-                        console.error('Schools API not available. Status:', response.status);
-                        alert('School functionality is not available. Please refresh the page or contact support.');
-                    } else {
-                        console.log('Schools API is available');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error checking schools API:', error);
-                });
+            try {
+                const modal = document.getElementById('schoolModal');
+                if (!modal) {
+                    console.error('School modal element not found!');
+                    alert('Error: School modal not found. Please refresh the page.');
+                    return;
+                }
+                
+                console.log('Adding show class to modal');
+                modal.classList.add('show');
+                
+                const searchInput = document.getElementById('schoolSearch');
+                if (searchInput) {
+                    setTimeout(() => searchInput.focus(), 100);
+                }
+                
+                // Test if the API is available
+                fetch('/api/schools')
+                    .then(response => {
+                        if (!response.ok) {
+                            console.error('Schools API not available. Status:', response.status);
+                            if (response.status === 404) {
+                                console.log('Schools API endpoint not found - this may be normal if running locally');
+                            }
+                        } else {
+                            console.log('Schools API is available');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error checking schools API:', error);
+                    });
+                    
+            } catch (error) {
+                console.error('Error in showAddSchoolModal:', error);
+                alert('An error occurred opening the school modal. Please check the console.');
+            }
         }
         
         function closeSchoolModal() {
-            document.getElementById('schoolModal').classList.remove('show');
+            const modal = document.getElementById('schoolModal');
+            if (modal) {
+                modal.classList.remove('show');
+            }
             document.getElementById('schoolForm').reset();
             document.getElementById('schoolSearchResults').classList.remove('show');
             document.getElementById('selectedSchoolInfo').style.display = 'none';
@@ -1511,6 +1538,44 @@
             loadGroups();
             loadSchools();
             
+            // Add event listener for Add School button as backup
+            const addSchoolBtn = document.getElementById('addSchoolBtn');
+            if (addSchoolBtn) {
+                console.log('Setting up click handler for Add School button');
+                
+                // Remove any existing onclick attribute
+                addSchoolBtn.removeAttribute('onclick');
+                
+                addSchoolBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Add School button clicked via event listener');
+                    
+                    // Direct modal manipulation
+                    const modal = document.getElementById('schoolModal');
+                    if (modal) {
+                        console.log('Found school modal, showing it now');
+                        modal.classList.add('show');
+                        
+                        // Focus the search input
+                        const searchInput = document.getElementById('schoolSearch');
+                        if (searchInput) {
+                            setTimeout(() => {
+                                searchInput.focus();
+                                console.log('Focused on school search input');
+                            }, 100);
+                        }
+                    } else {
+                        console.error('School modal not found!');
+                        alert('Error: Unable to open school modal. Please refresh the page.');
+                    }
+                });
+                
+                console.log('Click handler attached successfully');
+            } else {
+                console.error('Add School button not found!');
+            }
+            
             // Auto-format phone number
             const phoneInput = document.querySelector('input[name="phone"]');
             if (phoneInput) {
@@ -1543,11 +1608,14 @@
                 }
             });
             
-            document.getElementById('schoolModal').addEventListener('click', (e) => {
-                if (e.target.classList.contains('modal-overlay')) {
-                    closeSchoolModal();
-                }
-            });
+            const schoolModal = document.getElementById('schoolModal');
+            if (schoolModal) {
+                schoolModal.addEventListener('click', (e) => {
+                    if (e.target.id === 'schoolModal') {
+                        closeSchoolModal();
+                    }
+                });
+            }
         });
     </script>
 </body>

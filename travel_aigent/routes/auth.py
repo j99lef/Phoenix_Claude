@@ -163,6 +163,48 @@ def register():  # type: ignore[return-value]
         return jsonify({"error": "Registration failed"}), 500
 
 
+@bp.route("/forgot-password")
+def forgot_password_page():  # type: ignore[return-value]
+    """Forgot password page."""
+    return render_template("forgot_password.html")
+
+
+@bp.route("/api/password-reset", methods=["POST"])
+@limiter.limit("3 per hour")
+def request_password_reset():  # type: ignore[return-value]
+    """Request a password reset email."""
+    try:
+        data = request.get_json()
+        if not data or not data.get("email"):
+            return jsonify({"error": "Email address is required"}), 400
+        
+        email = data["email"].lower().strip()
+        
+        # Find user by email
+        user = User.query.filter_by(email=email).first()
+        
+        # Always return success to prevent email enumeration
+        # In production, you would send an email here
+        if user:
+            # TODO: Generate reset token and send email
+            # For now, just log the request
+            logging.info(f"Password reset requested for: {email}")
+            
+            # In a real implementation:
+            # 1. Generate a secure token
+            # 2. Store token with expiration
+            # 3. Send email with reset link
+            # 4. Create reset confirmation page
+        
+        return jsonify({
+            "message": "If an account exists with this email, password reset instructions have been sent."
+        }), 200
+        
+    except Exception as exc:  # noqa: BLE001
+        logging.exception("Password reset error: %s", exc)
+        return jsonify({"error": "Failed to process password reset request"}), 500
+
+
 @bp.route("/health")
 def health_check():  # type: ignore[return-value]
     """Health check endpoint for debugging."""
