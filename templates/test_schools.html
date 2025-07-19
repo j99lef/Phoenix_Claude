@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Schools - TravelAiGent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <nav class="bg-white shadow-md p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">TravelAiGent {{ app_version }}</h1>
+            <a href="/test" class="text-blue-600 hover:text-blue-800">← Back to Test</a>
+        </div>
+    </nav>
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">🏫 Schools/Council Test Page</h1>
+    
+    <a href="/test" class="text-blue-600 hover:text-blue-800 mb-4 inline-block">← Back to Test Dashboard</a>
+
+    <!-- Status -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Current Status</h2>
+        
+        {% if error %}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <strong>Error:</strong> {{ error }}
+        </div>
+        {% endif %}
+        
+        {% if user %}
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            <strong>✅ User Found:</strong> {{ user.username }} (ID: {{ user.id }})
+        </div>
+        {% else %}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <strong>❌ No User Found</strong> - Authentication issue!
+        </div>
+        {% endif %}
+        
+        <p><strong>Schools Count:</strong> {{ schools|length }}</p>
+    </div>
+
+    <!-- Current Schools -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Current Schools</h2>
+        
+        {% if schools %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="px-4 py-2 text-left">ID</th>
+                        <th class="px-4 py-2 text-left">School Name</th>
+                        <th class="px-4 py-2 text-left">Type</th>
+                        <th class="px-4 py-2 text-left">Region</th>
+                        <th class="px-4 py-2 text-left">Primary</th>
+                        <th class="px-4 py-2 text-left">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for school in schools %}
+                    <tr class="border-b">
+                        <td class="px-4 py-2">{{ school.id }}</td>
+                        <td class="px-4 py-2">{{ school.school_name }}</td>
+                        <td class="px-4 py-2">{{ school.school_type }}</td>
+                        <td class="px-4 py-2">{{ school.region }}</td>
+                        <td class="px-4 py-2">{{ '✅' if school.is_primary else '❌' }}</td>
+                        <td class="px-4 py-2">
+                            <button onclick="deleteSchool({{ school.id }})" 
+                                    class="text-red-600 hover:text-red-800">Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-gray-500">No schools found.</p>
+        {% endif %}
+    </div>
+
+    <!-- Add Test School -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Add Test School</h2>
+        
+        <form id="add-school-form" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">School Name</label>
+                <input type="text" id="school_name" value="Westminster Council" 
+                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700">School Key</label>
+                <input type="text" id="school_key" value="westminster-council" 
+                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Type</label>
+                <select id="school_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                    <option value="council">Council</option>
+                    <option value="independent">Independent</option>
+                    <option value="academy">Academy</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Add School
+            </button>
+        </form>
+        
+        <div id="add-result" class="mt-4"></div>
+    </div>
+
+    <!-- API Test -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4">Direct API Test</h2>
+        
+        <button onclick="testAPI()" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+            Test Schools API
+        </button>
+        
+        <div id="api-result" class="mt-4"></div>
+    </div>
+</div>
+
+<script>
+document.getElementById('add-school-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const resultDiv = document.getElementById('add-result');
+    resultDiv.innerHTML = '<p class="text-gray-500">Adding school...</p>';
+    
+    const schoolData = {
+        school_name: document.getElementById('school_name').value,
+        school_key: document.getElementById('school_key').value,
+        school_type: document.getElementById('school_type').value,
+        region: 'London',
+        country: 'England',
+        is_primary: true
+    };
+    
+    try {
+        const response = await fetch('/api/schools', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(schoolData)
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            resultDiv.innerHTML = '<p class="text-green-600">✅ School added successfully! Refresh to see it.</p>';
+        } else {
+            resultDiv.innerHTML = `<p class="text-red-600">❌ Error: ${data.error || 'Unknown error'}</p>`;
+        }
+    } catch (error) {
+        resultDiv.innerHTML = `<p class="text-red-600">❌ Error: ${error.message}</p>`;
+    }
+});
+
+async function deleteSchool(id) {
+    if (!confirm('Delete this school?')) return;
+    
+    try {
+        const response = await fetch(`/api/schools/${id}`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            location.reload();
+        } else {
+            alert('Failed to delete school');
+        }
+    } catch (error) {
+        alert(`Error: ${error.message}`);
+    }
+}
+
+async function testAPI() {
+    const resultDiv = document.getElementById('api-result');
+    resultDiv.innerHTML = '<p class="text-gray-500">Testing API...</p>';
+    
+    try {
+        const response = await fetch('/api/schools');
+        const data = await response.json();
+        
+        resultDiv.innerHTML = `
+            <p><strong>Status:</strong> ${response.status}</p>
+            <pre class="bg-gray-100 p-3 rounded mt-2">${JSON.stringify(data, null, 2)}</pre>
+        `;
+    } catch (error) {
+        resultDiv.innerHTML = `<p class="text-red-600">❌ Error: ${error.message}</p>`;
+    }
+}
+</script>
+</div>
+</body>
+</html>

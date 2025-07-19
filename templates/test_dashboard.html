@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dashboard - TravelAiGent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <nav class="bg-white shadow-md p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">TravelAiGent {{ app_version }}</h1>
+            <a href="/" class="text-blue-600 hover:text-blue-800">← Back to App</a>
+        </div>
+    </nav>
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">🧪 Functionality Test Dashboard</h1>
+    
+    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6">
+        <p class="font-bold">Testing Build {{ app_version }}</p>
+        <p>This page verifies that all features are actually working.</p>
+    </div>
+
+    <!-- Quick Status Check -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Quick Status Check</h2>
+        <button onclick="runStatusCheck()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Run All Tests
+        </button>
+        <div id="status-results" class="mt-4"></div>
+    </div>
+
+    <!-- Test Links -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Schools Test -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold mb-2">Schools/Council Test</h3>
+            <p class="text-gray-600 mb-4">Test if schools can be added and retrieved</p>
+            <a href="/test/schools" class="bg-green-600 text-white px-4 py-2 rounded inline-block hover:bg-green-700">
+                Test Schools →
+            </a>
+        </div>
+
+        <!-- Deals Test -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold mb-2">Deals Test</h3>
+            <p class="text-gray-600 mb-4">Test if deals are being saved and retrieved</p>
+            <a href="/test/deals" class="bg-green-600 text-white px-4 py-2 rounded inline-block hover:bg-green-700">
+                Test Deals →
+            </a>
+        </div>
+    </div>
+
+    <!-- Create Test Data -->
+    <div class="bg-white rounded-lg shadow-md p-6 mt-6">
+        <h2 class="text-xl font-semibold mb-4">Create Test Data</h2>
+        <p class="text-gray-600 mb-4">Create test schools and deals to verify functionality</p>
+        <button onclick="createTestData()" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+            Create Test Data
+        </button>
+        <div id="test-data-results" class="mt-4"></div>
+    </div>
+</div>
+
+<script>
+async function runStatusCheck() {
+    const resultsDiv = document.getElementById('status-results');
+    resultsDiv.innerHTML = '<p class="text-gray-500">Running tests...</p>';
+    
+    try {
+        const response = await fetch('/test/api/status');
+        const data = await response.json();
+        
+        let html = '<div class="space-y-4">';
+        
+        // Show session info
+        html += '<div class="bg-gray-100 p-3 rounded">';
+        html += '<h4 class="font-semibold">Session Info:</h4>';
+        html += `<pre class="text-sm">${JSON.stringify(data.session, null, 2)}</pre>`;
+        html += '</div>';
+        
+        // Show test results
+        for (const [test, result] of Object.entries(data.tests)) {
+            html += '<div class="border-l-4 p-3 ' + 
+                    (result.status.includes('PASS') ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') + 
+                    '">';
+            html += `<h4 class="font-semibold">${test.toUpperCase()}: ${result.status}</h4>`;
+            html += `<pre class="text-sm mt-2">${JSON.stringify(result, null, 2)}</pre>`;
+            html += '</div>';
+        }
+        
+        html += '</div>';
+        resultsDiv.innerHTML = html;
+    } catch (error) {
+        resultsDiv.innerHTML = `<p class="text-red-600">Error: ${error.message}</p>`;
+    }
+}
+
+async function createTestData() {
+    const resultsDiv = document.getElementById('test-data-results');
+    resultsDiv.innerHTML = '<p class="text-gray-500">Creating test data...</p>';
+    
+    try {
+        const response = await fetch('/test/api/create-test-data', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'}
+        });
+        const data = await response.json();
+        
+        resultsDiv.innerHTML = `<pre class="bg-gray-100 p-3 rounded">${JSON.stringify(data, null, 2)}</pre>`;
+    } catch (error) {
+        resultsDiv.innerHTML = `<p class="text-red-600">Error: ${error.message}</p>`;
+    }
+}
+
+// Run status check on load
+window.onload = () => runStatusCheck();
+</script>
+</div>
+</body>
+</html>

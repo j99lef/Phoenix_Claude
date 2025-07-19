@@ -144,6 +144,7 @@ def create_app(config_overrides=None):
     from .routes.schools import schools  # pylint: disable=import-outside-toplevel
     from .routes.people import bp as people_bp  # pylint: disable=import-outside-toplevel
     from .routes.notifications import bp as notifications_bp  # pylint: disable=import-outside-toplevel
+    from .routes.test_pages import bp as test_bp  # pylint: disable=import-outside-toplevel
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(status_bp)
@@ -154,6 +155,7 @@ def create_app(config_overrides=None):
     app.register_blueprint(schools)
     app.register_blueprint(people_bp)
     app.register_blueprint(notifications_bp)
+    app.register_blueprint(test_bp)
 
     return app
 
