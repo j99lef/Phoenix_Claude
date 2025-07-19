@@ -4,8 +4,10 @@ from __future__ import annotations
 import logging
 from datetime import datetime
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for
+from argon2 import PasswordHasher
 
 from auth import auth
+from ..models import db, User
 
 bp = Blueprint("auth", __name__)
 
@@ -103,7 +105,6 @@ def register():  # type: ignore[return-value]
                 return jsonify({"error": f"{field} is required"}), 400
         
         # Check if username already exists
-        from ..models import db, User
         existing_user = User.query.filter_by(username=data["username"]).first()
         if existing_user:
             return jsonify({"error": "Username already taken"}), 409
@@ -125,7 +126,6 @@ def register():  # type: ignore[return-value]
             return jsonify({"error": "Password must contain number"}), 400
         
         # Hash password with Argon2
-        from argon2 import PasswordHasher
         ph = PasswordHasher()
         password_hash = ph.hash(password)
         
@@ -173,7 +173,6 @@ def request_password_reset():  # type: ignore[return-value]
         email = data["email"].lower().strip()
         
         # Find user by email
-        from ..models import db, User
         user = User.query.filter_by(email=email).first()
         
         # Always return success to prevent email enumeration
