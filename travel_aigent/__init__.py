@@ -181,10 +181,32 @@ def create_app(config_overrides=None):
     @app.route('/version')
     def version_check():
         from flask import jsonify
+        # Get all registered routes
+        routes = []
+        for rule in app.url_map.iter_rules():
+            routes.append({
+                'endpoint': rule.endpoint,
+                'methods': list(rule.methods),
+                'path': str(rule)
+            })
+        
         return jsonify({
             'version': VERSION_FULL,
             'build': get_version_info()['build'],
             'test_routes_available': True,
+            'timestamp': datetime.utcnow().isoformat(),
+            'total_routes': len(routes),
+            'profile_routes': [r for r in routes if 'profile' in r['path'].lower()],
+            'auth_routes': [r for r in routes if 'auth' in r['path'].lower()],
+            'all_routes': sorted([r['path'] for r in routes])
+        }), 200
+
+    # Test route to verify routing works
+    @app.route('/test-profile-route')
+    def test_profile_route():
+        from flask import jsonify
+        return jsonify({
+            'message': 'Test route works!',
             'timestamp': datetime.utcnow().isoformat()
         }), 200
 
@@ -202,16 +224,38 @@ def create_app(config_overrides=None):
     from .routes.test_pages import bp as test_bp  # pylint: disable=import-outside-toplevel
     from .routes.school_calendar import bp as school_calendar_bp  # pylint: disable=import-outside-toplevel
 
+    # Log blueprint registration
+    logging.info(f"Registering blueprints for TravelAiGent {VERSION_FULL}")
+    
     app.register_blueprint(auth_bp)
+    logging.info("Registered auth blueprint")
+    
     app.register_blueprint(status_bp)
+    logging.info("Registered status blueprint")
+    
     app.register_blueprint(briefs_bp)
+    logging.info("Registered briefs blueprint")
+    
     app.register_blueprint(profile_bp)
+    logging.info(f"Registered profile blueprint - routes: {[str(rule) for rule in app.url_map.iter_rules() if 'profile' in str(rule)]}")
+    
     app.register_blueprint(groups_bp)
+    logging.info("Registered groups blueprint")
+    
     app.register_blueprint(schools)
+    logging.info("Registered schools blueprint")
+    
     app.register_blueprint(school_calendar_bp)
+    logging.info("Registered school_calendar blueprint")
+    
     app.register_blueprint(people_bp)
+    logging.info("Registered people blueprint")
+    
     app.register_blueprint(notifications_bp)
+    logging.info("Registered notifications blueprint")
+    
     app.register_blueprint(test_bp)
+    logging.info("Registered test blueprint")
 
     return app
 
