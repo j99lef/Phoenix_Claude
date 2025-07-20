@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Profile - TravelAiGent</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+        .field {
+            margin: 10px 0;
+        }
+        .field label {
+            font-weight: bold;
+            display: inline-block;
+            width: 150px;
+        }
+        .field input {
+            width: 300px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Profile Test Page</h1>
+        
+        <div class="section">
+            <h2>Current User Info</h2>
+            {% if user %}
+                <div class="field">
+                    <label>User ID:</label> {{ user.id }}
+                </div>
+                <div class="field">
+                    <label>Username:</label> {{ user.username }}
+                </div>
+                <div class="field">
+                    <label>Email:</label> {{ user.email or 'Not set' }}
+                </div>
+                <div class="field">
+                    <label>First Name:</label> {{ user.first_name or 'Not set' }}
+                </div>
+                <div class="field">
+                    <label>Last Name:</label> {{ user.last_name or 'Not set' }}
+                </div>
+                <div class="field">
+                    <label>Created:</label> {{ user.created_at }}
+                </div>
+            {% else %}
+                <p class="error">No user found!</p>
+            {% endif %}
+        </div>
+        
+        <div class="section">
+            <h2>Test Profile Save</h2>
+            <form id="testForm">
+                <div class="field">
+                    <label>First Name:</label>
+                    <input type="text" id="first_name" value="{{ user.first_name or '' if user else '' }}">
+                </div>
+                <div class="field">
+                    <label>Last Name:</label>
+                    <input type="text" id="last_name" value="{{ user.last_name or '' if user else '' }}">
+                </div>
+                <div class="field">
+                    <label>Email:</label>
+                    <input type="email" id="email" value="{{ user.email or '' if user else '' }}">
+                </div>
+                <div class="field">
+                    <label>Phone:</label>
+                    <input type="tel" id="phone" value="{{ user.phone or '' if user else '' }}">
+                </div>
+                <button type="button" onclick="testSaveProfile()">Test Save Profile</button>
+                <button type="button" onclick="testLoadProfile()">Test Load Profile</button>
+            </form>
+            
+            <div id="status"></div>
+            <div id="response"></div>
+        </div>
+        
+        <div class="section">
+            <h2>Test Travel Groups</h2>
+            <button onclick="testLoadGroups()">Load Groups</button>
+            <button onclick="testCreateGroup()">Create Test Group</button>
+            <div id="groupsStatus"></div>
+            <div id="groupsResponse"></div>
+        </div>
+        
+        <div class="section">
+            <h2>Navigation</h2>
+            <a href="/profile">Go to Real Profile Page</a> | 
+            <a href="/test">Back to Test Dashboard</a> |
+            <a href="/">Home</a>
+        </div>
+    </div>
+    
+    <script>
+        async function testSaveProfile() {
+            const statusDiv = document.getElementById('status');
+            const responseDiv = document.getElementById('response');
+            
+            statusDiv.innerHTML = '<div class="status">Saving profile...</div>';
+            
+            const data = {
+                first_name: document.getElementById('first_name').value,
+                last_name: document.getElementById('last_name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value
+            };
+            
+            try {
+                const response = await fetch('/api/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    statusDiv.innerHTML = '<div class="status success">✓ Profile saved successfully!</div>';
+                    responseDiv.innerHTML = '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+                } else {
+                    statusDiv.innerHTML = '<div class="status error">✗ Error saving profile</div>';
+                    responseDiv.innerHTML = '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<div class="status error">✗ Network error</div>';
+                responseDiv.innerHTML = '<pre>' + error.toString() + '</pre>';
+            }
+        }
+        
+        async function testLoadProfile() {
+            const statusDiv = document.getElementById('status');
+            const responseDiv = document.getElementById('response');
+            
+            statusDiv.innerHTML = '<div class="status">Loading profile...</div>';
+            
+            try {
+                const response = await fetch('/api/profile');
+                const result = await response.json();
+                
+                if (response.ok) {
+                    statusDiv.innerHTML = '<div class="status success">✓ Profile loaded successfully!</div>';
+                    responseDiv.innerHTML = '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+                    
+                    // Update form fields
+                    document.getElementById('first_name').value = result.first_name || '';
+                    document.getElementById('last_name').value = result.last_name || '';
+                    document.getElementById('email').value = result.email || '';
+                    document.getElementById('phone').value = result.phone || '';
+                } else {
+                    statusDiv.innerHTML = '<div class="status error">✗ Error loading profile</div>';
+                    responseDiv.innerHTML = '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<div class="status error">✗ Network error</div>';
+                responseDiv.innerHTML = '<pre>' + error.toString() + '</pre>';
+            }
+        }
+        
+        async function testLoadGroups() {
+            const statusDiv = document.getElementById('groupsStatus');
+            const responseDiv = document.getElementById('groupsResponse');
+            
+            statusDiv.innerHTML = '<div class="status">Loading groups...</div>';
+            
+            try {
+                const response = await fetch('/api/groups');
+                const result = await response.json();
+                
+                if (response.ok) {
+                    statusDiv.innerHTML = '<div class="status success">✓ Groups loaded: ' + result.length + ' groups found</div>';
+                    responseDiv.innerHTML = '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+                } else {
+                    statusDiv.innerHTML = '<div class="status error">✗ Error loading groups</div>';
+                    responseDiv.innerHTML = '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<div class="status error">✗ Network error</div>';
+                responseDiv.innerHTML = '<pre>' + error.toString() + '</pre>';
+            }
+        }
+        
+        async function testCreateGroup() {
+            const statusDiv = document.getElementById('groupsStatus');
+            const responseDiv = document.getElementById('groupsResponse');
+            
+            statusDiv.innerHTML = '<div class="status">Creating test group...</div>';
+            
+            const testGroup = {
+                group_name: 'Test Family ' + new Date().getTime(),
+                group_type: 'family',
+                members: [
+                    { name: 'Test Adult 1', type: 'adult' },
+                    { name: 'Test Child', type: 'child', age: 10 }
+                ]
+            };
+            
+            try {
+                const response = await fetch('/api/groups', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testGroup)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    statusDiv.innerHTML = '<div class="status success">✓ Group created successfully!</div>';
+                    responseDiv.innerHTML = '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+                } else {
+                    statusDiv.innerHTML = '<div class="status error">✗ Error creating group</div>';
+                    responseDiv.innerHTML = '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<div class="status error">✗ Network error</div>';
+                responseDiv.innerHTML = '<pre>' + error.toString() + '</pre>';
+            }
+        }
+        
+        // Load profile on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            testLoadProfile();
+        });
+    </script>
+</body>
+</html>

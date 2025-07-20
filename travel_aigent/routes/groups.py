@@ -2,7 +2,7 @@
 import json
 from flask import Blueprint, jsonify, request, session
 from ..models import db, TravelGroup, User
-from auth import require_auth
+from auth import require_auth, auth
 
 groups_bp = Blueprint('groups', __name__)
 
@@ -11,24 +11,11 @@ groups_bp = Blueprint('groups', __name__)
 @require_auth
 def get_groups():
     """Get all travel groups for the current user"""
-    username = session.get('username', 'admin')
-    
     try:
-        # Get user from database
-        user = User.query.filter_by(username=username).first()
+        # Get current user using auth system
+        user = auth.get_current_user()
         if not user:
-            # Create default user if doesn't exist
-            user = User(
-                username=username,
-                email=f"{username}@travelaigent.com",
-                password_hash="temp_hash",
-                first_name="",
-                last_name="",
-                adults_count=2,
-                travel_style="luxury"
-            )
-            db.session.add(user)
-            db.session.commit()
+            return jsonify({'error': 'User not found'}), 404
         
         groups = TravelGroup.query.filter_by(user_id=user.id).all()
         return jsonify([group.to_dict() for group in groups])
@@ -40,31 +27,13 @@ def get_groups():
 @require_auth
 def create_group():
     """Create a new travel group"""
-    username = session.get('username', 'admin')
     data = request.get_json()
     
     try:
-        # Get user from database
-        user = User.query.filter_by(username=username).first()
+        # Get current user using auth system
+        user = auth.get_current_user()
         if not user:
-            # Create default user if doesn't exist
-            user = User(
-                username=username,
-                email=f"{username}@travelaigent.com",
-                password_hash="temp_hash",
-                first_name="",
-                last_name="",
-                adults_count=2,
-                travel_style="luxury"
-            )
-            db.session.add(user)
-            db.session.commit()
-            # Refresh user to get the ID
-            user = User.query.filter_by(username=username).first()
-        
-        # Ensure user exists and has valid ID
-        if not user or not user.id:
-            return jsonify({'error': 'Failed to create or find user'}), 500
+            return jsonify({'error': 'User not found'}), 404
         
         # Validate required fields
         if not data.get('group_name'):
@@ -95,12 +64,11 @@ def create_group():
 @require_auth
 def update_group(group_id):
     """Update an existing travel group"""
-    username = session.get('username', 'admin')
     data = request.get_json()
     
     try:
-        # Get user from database
-        user = User.query.filter_by(username=username).first()
+        # Get current user using auth system
+        user = auth.get_current_user()
         if not user:
             return jsonify({'error': 'User not found'}), 404
             
@@ -128,11 +96,9 @@ def update_group(group_id):
 @require_auth
 def delete_group(group_id):
     """Delete a travel group"""
-    username = session.get('username', 'admin')
-    
     try:
-        # Get user from database
-        user = User.query.filter_by(username=username).first()
+        # Get current user using auth system
+        user = auth.get_current_user()
         if not user:
             return jsonify({'error': 'User not found'}), 404
             
@@ -154,11 +120,9 @@ def delete_group(group_id):
 @require_auth
 def set_primary_group(group_id):
     """Set a group as the primary group"""
-    username = session.get('username', 'admin')
-    
     try:
-        # Get user from database
-        user = User.query.filter_by(username=username).first()
+        # Get current user using auth system
+        user = auth.get_current_user()
         if not user:
             return jsonify({'error': 'User not found'}), 404
         

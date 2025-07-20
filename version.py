@@ -4,10 +4,10 @@ from datetime import datetime
 # Semantic versioning: MAJOR.MINOR.PATCH
 VERSION_MAJOR = 1
 VERSION_MINOR = 3
-VERSION_PATCH = 0
+VERSION_PATCH = 1
 
 # Build metadata
-BUILD_NUMBER = 24  # Increment with each build
+BUILD_NUMBER = 25  # Increment with each build
 BUILD_DATE = datetime.now().strftime("%Y-%m-%d")
 BUILD_TIME = datetime.now().strftime("%H:%M:%S")
 

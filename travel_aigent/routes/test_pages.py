@@ -65,6 +65,13 @@ def test_deals():
                          briefs=briefs,
                          error=error)
 
+@bp.route("/test/profile")
+@require_auth
+def test_profile():
+    """Test profile functionality."""
+    user = auth.get_current_user()
+    return render_template("test_profile.html", user=user)
+
 @bp.route("/test/api/status")
 @require_auth
 def test_api_status():

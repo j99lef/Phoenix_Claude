@@ -57,23 +57,13 @@ def travel_groups():  # type: ignore[return-value]
 def api_profile():  # type: ignore[return-value]
     """API endpoint for profile data."""
     try:
-        username = session.get('username', 'admin')
-        user = User.query.filter_by(username=username).first()
+        # Use the same method as other routes
+        user = auth.get_current_user()
+        
+        if not user:
+            return jsonify({"error": "User not found"}), 404
         
         if request.method == "GET":
-            if not user:
-                # Create default user
-                user = User(
-                    username=username,
-                    email=f"{username}@travelaigent.com",
-                    password_hash="temp_hash",
-                    first_name="",
-                    last_name="",
-                    adults_count=2,
-                    travel_style="luxury"
-                )
-                db.session.add(user)
-                db.session.commit()
             return jsonify(user.to_dict())
         
         # Handle PUT request
@@ -81,44 +71,54 @@ def api_profile():  # type: ignore[return-value]
         if not data:
             return jsonify({"error": "No data provided"}), 400
         
-        if not user:
-            # Create new user
-            user = User(
-                username=username,
-                email=f"{username}@travelaigent.com",
-                password_hash="temp_hash"
-            )
-            db.session.add(user)
-        
         # Update user fields
+        updated_fields = []
+        
         if 'first_name' in data:
             user.first_name = data['first_name']
+            updated_fields.append('first_name')
         if 'last_name' in data:
             user.last_name = data['last_name']
+            updated_fields.append('last_name')
         if 'email' in data:
             user.email = data['email']
+            updated_fields.append('email')
         if 'phone' in data:
             user.phone = data['phone']
+            updated_fields.append('phone')
+        if 'whatsapp_number' in data:
+            user.whatsapp_number = data['whatsapp_number']
+            updated_fields.append('whatsapp_number')
         if 'home_airports' in data:
             user.home_airports = json.dumps(data['home_airports']) if isinstance(data['home_airports'], list) else data['home_airports']
+            updated_fields.append('home_airports')
         if 'preferred_airlines' in data:
             user.preferred_airlines = json.dumps(data['preferred_airlines']) if isinstance(data['preferred_airlines'], list) else data['preferred_airlines']
+            updated_fields.append('preferred_airlines')
         if 'dietary_restrictions' in data:
             user.dietary_restrictions = data['dietary_restrictions']
+            updated_fields.append('dietary_restrictions')
         if 'travel_style' in data:
             user.travel_style = data['travel_style']
+            updated_fields.append('travel_style')
         if 'adults_count' in data:
             user.adults_count = int(data['adults_count'])
+            updated_fields.append('adults_count')
         if 'children_ages' in data:
             user.children_ages = json.dumps(data['children_ages']) if isinstance(data['children_ages'], list) else data['children_ages']
+            updated_fields.append('children_ages')
         if 'senior_travelers' in data:
             user.senior_travelers = bool(data['senior_travelers'])
+            updated_fields.append('senior_travelers')
         if 'preferred_accommodation' in data:
             user.preferred_accommodation = data['preferred_accommodation']
+            updated_fields.append('preferred_accommodation')
         
         db.session.commit()
         
-        return jsonify({"message": "Profile updated successfully", "user": user.to_dict()})
+        logging.info(f"Updated profile for user {user.username} (ID: {user.id}). Fields updated: {', '.join(updated_fields)}")
+        
+        return jsonify({"message": "Profile updated successfully", "user": user.to_dict(), "updated_fields": updated_fields})
         
     except Exception as exc:  # noqa: BLE001
         logging.exception("Error with profile API: %s", exc)
@@ -148,8 +148,8 @@ def account():  # type: ignore[return-value]
 def user_preferences():  # type: ignore[return-value]
     """API endpoint for user preferences."""
     try:
-        username = request.args.get('username', 'admin')
-        user = User.query.filter_by(username=username).first()
+        # Use auth system consistently
+        user = auth.get_current_user()
         
         if not user:
             return jsonify({"error": "User not found"}), 404

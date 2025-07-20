@@ -1047,15 +1047,25 @@
                 });
                 
                 if (response.ok) {
+                    const result = await response.json();
+                    console.log('Profile saved successfully:', result);
+                    
                     // Show success notification
                     const notification = document.getElementById('successNotification');
+                    notification.textContent = 'Profile saved successfully!';
                     notification.classList.add('show');
+                    
+                    // If fields were updated, log them
+                    if (result.updated_fields && result.updated_fields.length > 0) {
+                        console.log('Updated fields:', result.updated_fields.join(', '));
+                    }
                     
                     setTimeout(() => {
                         notification.classList.remove('show');
                     }, 3000);
                 } else {
                     const error = await response.json();
+                    console.error('Error saving profile:', error);
                     alert('Error saving profile: ' + (error.error || 'Unknown error'));
                 }
             } catch (error) {
@@ -1545,16 +1555,38 @@
             }
         }
         
+        // Load profile data from API
+        async function loadProfile() {
+            try {
+                console.log('Loading profile data from API...');
+                const response = await fetch('/api/profile');
+                
+                if (!response.ok) {
+                    console.error('Failed to load profile:', response.status);
+                    const error = await response.json();
+                    console.error('Error details:', error);
+                    return;
+                }
+                
+                const profile = await response.json();
+                console.log('Profile loaded successfully:', profile);
+                console.log('User ID:', profile.id, 'Username:', profile.username);
+                
+                // Don't override form values - they're already populated server-side
+                // Just log for verification
+                return profile;
+                
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+        
         // Add elegant form interactions
         document.addEventListener('DOMContentLoaded', () => {
             console.log('Initializing profile page...');
             
-            // Check if uk-schools-database is loaded
-            if (typeof window.searchSchools === 'function') {
-                console.log('UK schools database loaded successfully');
-            } else {
-                console.error('UK schools database not loaded!');
-            }
+            // Load profile data to verify it's in the database
+            loadProfile();
             
             // Load travel groups and school calendar
             loadGroups();
