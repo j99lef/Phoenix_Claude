@@ -114,6 +114,23 @@ class BriefSchema(Schema):
         load_default='',
         allow_none=True
     )
+    
+    selected_holiday = fields.Str(
+        validate=validate.Length(max=100),
+        load_default='',
+        allow_none=True
+    )
+    
+    date_mode = fields.Str(
+        validate=validate.OneOf(['holidays', 'custom']),
+        load_default='custom',
+        allow_none=True
+    )
+    
+    travel_group_id = fields.Int(
+        required=False,
+        allow_none=True
+    )
 
 
 class QueryParamsSchema(Schema):

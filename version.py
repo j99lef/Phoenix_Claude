@@ -4,10 +4,10 @@ from datetime import datetime
 # Semantic versioning: MAJOR.MINOR.PATCH
 VERSION_MAJOR = 1
 VERSION_MINOR = 3
-VERSION_PATCH = 11
+VERSION_PATCH = 12
 
 # Build metadata
-BUILD_NUMBER = 50  # Increment with each build
+BUILD_NUMBER = 51  # Increment with each build
 BUILD_DATE = datetime.now().strftime("%Y-%m-%d")
 BUILD_TIME = datetime.now().strftime("%H:%M:%S")
 
@@ -26,6 +26,15 @@ VERSION_FEATURES = {
 
 # Version history
 VERSION_HISTORY = {
+    "1.3.12": {
+        "date": "2025-01-20",
+        "changes": [
+            "Fixed validation error on travel brief submission",
+            "Added missing fields to validation schema: selected_holiday, date_mode",
+            "Added travel_group_id field to brief schema",
+            "Travel briefs can now be submitted without validation errors"
+        ]
+    },
     "1.3.11": {
         "date": "2025-01-20",
         "changes": [
