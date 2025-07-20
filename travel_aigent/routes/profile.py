@@ -49,7 +49,7 @@ def profile():  # type: ignore[return-value]
         if not hasattr(user, 'dietary_restrictions'):
             user.dietary_restrictions = ''
         if not hasattr(user, 'travel_style'):
-            user.travel_style = 'comfort'  # Default value
+            user.travel_style = 'economy'  # Default value
         if not hasattr(user, 'adults_count'):
             user.adults_count = 2
         if not hasattr(user, 'children_ages'):

@@ -17,11 +17,145 @@
     <link href="/static/luxury-concierge.css" rel="stylesheet">
     
     <style>
+        /* Header Fixes */
+        .luxury-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 1rem 0;
+        }
+        
+        .luxury-header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+        
+        .luxury-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: var(--luxury-obsidian, #1a1a1a);
+        }
+        
+        .luxury-logo {
+            height: 40px;
+            width: auto;
+        }
+        
+        .brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .luxury-nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .luxury-nav-link {
+            text-decoration: none;
+            color: var(--luxury-charcoal, #666);
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        
+        .luxury-nav-link:hover,
+        .luxury-nav-link.active {
+            color: var(--luxury-gold, #d4af37);
+        }
+        
+        .luxury-nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--luxury-gold, #d4af37);
+        }
+        
+        .luxury-profile {
+            position: relative;
+        }
+        
+        .luxury-profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+        
+        .luxury-profile-trigger:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        
+        .luxury-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--luxury-gold, #d4af37);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+        
+        .luxury-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            min-width: 200px;
+            display: none;
+            z-index: 1001;
+        }
+        
+        .luxury-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            color: var(--luxury-charcoal, #666);
+            transition: all 0.3s ease;
+        }
+        
+        .luxury-dropdown-item:hover {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--luxury-gold, #d4af37);
+        }
+        
+        .luxury-dropdown-divider {
+            height: 1px;
+            background: #e0e0e0;
+            margin: 0.5rem 0;
+        }
+        
         /* Additional Profile Styles */
         .profile-container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
+            margin-top: 2rem;
         }
         
         .profile-header {
@@ -207,12 +341,46 @@
         
         /* Responsive */
         @media (max-width: 768px) {
+            .luxury-header-content {
+                flex-wrap: wrap;
+                padding: 0 1rem;
+            }
+            
+            .luxury-nav {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                margin-top: 1rem;
+                padding-top: 1rem;
+                border-top: 1px solid #e0e0e0;
+            }
+            
+            .luxury-brand {
+                flex: 1;
+            }
+            
+            .brand-name {
+                font-size: 1.25rem;
+            }
+            
+            .luxury-logo {
+                height: 32px;
+            }
+            
             .profile-title {
                 font-size: 2.5rem;
             }
             
             .form-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .profile-container {
+                padding: 1rem;
+            }
+            
+            .profile-section {
+                padding: 1.5rem;
             }
         }
     </style>
@@ -324,13 +492,12 @@
                                    placeholder="BA, Emirates, Singapore (comma separated)">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Travel Style</label>
+                            <label class="form-label">Preferred Flight Class</label>
                             <select class="form-select" name="travel_style">
-                                <option value="luxury" {% if user.travel_style == 'luxury' %}selected{% endif %}>Luxury</option>
-                                <option value="premium" {% if user.travel_style == 'premium' %}selected{% endif %}>Premium</option>
-                                <option value="comfort" {% if user.travel_style == 'comfort' or not user.travel_style %}selected{% endif %}>Comfort</option>
-                                <option value="budget" {% if user.travel_style == 'budget' %}selected{% endif %}>Budget</option>
-                                <option value="adventure" {% if user.travel_style == 'adventure' %}selected{% endif %}>Adventure</option>
+                                <option value="economy" {% if user.travel_style == 'economy' or not user.travel_style %}selected{% endif %}>Economy</option>
+                                <option value="premium_economy" {% if user.travel_style == 'premium_economy' %}selected{% endif %}>Premium Economy</option>
+                                <option value="business" {% if user.travel_style == 'business' %}selected{% endif %}>Business Class</option>
+                                <option value="first" {% if user.travel_style == 'first' %}selected{% endif %}>First Class</option>
                             </select>
                         </div>
                     </div>

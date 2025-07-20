@@ -175,13 +175,12 @@
                                value="{{ user.home_airports or '' }}" placeholder="e.g., LHR, LGW">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Travel Style</label>
+                        <label class="form-label">Preferred Flight Class</label>
                         <select class="form-input" name="travel_style">
-                            <option value="luxury" {% if user.travel_style == 'luxury' %}selected{% endif %}>Luxury</option>
-                            <option value="premium" {% if user.travel_style == 'premium' %}selected{% endif %}>Premium</option>
-                            <option value="comfort" {% if user.travel_style == 'comfort' or not user.travel_style %}selected{% endif %}>Comfort</option>
-                            <option value="budget" {% if user.travel_style == 'budget' %}selected{% endif %}>Budget</option>
-                            <option value="adventure" {% if user.travel_style == 'adventure' %}selected{% endif %}>Adventure</option>
+                            <option value="economy" {% if user.travel_style == 'economy' or not user.travel_style %}selected{% endif %}>Economy</option>
+                            <option value="premium_economy" {% if user.travel_style == 'premium_economy' %}selected{% endif %}>Premium Economy</option>
+                            <option value="business" {% if user.travel_style == 'business' %}selected{% endif %}>Business Class</option>
+                            <option value="first" {% if user.travel_style == 'first' %}selected{% endif %}>First Class</option>
                         </select>
                     </div>
                 </div>
