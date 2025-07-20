@@ -748,7 +748,16 @@
             const timeline = document.getElementById('searchActivityTimeline');
             
             try {
-                const response = await fetch(`/api/briefs/${briefId}/search-activity`);
+                const response = await fetch(`/api/briefs/${briefId}/search-activity`, {
+                    credentials: 'same-origin'
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    console.error('Search activity error:', error);
+                    throw new Error(error.error || 'Failed to load search activity');
+                }
+                
                 const activities = await response.json();
                 
                 if (activities.length === 0) {

@@ -296,21 +296,36 @@ def create_deal():
 def get_search_activity(brief_id):
     """Get search activity for a specific brief"""
     try:
-        from auth import auth
-        user = auth.get_current_user()
+        # Get username from session
+        username = session.get('username', 'user')
+        user = User.query.filter_by(username=username).first()
+        
+        logging.info(f"Fetching search activity for brief {brief_id}, username: {username}, user: {user}")
         
         if not user:
+            logging.error(f"User not found for username: {username}")
             return jsonify({"error": "User not found"}), 404
         
         # Verify the brief belongs to the user
         brief = TravelBrief.query.filter_by(id=brief_id, user_id=user.id).first()
         if not brief:
+            logging.error(f"Brief {brief_id} not found for user {user.id}")
+            # For now, just check if brief exists at all (for debugging)
+            any_brief = TravelBrief.query.filter_by(id=brief_id).first()
+            if any_brief:
+                logging.warning(f"Brief {brief_id} exists but belongs to user {any_brief.user_id}, not {user.id}")
             return jsonify({"error": "Brief not found"}), 404
         
         # Get search activities for this brief
         activities = SearchActivity.query.filter_by(
             brief_id=brief_id
         ).order_by(SearchActivity.started_at.desc()).limit(20).all()
+        
+        logging.info(f"Found {len(activities)} search activities for brief {brief_id}")
+        
+        # If no activities yet, return empty list
+        if not activities:
+            return jsonify([])
         
         # Convert to dict and add any running activities
         activity_list = []
@@ -328,5 +343,5 @@ def get_search_activity(brief_id):
         return jsonify(activity_list)
         
     except Exception as e:
-        logging.error(f"Error fetching search activity: {e}")
-        return jsonify({"error": "Failed to fetch search activity"}), 500
+        logging.error(f"Error fetching search activity for brief {brief_id}: {e}", exc_info=True)
+        return jsonify({"error": f"Failed to fetch search activity: {str(e)}"}), 500
