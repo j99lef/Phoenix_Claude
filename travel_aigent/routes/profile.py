@@ -62,8 +62,8 @@ def profile():  # type: ignore[return-value]
         # Log what we're sending to template
         logging.info(f"User attributes: first_name={user.first_name}, email={user.email}, travel_style={user.travel_style}")
             
-        # Temporarily use the working profile template
-        return render_template("profile_working.html", user=user)
+        # Use production-ready profile template
+        return render_template("profile_production.html", user=user)
     except Exception as exc:  # noqa: BLE001
         logging.exception("Error loading profile: %s", exc)
         # Return a more detailed error for debugging
