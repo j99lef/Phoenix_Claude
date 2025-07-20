@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configure Profile - TravelAiGent</title>
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Luxury Concierge Design System -->
+    <link href="/static/luxury-concierge.css" rel="stylesheet">
+    
+    <style>
+        /* Basic Profile Styles */
+        .profile-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .profile-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .profile-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 400;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+        }
+        
+        .profile-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .form-section {
+            margin-bottom: 2rem;
+        }
+        
+        .form-section h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: #007bff;
+            color: white;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+        
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <!-- Simple Navigation -->
+    <nav style="background: #f8f9fa; padding: 1rem;">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+            <a href="/" style="font-size: 1.5rem; font-weight: bold; text-decoration: none; color: #333;">TravelAiGent</a>
+            <div>
+                <a href="/" style="margin: 0 1rem; text-decoration: none; color: #666;">Dashboard</a>
+                <a href="/profile" style="margin: 0 1rem; text-decoration: none; color: #333; font-weight: bold;">Profile</a>
+                <a href="/briefs" style="margin: 0 1rem; text-decoration: none; color: #666;">Travel Briefs</a>
+                <a href="/groups" style="margin: 0 1rem; text-decoration: none; color: #666;">Groups</a>
+                <a href="/logout" style="margin: 0 1rem; text-decoration: none; color: #666;">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1 class="profile-title">Configure Your Profile</h1>
+            <p>Personalize your travel preferences and contact information</p>
+        </div>
+        
+        <div id="statusMessage"></div>
+        
+        <form id="profileForm" class="profile-form" onsubmit="saveProfile(event)">
+            <!-- Personal Information -->
+            <div class="form-section">
+                <h3>Personal Information</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">First Name</label>
+                        <input type="text" class="form-input" name="first_name" 
+                               value="{{ user.first_name or '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" class="form-input" name="last_name" 
+                               value="{{ user.last_name or '' }}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" name="email" 
+                               value="{{ user.email or '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" class="form-input" name="phone" 
+                               value="{{ user.phone or '' }}">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Travel Preferences -->
+            <div class="form-section">
+                <h3>Travel Preferences</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Home Airports (comma separated)</label>
+                        <input type="text" class="form-input" name="home_airports" 
+                               value="{{ user.home_airports or '' }}" placeholder="e.g., LHR, LGW">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Travel Style</label>
+                        <select class="form-input" name="travel_style">
+                            <option value="luxury" {% if user.travel_style == 'luxury' %}selected{% endif %}>Luxury</option>
+                            <option value="premium" {% if user.travel_style == 'premium' %}selected{% endif %}>Premium</option>
+                            <option value="comfort" {% if user.travel_style == 'comfort' or not user.travel_style %}selected{% endif %}>Comfort</option>
+                            <option value="budget" {% if user.travel_style == 'budget' %}selected{% endif %}>Budget</option>
+                            <option value="adventure" {% if user.travel_style == 'adventure' %}selected{% endif %}>Adventure</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center;">
+                <button type="submit" class="btn-primary">Save Profile</button>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        async function saveProfile(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = {};
+            
+            // Convert form data to object
+            for (let [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+            
+            try {
+                const response = await fetch('/api/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                const statusDiv = document.getElementById('statusMessage');
+                
+                if (response.ok) {
+                    statusDiv.innerHTML = '<div class="alert alert-success">Profile saved successfully!</div>';
+                    setTimeout(() => {
+                        statusDiv.innerHTML = '';
+                    }, 3000);
+                } else {
+                    statusDiv.innerHTML = '<div class="alert alert-error">Error saving profile: ' + (result.error || 'Unknown error') + '</div>';
+                }
+            } catch (error) {
+                const statusDiv = document.getElementById('statusMessage');
+                statusDiv.innerHTML = '<div class="alert alert-error">Network error: ' + error.message + '</div>';
+            }
+        }
+    </script>
+</body>
+</html>

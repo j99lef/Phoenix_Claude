@@ -62,7 +62,8 @@ def profile():  # type: ignore[return-value]
         # Log what we're sending to template
         logging.info(f"User attributes: first_name={user.first_name}, email={user.email}, travel_style={user.travel_style}")
             
-        return render_template("profile.html", user=user)
+        # Temporarily use the working profile template
+        return render_template("profile_working.html", user=user)
     except Exception as exc:  # noqa: BLE001
         logging.exception("Error loading profile: %s", exc)
         # Return a more detailed error for debugging
@@ -194,6 +195,51 @@ def profile_simple():  # type: ignore[return-value]
         return render_template("profile_simple.html", user=user)
     except Exception as exc:  # noqa: BLE001
         logging.exception("Error loading simple profile: %s", exc)
+        return jsonify({"error": str(exc), "type": str(type(exc))}), 500
+
+
+@bp.route("/profile/original")
+@require_auth
+def profile_original():  # type: ignore[return-value]
+    """Original profile page (might have issues)."""
+    try:
+        from auth import auth
+        user = auth.get_current_user()
+        
+        if not user:
+            return redirect(url_for('auth.login'))
+            
+        # Make sure user has all required attributes with safe defaults
+        if not hasattr(user, 'first_name'):
+            user.first_name = ''
+        if not hasattr(user, 'last_name'):
+            user.last_name = ''
+        if not hasattr(user, 'email'):
+            user.email = ''
+        if not hasattr(user, 'phone'):
+            user.phone = ''
+        if not hasattr(user, 'whatsapp_number'):
+            user.whatsapp_number = ''
+        if not hasattr(user, 'home_airports'):
+            user.home_airports = ''
+        if not hasattr(user, 'preferred_airlines'):
+            user.preferred_airlines = ''
+        if not hasattr(user, 'dietary_restrictions'):
+            user.dietary_restrictions = ''
+        if not hasattr(user, 'travel_style'):
+            user.travel_style = 'comfort'
+        if not hasattr(user, 'adults_count'):
+            user.adults_count = 2
+        if not hasattr(user, 'children_ages'):
+            user.children_ages = ''
+        if not hasattr(user, 'senior_travelers'):
+            user.senior_travelers = False
+        if not hasattr(user, 'preferred_accommodation'):
+            user.preferred_accommodation = ''
+            
+        return render_template("profile.html", user=user)
+    except Exception as exc:  # noqa: BLE001
+        logging.exception("Error loading original profile: %s", exc)
         return jsonify({"error": str(exc), "type": str(type(exc))}), 500
 
 
