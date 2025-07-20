@@ -31,38 +31,43 @@ def profile():  # type: ignore[return-value]
         
         logging.info(f"Loading profile page for user: {user.username} (ID: {user.id if hasattr(user, 'id') else 'No ID'})")
         
-        # Make sure user has all required attributes
+        # Make sure user has all required attributes with safe defaults
         if not hasattr(user, 'first_name'):
-            user.first_name = None
+            user.first_name = ''
         if not hasattr(user, 'last_name'):
-            user.last_name = None
+            user.last_name = ''
         if not hasattr(user, 'email'):
-            user.email = None
+            user.email = ''
         if not hasattr(user, 'phone'):
-            user.phone = None
+            user.phone = ''
         if not hasattr(user, 'whatsapp_number'):
-            user.whatsapp_number = None
+            user.whatsapp_number = ''
         if not hasattr(user, 'home_airports'):
-            user.home_airports = None
+            user.home_airports = ''
         if not hasattr(user, 'preferred_airlines'):
-            user.preferred_airlines = None
+            user.preferred_airlines = ''
         if not hasattr(user, 'dietary_restrictions'):
-            user.dietary_restrictions = None
+            user.dietary_restrictions = ''
         if not hasattr(user, 'travel_style'):
-            user.travel_style = None
+            user.travel_style = 'comfort'  # Default value
         if not hasattr(user, 'adults_count'):
             user.adults_count = 2
         if not hasattr(user, 'children_ages'):
-            user.children_ages = None
+            user.children_ages = ''
         if not hasattr(user, 'senior_travelers'):
             user.senior_travelers = False
         if not hasattr(user, 'preferred_accommodation'):
-            user.preferred_accommodation = None
+            user.preferred_accommodation = ''
+            
+        # Log what we're sending to template
+        logging.info(f"User attributes: first_name={user.first_name}, email={user.email}, travel_style={user.travel_style}")
             
         return render_template("profile.html", user=user)
     except Exception as exc:  # noqa: BLE001
         logging.exception("Error loading profile: %s", exc)
-        return render_template("error.html", message="Unable to load profile"), 500
+        # Return a more detailed error for debugging
+        error_details = f"Error: {str(exc)} (Type: {type(exc).__name__})"
+        return render_template("error.html", message=error_details), 500
 
 
 @bp.route("/groups")
