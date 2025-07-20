@@ -7,7 +7,7 @@ VERSION_MINOR = 3
 VERSION_PATCH = 1
 
 # Build metadata
-BUILD_NUMBER = 26  # Increment with each build
+BUILD_NUMBER = 27  # Increment with each build
 BUILD_DATE = datetime.now().strftime("%Y-%m-%d")
 BUILD_TIME = datetime.now().strftime("%H:%M:%S")
 
