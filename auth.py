@@ -140,7 +140,6 @@ class SimpleAuth:
                             self.first_name = 'Admin'
                             self.last_name = 'User'
                             self.phone = ''
-                            self.whatsapp_number = ''
                             self.home_airports = ''
                             self.preferred_airlines = ''
                             self.dietary_restrictions = ''

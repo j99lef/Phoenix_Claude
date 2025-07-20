@@ -383,6 +383,7 @@
                 padding: 1.5rem;
             }
         }
+        
     </style>
 </head>
 <body>
@@ -390,7 +391,7 @@
     <header class="luxury-header">
         <div class="luxury-header-content">
             <a href="/" class="luxury-brand">
-                <img src="/static/logo.png" alt="TravelAiGent" class="luxury-logo">
+                <img src="/static/TravelAigent_logo.png" alt="TravelAiGent" class="luxury-logo">
                 <span class="brand-name">TravelAiGent</span>
             </a>
             
@@ -465,12 +466,6 @@
                             <label class="form-label">Phone Number</label>
                             <input type="tel" class="form-input" name="phone" 
                                    value="{{ user.phone or '' }}" placeholder="+1 (555) 123-4567">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">WhatsApp Number</label>
-                            <input type="tel" class="form-input" name="whatsapp_number" 
-                                   value="{{ user.whatsapp_number or user.phone or '' }}" 
-                                   placeholder="+1 (555) 123-4567">
                         </div>
                     </div>
                 </div>
@@ -574,182 +569,8 @@
                     </div>
                 </div>
                 
-                <!-- Location & School Settings -->
-                <div class="profile-section">
-                    <h2 class="section-title">
-                        <i class="fas fa-map-marker-alt"></i>
-                        Location & School Calendar
-                    </h2>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label">Country</label>
-                            <select class="form-select" name="country" id="countrySelect" onchange="updateSchoolInfo()">
-                                <option value="">Select your country</option>
-                                <option value="England" {% if school_calendar and school_calendar.country == 'England' %}selected{% endif %}>England</option>
-                                <option value="Scotland" {% if school_calendar and school_calendar.country == 'Scotland' %}selected{% endif %}>Scotland</option>
-                                <option value="Wales" {% if school_calendar and school_calendar.country == 'Wales' %}selected{% endif %}>Wales</option>
-                                <option value="Northern Ireland" {% if school_calendar and school_calendar.country == 'Northern Ireland' %}selected{% endif %}>Northern Ireland</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Manage School Terms</label>
-                            <button type="button" id="editTermsBtn" onclick="toggleTermEditor()" class="btn-secondary" style="background: #007bff; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 4px; width: 100%;">
-                                <i class="fas fa-calendar-alt"></i> Edit Term Dates
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Term Dates Editor (Hidden by default) -->
-                    <div id="termDatesEditor" style="display: none; margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px;">
-                        <h3 style="margin-bottom: 1.5rem; color: #333;">
-                            <i class="fas fa-edit"></i> Edit School Term Dates
-                            <span id="countryIndicator" style="font-size: 1rem; font-weight: normal; color: #666; margin-left: 1rem;"></span>
-                        </h3>
-                        
-                        <!-- Current Year Terms -->
-                        <div style="margin-bottom: 2rem;">
-                            <h4 style="margin-bottom: 1rem; color: #555;">2025 School Terms</h4>
-                            <div class="term-dates-grid" style="display: grid; gap: 1rem;">
-                                <div class="term-row">
-                                    <label class="form-label">Spring Half Term</label>
-                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="date" name="spring_half_term_start_2025" class="form-input" style="flex: 1;">
-                                        <span>to</span>
-                                        <input type="date" name="spring_half_term_end_2025" class="form-input" style="flex: 1;">
-                                    </div>
-                                </div>
-                                <div class="term-row">
-                                    <label class="form-label">Easter Holidays</label>
-                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="date" name="easter_holidays_start_2025" class="form-input" style="flex: 1;">
-                                        <span>to</span>
-                                        <input type="date" name="easter_holidays_end_2025" class="form-input" style="flex: 1;">
-                                    </div>
-                                </div>
-                                <div class="term-row">
-                                    <label class="form-label">May Half Term</label>
-                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="date" name="may_half_term_start_2025" class="form-input" style="flex: 1;">
-                                        <span>to</span>
-                                        <input type="date" name="may_half_term_end_2025" class="form-input" style="flex: 1;">
-                                    </div>
-                                </div>
-                                <div class="term-row">
-                                    <label class="form-label">Summer Holidays</label>
-                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="date" name="summer_holidays_start_2025" class="form-input" style="flex: 1;">
-                                        <span>to</span>
-                                        <input type="date" name="summer_holidays_end_2025" class="form-input" style="flex: 1;">
-                                    </div>
-                                </div>
-                                <div class="term-row">
-                                    <label class="form-label">Autumn Half Term</label>
-                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="date" name="autumn_half_term_start_2025" class="form-input" style="flex: 1;">
-                                        <span>to</span>
-                                        <input type="date" name="autumn_half_term_end_2025" class="form-input" style="flex: 1;">
-                                    </div>
-                                </div>
-                                <div class="term-row">
-                                    <label class="form-label">Christmas Holidays</label>
-                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="date" name="christmas_holidays_start_2025" class="form-input" style="flex: 1;">
-                                        <span>to</span>
-                                        <input type="date" name="christmas_holidays_end_2025" class="form-input" style="flex: 1;">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Next Year Terms -->
-                        <div style="margin-bottom: 2rem;">
-                            <h4 style="margin-bottom: 1rem; color: #555;">2026 School Terms</h4>
-                            <div class="term-dates-grid" style="display: grid; gap: 1rem;">
-                                <div class="term-row">
-                                    <label class="form-label">Spring Half Term</label>
-                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="date" name="spring_half_term_start_2026" class="form-input" style="flex: 1;">
-                                        <span>to</span>
-                                        <input type="date" name="spring_half_term_end_2026" class="form-input" style="flex: 1;">
-                                    </div>
-                                </div>
-                                <div class="term-row">
-                                    <label class="form-label">Easter Holidays</label>
-                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="date" name="easter_holidays_start_2026" class="form-input" style="flex: 1;">
-                                        <span>to</span>
-                                        <input type="date" name="easter_holidays_end_2026" class="form-input" style="flex: 1;">
-                                    </div>
-                                </div>
-                                <div class="term-row">
-                                    <label class="form-label">May Half Term</label>
-                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="date" name="may_half_term_start_2026" class="form-input" style="flex: 1;">
-                                        <span>to</span>
-                                        <input type="date" name="may_half_term_end_2026" class="form-input" style="flex: 1;">
-                                    </div>
-                                </div>
-                                <div class="term-row">
-                                    <label class="form-label">Summer Holidays</label>
-                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="date" name="summer_holidays_start_2026" class="form-input" style="flex: 1;">
-                                        <span>to</span>
-                                        <input type="date" name="summer_holidays_end_2026" class="form-input" style="flex: 1;">
-                                    </div>
-                                </div>
-                                <div class="term-row">
-                                    <label class="form-label">Autumn Half Term</label>
-                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="date" name="autumn_half_term_start_2026" class="form-input" style="flex: 1;">
-                                        <span>to</span>
-                                        <input type="date" name="autumn_half_term_end_2026" class="form-input" style="flex: 1;">
-                                    </div>
-                                </div>
-                                <div class="term-row">
-                                    <label class="form-label">Christmas Holidays</label>
-                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <input type="date" name="christmas_holidays_start_2026" class="form-input" style="flex: 1;">
-                                        <span>to</span>
-                                        <input type="date" name="christmas_holidays_end_2026" class="form-input" style="flex: 1;">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div style="display: flex; gap: 1rem;">
-                            <button type="button" onclick="loadDefaultTermDates()" class="btn-secondary" style="background: #6c757d; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 4px;">
-                                Load Default Dates
-                            </button>
-                            <button type="button" onclick="toggleTermEditor()" class="btn-secondary" style="background: #28a745; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 4px;">
-                                Done Editing
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- INSET Days -->
-                    <div class="form-group" style="margin-top: 1.5rem;">
-                        <label class="form-label">Personal INSET Days</label>
-                        <p style="font-size: 0.875rem; color: #666; margin-bottom: 1rem;">
-                            Add your school's specific INSET/Teacher Training days
-                        </p>
-                        <div id="insetDaysList" style="margin-bottom: 1rem;">
-                            {% if school_calendar and school_calendar.inset_days %}
-                                {% for day in school_calendar.inset_days %}
-                                <div class="inset-day-item" style="display: flex; gap: 1rem; margin-bottom: 0.5rem;">
-                                    <input type="date" value="{{ day.date }}" name="inset_dates[]" class="form-input" style="flex: 1;">
-                                    <input type="text" value="{{ day.description or '' }}" name="inset_descriptions[]" placeholder="Description" class="form-input" style="flex: 2;">
-                                    <button type="button" onclick="removeInsetDay(this)" class="btn-remove" style="padding: 0.5rem 1rem; background: #dc3545; color: white; border: none; border-radius: 4px;">Remove</button>
-                                </div>
-                                {% endfor %}
-                            {% endif %}
-                        </div>
-                        <button type="button" onclick="addInsetDay()" class="btn-secondary" style="background: #6c757d; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px;">
-                            Add INSET Day
-                        </button>
-                    </div>
-                </div>
                 
-                <!-- Special Requirements -->
+<!-- Special Requirements -->
                 <div class="profile-section">
                     <h2 class="section-title">
                         <i class="fas fa-info-circle"></i>
@@ -982,132 +803,6 @@
             }
         };
         
-        // School calendar functions
-        function updateSchoolInfo() {
-            const country = document.getElementById('countrySelect').value;
-            const editBtn = document.getElementById('editTermsBtn');
-            const editor = document.getElementById('termDatesEditor');
-            
-            if (country) {
-                editBtn.style.display = 'block';
-                // Hide the editor when country changes (user needs to click Edit again)
-                editor.style.display = 'none';
-            } else {
-                editBtn.style.display = 'none';
-                editor.style.display = 'none';
-            }
-        }
-        
-        function toggleTermEditor() {
-            const editor = document.getElementById('termDatesEditor');
-            const isVisible = editor.style.display === 'block';
-            editor.style.display = isVisible ? 'none' : 'block';
-            
-            if (!isVisible) {
-                const country = document.getElementById('countrySelect').value;
-                if (country) {
-                    // Update country indicator
-                    document.getElementById('countryIndicator').textContent = `(${country})`;
-                    
-                    // First check if we have saved dates
-                    const savedDates = loadTermDatesIfAvailable();
-                    
-                    // If no saved dates, load the defaults for the selected country
-                    if (!savedDates) {
-                        loadDefaultTermDates();
-                    }
-                }
-            }
-        }
-        
-        function loadDefaultTermDates() {
-            const country = document.getElementById('countrySelect').value;
-            if (!country || !DEFAULT_TERM_DATES[country]) {
-                alert('Please select a country first');
-                return;
-            }
-            
-            const dates = DEFAULT_TERM_DATES[country];
-            let fieldsUpdated = 0;
-            
-            // Load 2025 dates
-            Object.keys(dates[2025]).forEach(term => {
-                const startInput = document.querySelector(`input[name="${term}_start_2025"]`);
-                const endInput = document.querySelector(`input[name="${term}_end_2025"]`);
-                if (startInput && endInput) {
-                    startInput.value = dates[2025][term].start;
-                    endInput.value = dates[2025][term].end;
-                    fieldsUpdated += 2;
-                }
-            });
-            
-            // Load 2026 dates
-            Object.keys(dates[2026]).forEach(term => {
-                const startInput = document.querySelector(`input[name="${term}_start_2026"]`);
-                const endInput = document.querySelector(`input[name="${term}_end_2026"]`);
-                if (startInput && endInput) {
-                    startInput.value = dates[2026][term].start;
-                    endInput.value = dates[2026][term].end;
-                    fieldsUpdated += 2;
-                }
-            });
-            
-            // Show feedback
-            if (fieldsUpdated > 0) {
-                const btn = event.target;
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-check"></i> Dates Loaded!';
-                btn.style.background = '#28a745';
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.style.background = '#6c757d';
-                }, 2000);
-            }
-        }
-        
-        function loadTermDatesIfAvailable() {
-            // Check if we have existing term dates saved
-            const existingDates = document.querySelector('input[type="hidden"][name="existing_term_dates"]');
-            if (existingDates && existingDates.value && existingDates.value !== '{}') {
-                try {
-                    const dates = JSON.parse(existingDates.value);
-                    
-                    // Check if we actually have dates
-                    if (Object.keys(dates).length > 0) {
-                        // Populate form fields with existing dates
-                        Object.keys(dates).forEach(termKey => {
-                            const input = document.querySelector(`input[name="${termKey}"]`);
-                            if (input) {
-                                input.value = dates[termKey];
-                            }
-                        });
-                        return true; // Found and loaded saved dates
-                    }
-                } catch (e) {
-                    console.error('Error loading existing term dates:', e);
-                }
-            }
-            return false; // No saved dates found
-        }
-        
-        function addInsetDay() {
-            const container = document.getElementById('insetDaysList');
-            const dayDiv = document.createElement('div');
-            dayDiv.className = 'inset-day-item';
-            dayDiv.style.cssText = 'display: flex; gap: 1rem; margin-bottom: 0.5rem;';
-            
-            dayDiv.innerHTML = `
-                <input type="date" name="inset_dates[]" class="form-input" style="flex: 1;" required>
-                <input type="text" name="inset_descriptions[]" placeholder="Description" class="form-input" style="flex: 2;">
-                <button type="button" onclick="removeInsetDay(this)" class="btn-remove" style="padding: 0.5rem 1rem; background: #dc3545; color: white; border: none; border-radius: 4px;">Remove</button>
-            `;
-            
-            container.appendChild(dayDiv);
-        }
-        
-        function removeInsetDay(button) {
-            button.parentElement.remove();
-        }
         
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {

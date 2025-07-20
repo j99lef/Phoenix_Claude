@@ -123,21 +123,38 @@ class AmadeusAPI:
         }
         
         try:
-            # Search for 4+ star family-friendly hotels only
-            params = {
+            # First, search for hotels by city
+            search_params = {
                 'cityCode': destination_code,
+                'radius': 20,
+                'radiusUnit': 'KM',
+                'hotelSource': 'ALL'
+            }
+            
+            self.rate_limit()
+            search_url = f"{self.base_url}/v1/reference-data/locations/hotels/by-city"
+            search_response = requests.get(search_url, headers=headers, params=search_params, timeout=30)
+            
+            if search_response.status_code != 200:
+                logging.warning(f"Hotel search by city failed: {search_response.text}")
+                return []
+            
+            hotel_search_data = search_response.json()
+            hotel_ids = [hotel['hotelId'] for hotel in hotel_search_data.get('data', [])[:10]]  # Get top 10 hotels
+            
+            if not hotel_ids:
+                logging.info(f"No hotels found in {destination_code}")
+                return []
+            
+            # Now get offers for these hotels
+            params = {
+                'hotelIds': ','.join(hotel_ids),
                 'checkInDate': check_in_date.strftime('%Y-%m-%d'),
                 'checkOutDate': check_out_date.strftime('%Y-%m-%d'),
                 'adults': 2,  # Family default
-                'children': 2,  # Family with children
                 'roomQuantity': 1,
-                'radius': 20,  # 20km radius
-                'radiusUnit': 'KM',
-                'ratings': '4,5',  # 4+ star hotels only as per brief requirements
-                'amenities': 'FAMILY_PLAN,POOL,WIFI,RESTAURANT',
-                'hotelSource': 'ALL',
-                'sort': 'PRICE',  # Sort by price for best value
-                'view': 'FULL_ALL_IMAGES'
+                'currency': 'GBP',
+                'bestRateOnly': True
             }
             
             self.rate_limit()
@@ -406,16 +423,21 @@ class AmadeusAPI:
                     except:
                         pass
             
+            # Try to parse as a single date first
+            try:
+                single_date = datetime.strptime(dates_str.strip(), '%Y-%m-%d')
+                dates.append(single_date)
+                return dates
+            except:
+                pass
+                
             # Handle format like "2025-08-15 to 2025-08-22"
-            parts = dates_str.split('-')
-            
-            if len(parts) >= 1:
-                # Departure date
-                dates.append(datetime.strptime(parts[0].strip(), '%Y-%m-%d'))
-            
-            if len(parts) >= 2:
-                # Return date
-                dates.append(datetime.strptime(parts[1].strip(), '%Y-%m-%d'))
+            if ' to ' in dates_str:
+                parts = dates_str.split(' to ')
+                if len(parts) == 2:
+                    dates.append(datetime.strptime(parts[0].strip(), '%Y-%m-%d'))
+                    dates.append(datetime.strptime(parts[1].strip(), '%Y-%m-%d'))
+                    return dates
             
             return dates
             

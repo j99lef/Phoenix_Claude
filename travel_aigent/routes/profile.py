@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import logging
+from datetime import datetime
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -40,8 +41,6 @@ def profile():  # type: ignore[return-value]
             user.email = ''
         if not hasattr(user, 'phone'):
             user.phone = ''
-        if not hasattr(user, 'whatsapp_number'):
-            user.whatsapp_number = ''
         if not hasattr(user, 'home_airports'):
             user.home_airports = ''
         if not hasattr(user, 'preferred_airlines'):
@@ -62,23 +61,8 @@ def profile():  # type: ignore[return-value]
         # Log what we're sending to template
         logging.info(f"User attributes: first_name={user.first_name}, email={user.email}, travel_style={user.travel_style}")
         
-        # Get user's school calendar if exists
-        from ..models import UserSchoolCalendar, SchoolTermDates
-        school_calendar = UserSchoolCalendar.query.filter_by(user_id=user.id).first() if hasattr(user, 'id') and user.id else None
-        
-        # Get term dates if calendar exists
-        term_dates_data = {}
-        if school_calendar:
-            term_dates = SchoolTermDates.query.filter_by(calendar_id=school_calendar.id).all()
-            for term in term_dates:
-                term_dates_data[f"{term.term_name}_start_{term.year}"] = term.start_date.isoformat() if term.start_date else ''
-                term_dates_data[f"{term.term_name}_end_{term.year}"] = term.end_date.isoformat() if term.end_date else ''
-            
         # Use production-ready profile template
-        return render_template("profile_production.html", 
-                             user=user, 
-                             school_calendar=school_calendar,
-                             existing_term_dates=json.dumps(term_dates_data))
+        return render_template("profile_production.html", user=user)
     except Exception as exc:  # noqa: BLE001
         logging.exception("Error loading profile: %s", exc)
         # Return a more detailed error for debugging
@@ -139,9 +123,6 @@ def api_profile():  # type: ignore[return-value]
         if 'phone' in data:
             user.phone = data['phone']
             updated_fields.append('phone')
-        if 'whatsapp_number' in data:
-            user.whatsapp_number = data['whatsapp_number']
-            updated_fields.append('whatsapp_number')
         if 'home_airports' in data:
             user.home_airports = data['home_airports']
             updated_fields.append('home_airports')
@@ -166,89 +147,6 @@ def api_profile():  # type: ignore[return-value]
         if 'preferred_accommodation' in data:
             user.preferred_accommodation = data['preferred_accommodation']
             updated_fields.append('preferred_accommodation')
-        
-        # Handle school calendar
-        if 'country' in data and data['country']:
-            from ..models import UserSchoolCalendar, InsetDay, SchoolTermDates
-            
-            # Get or create school calendar
-            school_calendar = UserSchoolCalendar.query.filter_by(user_id=user.id).first()
-            if not school_calendar:
-                school_calendar = UserSchoolCalendar(user_id=user.id, country=data['country'])
-                db.session.add(school_calendar)
-                db.session.flush()  # Get the ID
-            else:
-                school_calendar.country = data['country']
-            
-            updated_fields.append('school_calendar')
-            
-            # Handle term dates
-            if 'term_dates' in data and data['term_dates']:
-                # Clear existing term dates
-                SchoolTermDates.query.filter_by(calendar_id=school_calendar.id).delete()
-                
-                # Parse and save new term dates
-                term_dates = data['term_dates']
-                for key, value in term_dates.items():
-                    if value:  # Only process if date is provided
-                        # Parse key like "spring_half_term_start_2025"
-                        parts = key.rsplit('_', 2)
-                        if len(parts) == 3:
-                            term_name = parts[0]
-                            date_type = parts[1]  # 'start' or 'end'
-                            year = int(parts[2])
-                            
-                            # Find or create the term record
-                            term = SchoolTermDates.query.filter_by(
-                                calendar_id=school_calendar.id,
-                                year=year,
-                                term_name=term_name
-                            ).first()
-                            
-                            if not term:
-                                term = SchoolTermDates(
-                                    calendar_id=school_calendar.id,
-                                    year=year,
-                                    term_name=term_name,
-                                    start_date=datetime.strptime('2000-01-01', '%Y-%m-%d').date(),
-                                    end_date=datetime.strptime('2000-01-01', '%Y-%m-%d').date()
-                                )
-                                db.session.add(term)
-                            
-                            # Update the appropriate date
-                            date_obj = datetime.strptime(value, '%Y-%m-%d').date()
-                            if date_type == 'start':
-                                term.start_date = date_obj
-                            else:
-                                term.end_date = date_obj
-                
-                updated_fields.append('term_dates')
-            
-            # Handle INSET days
-            if 'inset_dates[]' in data or 'inset_dates' in data:
-                # Clear existing INSET days
-                InsetDay.query.filter_by(calendar_id=school_calendar.id).delete()
-                
-                # Get dates and descriptions
-                dates = data.getlist('inset_dates[]') if hasattr(data, 'getlist') else data.get('inset_dates', [])
-                descriptions = data.getlist('inset_descriptions[]') if hasattr(data, 'getlist') else data.get('inset_descriptions', [])
-                
-                # Add new INSET days
-                for i, date_str in enumerate(dates):
-                    if date_str:
-                        try:
-                            from datetime import datetime
-                            date_obj = datetime.strptime(date_str, '%Y-%m-%d').date()
-                            description = descriptions[i] if i < len(descriptions) else ''
-                            
-                            inset_day = InsetDay(
-                                calendar_id=school_calendar.id,
-                                date=date_obj,
-                                description=description
-                            )
-                            db.session.add(inset_day)
-                        except ValueError:
-                            logging.warning(f"Invalid date format: {date_str}")
         
         # Commit all changes
         db.session.commit()
@@ -318,8 +216,6 @@ def profile_original():  # type: ignore[return-value]
             user.email = ''
         if not hasattr(user, 'phone'):
             user.phone = ''
-        if not hasattr(user, 'whatsapp_number'):
-            user.whatsapp_number = ''
         if not hasattr(user, 'home_airports'):
             user.home_airports = ''
         if not hasattr(user, 'preferred_airlines'):

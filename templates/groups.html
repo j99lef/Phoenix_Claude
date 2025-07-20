@@ -481,6 +481,42 @@
             </p>
         </div>
         
+        <!-- School Calendar Settings -->
+        <div class="groups-section luxury-animate-fade-up">
+            <div class="section-title">
+                <i class="fas fa-calendar-alt"></i>
+                <span>School Calendar Settings</span>
+            </div>
+            
+            <div style="margin-bottom: var(--space-luxury-xl);">
+                <p style="color: var(--luxury-charcoal); margin-bottom: var(--space-luxury-lg);">
+                    Configure your school calendar to find travel deals during school holidays.
+                </p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-luxury-lg);">
+                    <div class="form-group">
+                        <label class="form-label">Country</label>
+                        <select class="form-select" id="countrySelect" onchange="updateCountrySelection()">
+                            <option value="">Select your country</option>
+                            <option value="England">England</option>
+                            <option value="Scotland">Scotland</option>
+                            <option value="Wales">Wales</option>
+                            <option value="Northern Ireland">Northern Ireland</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="button" class="save-button" style="width: 100%;" onclick="saveSchoolCalendar()">
+                            <i class="fas fa-save"></i>
+                            Save Calendar Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Travel Groups Section -->
         <div class="groups-section luxury-animate-fade-up">
             <div class="section-title">
                 <i class="fas fa-users"></i>
@@ -542,9 +578,14 @@
                     <div id="membersContainer">
                         <!-- Member inputs will be added here -->
                     </div>
-                    <button type="button" class="add-member-btn" onclick="addMemberInput()">
-                        <i class="fas fa-plus"></i> Add Member
-                    </button>
+                    <div style="display: flex; gap: var(--space-luxury-md); margin-top: var(--space-luxury-md);">
+                        <button type="button" class="add-member-btn" onclick="addMe()" style="background: var(--luxury-gold); color: white; border: none;">
+                            <i class="fas fa-user-plus"></i> Add Me
+                        </button>
+                        <button type="button" class="add-member-btn" onclick="addMemberInput()">
+                            <i class="fas fa-plus"></i> Add Member
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="form-actions">
@@ -562,6 +603,111 @@
         // Travel Groups Management
         let groups = [];
         let memberCounter = 0;
+        let currentUserData = {{ user.to_dict()|tojson if user else 'null' }};
+        
+        // School Calendar Functions
+        async function loadSchoolCalendar() {
+            try {
+                const response = await fetch('/api/profile');
+                if (response.ok) {
+                    const userData = await response.json();
+                    if (userData.school_calendar && userData.school_calendar.country) {
+                        document.getElementById('countrySelect').value = userData.school_calendar.country;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading school calendar:', error);
+            }
+        }
+        
+        function updateCountrySelection() {
+            // Country selection updated
+        }
+        
+        async function saveSchoolCalendar() {
+            const country = document.getElementById('countrySelect').value;
+            if (!country) {
+                showNotification('Please select a country', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ country: country })
+                });
+                
+                if (response.ok) {
+                    showNotification('School calendar settings saved successfully!', 'success');
+                } else {
+                    showNotification('Failed to save school calendar settings', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving school calendar:', error);
+                showNotification('Failed to save school calendar settings', 'error');
+            }
+        }
+        
+        // Add Me function
+        function addMe() {
+            if (!currentUserData) {
+                showNotification('User data not available', 'error');
+                return;
+            }
+            
+            memberCounter++;
+            const container = document.getElementById('membersContainer');
+            const memberDiv = document.createElement('div');
+            memberDiv.className = 'member-input-group';
+            memberDiv.innerHTML = `
+                <div class="member-input-row">
+                    <input type="text" class="form-input" placeholder="First Name" name="member_first_name_${memberCounter}" value="${currentUserData.first_name || ''}" required>
+                    <input type="text" class="form-input" placeholder="Last Name" name="member_last_name_${memberCounter}" value="${currentUserData.last_name || ''}">
+                    <input type="date" class="form-input" placeholder="Date of Birth" name="member_dob_${memberCounter}" onchange="autoSetType(this)" max="${new Date().toISOString().split('T')[0]}">
+                    <input type="text" class="form-input member-type" name="member_type_${memberCounter}" value="Adult" readonly style="background: #f8f9fa;">
+                    <button type="button" class="member-remove-btn" onclick="removeMember(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(memberDiv);
+        }
+        
+        // Auto-set member type based on DOB
+        function autoSetType(dobInput) {
+            const dob = new Date(dobInput.value);
+            const today = new Date();
+            
+            // Validate date
+            if (dob > today) {
+                showNotification('Date of birth cannot be in the future', 'error');
+                dobInput.value = '';
+                return;
+            }
+            
+            let age = today.getFullYear() - dob.getFullYear();
+            const monthDiff = today.getMonth() - dob.getMonth();
+            
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+                age--;
+            }
+            
+            // Find the type input in the same row
+            const typeInput = dobInput.closest('.member-input-row').querySelector('.member-type');
+            
+            if (age < 2) {
+                typeInput.value = 'Infant';
+            } else if (age < 18) {
+                typeInput.value = 'Child';
+            } else if (age >= 65) {
+                typeInput.value = 'Senior';
+            } else {
+                typeInput.value = 'Adult';
+            }
+        }
         
         // Calculate age from date of birth
         function calculateAge(dob) {
@@ -658,22 +804,17 @@
             document.querySelector('.save-button').innerHTML = '<i class="fas fa-save"></i> Create Group';
         }
         
-        function addMemberInput() {
+        function addMemberInput(memberData = {}) {
             memberCounter++;
             const container = document.getElementById('membersContainer');
             const memberDiv = document.createElement('div');
             memberDiv.className = 'member-input-group';
             memberDiv.innerHTML = `
                 <div class="member-input-row">
-                    <input type="text" class="form-input" placeholder="First Name" name="member_first_name_${memberCounter}" required>
-                    <input type="text" class="form-input" placeholder="Last Name" name="member_last_name_${memberCounter}">
-                    <input type="date" class="form-input" placeholder="Date of Birth" name="member_dob_${memberCounter}">
-                    <select class="form-select" name="member_type_${memberCounter}">
-                        <option value="adult">Adult</option>
-                        <option value="child">Child</option>
-                        <option value="senior">Senior</option>
-                        <option value="infant">Infant</option>
-                    </select>
+                    <input type="text" class="form-input" placeholder="First Name" name="member_first_name_${memberCounter}" value="${memberData.first_name || ''}" required>
+                    <input type="text" class="form-input" placeholder="Last Name" name="member_last_name_${memberCounter}" value="${memberData.last_name || ''}">
+                    <input type="date" class="form-input" placeholder="Date of Birth" name="member_dob_${memberCounter}" value="${memberData.dob || ''}" onchange="autoSetType(this)" max="${new Date().toISOString().split('T')[0]}">
+                    <input type="text" class="form-input member-type" name="member_type_${memberCounter}" value="${memberData.type || 'Adult'}" readonly style="background: #f8f9fa;">
                     <button type="button" class="member-remove-btn" onclick="removeMember(this)">
                         <i class="fas fa-times"></i>
                     </button>
@@ -703,7 +844,8 @@
                 const firstName = memberGroup.querySelector(`input[name*="member_first_name_"]`)?.value;
                 const lastName = memberGroup.querySelector(`input[name*="member_last_name_"]`)?.value;
                 const dob = memberGroup.querySelector(`input[name*="member_dob_"]`)?.value;
-                const type = memberGroup.querySelector(`select[name*="member_type_"]`)?.value;
+                const typeInput = memberGroup.querySelector(`.member-type`);
+                const type = typeInput ? typeInput.value.toLowerCase() : 'adult';
                 
                 if (firstName && firstName.trim()) {
                     members.push({
@@ -719,7 +861,7 @@
             
             // Validate that at least one member is added
             if (members.length === 0) {
-                alert('Please add at least one member to the group.');
+                showNotification('Please add at least one member to the group.', 'error');
                 return;
             }
             
@@ -773,11 +915,11 @@
                     delete form.dataset.groupId;
                 } else {
                     const error = await response.json();
-                    alert(`Error ${isEditMode ? 'updating' : 'creating'} group: ` + (error.error || 'Unknown error'));
+                    showNotification(`Error ${isEditMode ? 'updating' : 'creating'} group: ` + (error.error || 'Unknown error'), 'error');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert(`Failed to ${isEditMode ? 'update' : 'create'} group`);
+                showNotification(`Failed to ${isEditMode ? 'update' : 'create'} group`, 'error');
             }
         }
         
@@ -842,13 +984,29 @@
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Failed to delete group');
+                showNotification('Failed to delete group', 'error');
             }
+        }
+        
+        // Show notification function
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('successNotification');
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                <span>${message}</span>
+            `;
+            notification.style.background = type === 'success' ? 'var(--luxury-success)' : '#f44336';
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
         }
         
         // Initialize page
         document.addEventListener('DOMContentLoaded', () => {
             loadGroups();
+            loadSchoolCalendar();
             
             // Modal overlay click to close
             document.getElementById('groupModal').addEventListener('click', (e) => {

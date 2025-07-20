@@ -103,6 +103,17 @@ class BriefSchema(Schema):
         load_default='',
         allow_none=True
     )
+    
+    focus_on_school_holidays = fields.Bool(
+        load_default=False,
+        allow_none=True
+    )
+    
+    preferred_holiday_periods = fields.Str(
+        validate=validate.Length(max=500),
+        load_default='',
+        allow_none=True
+    )
 
 
 class QueryParamsSchema(Schema):

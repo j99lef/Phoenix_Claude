@@ -4,10 +4,10 @@ from datetime import datetime
 # Semantic versioning: MAJOR.MINOR.PATCH
 VERSION_MAJOR = 1
 VERSION_MINOR = 3
-VERSION_PATCH = 1
+VERSION_PATCH = 5
 
 # Build metadata
-BUILD_NUMBER = 37  # Increment with each build
+BUILD_NUMBER = 44  # Increment with each build
 BUILD_DATE = datetime.now().strftime("%Y-%m-%d")
 BUILD_TIME = datetime.now().strftime("%H:%M:%S")
 
@@ -26,6 +26,16 @@ VERSION_FEATURES = {
 
 # Version history
 VERSION_HISTORY = {
+    "1.3.5": {
+        "date": "2025-01-20",
+        "changes": [
+            "Fixed Amadeus API integration - now finding real flights",
+            "Added Amadeus API credentials to environment",
+            "Fixed date parsing issues in travel brief processing",
+            "Improved hotel search API calls",
+            "Amadeus API now successfully searches London to Paris/Rome flights"
+        ]
+    },
     "1.3.0": {
         "date": "2025-01-20",
         "changes": [

@@ -155,6 +155,10 @@
                 Discover extraordinary journeys crafted exclusively for discerning travelers. 
                 Your AI concierge is curating the world's finest travel experiences.
             </p>
+            <div style="text-align: center; margin: 1rem 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
+                Build v1.3.5+build.43 | 
+                API Status: <span style="color: {% if api_status and 'Active' in api_status %}#28a745{% elif api_status and 'Error' in api_status %}#dc3545{% else %}#ffc107{% endif %};">{{ api_status or 'Unknown' }}</span>
+            </div>
             <div class="luxury-cta-group">
                 <a href="/brief/new" class="btn-luxury-primary">
                     <i class="fas fa-plus"></i>
@@ -197,6 +201,29 @@
                     <div class="luxury-stat-description">Tailored for you</div>
                 </div>
             </section>
+            <!-- API Status Debug Info -->
+            {% if api_status %}
+            <div class="luxury-card" style="margin-bottom: var(--space-luxury-xl); background: {% if 'Active' in api_status %}#d4edda{% elif 'Error' in api_status %}#f8d7da{% else %}#fff3cd{% endif %};">
+                <div class="luxury-card-header">
+                    <h3 class="luxury-card-title">
+                        <i class="fas fa-cogs" style="color: var(--luxury-gold); margin-right: var(--space-luxury-sm);"></i>
+                        Amadeus API Status
+                    </h3>
+                </div>
+                <div class="luxury-card-content">
+                    <p><strong>Status:</strong> {{ api_status }}</p>
+                    {% if amadeus_info %}
+                        <p><strong>Client ID Set:</strong> {{ amadeus_info.client_id_set }}</p>
+                        <p><strong>Client Secret Set:</strong> {{ amadeus_info.client_secret_set }}</p>
+                        <p><strong>Client ID Length:</strong> {{ amadeus_info.client_id_length }}</p>
+                        {% if amadeus_info.direct_test_error %}
+                            <p><strong>Direct Test Error:</strong> {{ amadeus_info.direct_test_error }}</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
             <!-- Travel Briefs Section -->
             <div class="luxury-section-header">
                 <h2 class="luxury-section-title">Your Travel Portfolio</h2>

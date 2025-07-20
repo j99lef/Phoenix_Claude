@@ -56,10 +56,46 @@ def index():  # type: ignore[return-value]
                 briefs_count = 0
                 recent_briefs = []
             
+            # Check API status for dashboard
+            api_status = "Unknown"
+            amadeus_info = {}
+            try:
+                import os
+                from amadeus_api import AmadeusAPI
+                
+                amadeus_info = {
+                    'client_id_set': bool(os.environ.get("AMADEUS_CLIENT_ID")),
+                    'client_secret_set': bool(os.environ.get("AMADEUS_CLIENT_SECRET")),
+                    'client_id_length': len(os.environ.get("AMADEUS_CLIENT_ID", "")),
+                }
+                
+                agent = _get_agent()
+                if agent and hasattr(agent, 'amadeus') and agent.amadeus:
+                    api_status = "Active"
+                    amadeus_info['api_initialized'] = True
+                else:
+                    api_status = "Limited - Using Mock Data"
+                    amadeus_info['api_initialized'] = False
+                    
+                    # Try to initialize directly
+                    try:
+                        test_amadeus = AmadeusAPI()
+                        if test_amadeus.access_token:
+                            api_status = "API Available - Agent Issue"
+                            amadeus_info['direct_test'] = True
+                    except Exception as e:
+                        amadeus_info['direct_test_error'] = str(e)
+                        
+            except Exception as e:
+                api_status = f"Error: {str(e)}"
+                amadeus_info['error'] = str(e)
+            
             return render_template("index.html", 
                                  briefs_count=briefs_count,
                                  recent_briefs=recent_briefs,
-                                 user=user)
+                                 user=user,
+                                 api_status=api_status,
+                                 amadeus_info=amadeus_info)
         except Exception as exc:  # noqa: BLE001
             logging.exception("Error loading dashboard: %s", exc)
             return render_template("index.html", briefs_count=0, recent_briefs=[], user=None)
@@ -362,6 +398,56 @@ def test_notification():  # type: ignore[return-value]
     except Exception as exc:  # noqa: BLE001
         logging.exception("Test notification error: %s", exc)
         return jsonify({"message": "Error"}), 200
+
+
+@bp.route("/api/debug/amadeus-status")
+@require_auth
+def debug_amadeus_status():  # type: ignore[return-value]
+    """Debug endpoint to check Amadeus API status and environment variables"""
+    import os
+    from amadeus_api import AmadeusAPI
+    
+    debug_info = {}
+    
+    # Check environment variables (safely)
+    debug_info['env_check'] = {
+        'amadeus_client_id_set': bool(os.environ.get("AMADEUS_CLIENT_ID")),
+        'amadeus_client_secret_set': bool(os.environ.get("AMADEUS_CLIENT_SECRET")),
+        'amadeus_client_id_length': len(os.environ.get("AMADEUS_CLIENT_ID", "")),
+        'amadeus_client_secret_length': len(os.environ.get("AMADEUS_CLIENT_SECRET", "")),
+        'amadeus_client_id_prefix': os.environ.get("AMADEUS_CLIENT_ID", "")[:4] if os.environ.get("AMADEUS_CLIENT_ID") else "",
+    }
+    
+    # Try to initialize Amadeus API
+    try:
+        amadeus = AmadeusAPI()
+        debug_info['amadeus_init'] = {
+            'success': True,
+            'has_access_token': bool(amadeus.access_token),
+            'token_expires_at': str(amadeus.token_expires_at) if amadeus.token_expires_at else None
+        }
+    except Exception as e:
+        debug_info['amadeus_init'] = {
+            'success': False,
+            'error': str(e),
+            'error_type': type(e).__name__
+        }
+    
+    # Check Travel Agent
+    try:
+        agent = _get_agent()
+        debug_info['travel_agent'] = {
+            'agent_exists': agent is not None,
+            'has_amadeus': hasattr(agent, 'amadeus') and agent.amadeus is not None if agent else False,
+            'amadeus_type': type(agent.amadeus).__name__ if agent and hasattr(agent, 'amadeus') and agent.amadeus else None
+        }
+    except Exception as e:
+        debug_info['travel_agent'] = {
+            'error': str(e),
+            'error_type': type(e).__name__
+        }
+    
+    return jsonify(debug_info)
 
 
 @bp.route("/api/briefs", methods=["POST"])
