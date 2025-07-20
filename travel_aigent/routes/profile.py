@@ -63,11 +63,22 @@ def profile():  # type: ignore[return-value]
         logging.info(f"User attributes: first_name={user.first_name}, email={user.email}, travel_style={user.travel_style}")
         
         # Get user's school calendar if exists
-        from ..models import UserSchoolCalendar
+        from ..models import UserSchoolCalendar, SchoolTermDates
         school_calendar = UserSchoolCalendar.query.filter_by(user_id=user.id).first() if hasattr(user, 'id') and user.id else None
+        
+        # Get term dates if calendar exists
+        term_dates_data = {}
+        if school_calendar:
+            term_dates = SchoolTermDates.query.filter_by(calendar_id=school_calendar.id).all()
+            for term in term_dates:
+                term_dates_data[f"{term.term_name}_start_{term.year}"] = term.start_date.isoformat() if term.start_date else ''
+                term_dates_data[f"{term.term_name}_end_{term.year}"] = term.end_date.isoformat() if term.end_date else ''
             
         # Use production-ready profile template
-        return render_template("profile_production.html", user=user, school_calendar=school_calendar)
+        return render_template("profile_production.html", 
+                             user=user, 
+                             school_calendar=school_calendar,
+                             existing_term_dates=json.dumps(term_dates_data))
     except Exception as exc:  # noqa: BLE001
         logging.exception("Error loading profile: %s", exc)
         # Return a more detailed error for debugging
@@ -158,17 +169,60 @@ def api_profile():  # type: ignore[return-value]
         
         # Handle school calendar
         if 'country' in data and data['country']:
-            from ..models import UserSchoolCalendar, InsetDay
+            from ..models import UserSchoolCalendar, InsetDay, SchoolTermDates
             
             # Get or create school calendar
             school_calendar = UserSchoolCalendar.query.filter_by(user_id=user.id).first()
             if not school_calendar:
                 school_calendar = UserSchoolCalendar(user_id=user.id, country=data['country'])
                 db.session.add(school_calendar)
+                db.session.flush()  # Get the ID
             else:
                 school_calendar.country = data['country']
             
             updated_fields.append('school_calendar')
+            
+            # Handle term dates
+            if 'term_dates' in data and data['term_dates']:
+                # Clear existing term dates
+                SchoolTermDates.query.filter_by(calendar_id=school_calendar.id).delete()
+                
+                # Parse and save new term dates
+                term_dates = data['term_dates']
+                for key, value in term_dates.items():
+                    if value:  # Only process if date is provided
+                        # Parse key like "spring_half_term_start_2025"
+                        parts = key.rsplit('_', 2)
+                        if len(parts) == 3:
+                            term_name = parts[0]
+                            date_type = parts[1]  # 'start' or 'end'
+                            year = int(parts[2])
+                            
+                            # Find or create the term record
+                            term = SchoolTermDates.query.filter_by(
+                                calendar_id=school_calendar.id,
+                                year=year,
+                                term_name=term_name
+                            ).first()
+                            
+                            if not term:
+                                term = SchoolTermDates(
+                                    calendar_id=school_calendar.id,
+                                    year=year,
+                                    term_name=term_name,
+                                    start_date=datetime.strptime('2000-01-01', '%Y-%m-%d').date(),
+                                    end_date=datetime.strptime('2000-01-01', '%Y-%m-%d').date()
+                                )
+                                db.session.add(term)
+                            
+                            # Update the appropriate date
+                            date_obj = datetime.strptime(value, '%Y-%m-%d').date()
+                            if date_type == 'start':
+                                term.start_date = date_obj
+                            else:
+                                term.end_date = date_obj
+                
+                updated_fields.append('term_dates')
             
             # Handle INSET days
             if 'inset_dates[]' in data or 'inset_dates' in data:

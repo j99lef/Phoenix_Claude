@@ -435,6 +435,9 @@
         <div id="alertMessage" class="alert"></div>
         
         <form id="profileForm" onsubmit="saveProfile(event)">
+            <!-- Hidden field for existing term dates -->
+            <input type="hidden" name="existing_term_dates" value="{{ existing_term_dates or '{}' }}">
+            
             <div class="profile-sections">
                 <!-- Personal Information -->
                 <div class="profile-section">
@@ -589,14 +592,136 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">School Term Times</label>
-                            <div id="schoolTermInfo" class="form-input" style="background: #f8f9fa; min-height: 45px; display: flex; align-items: center;">
-                                {% if school_calendar %}
-                                    Based on {{ school_calendar.country }} school calendar
-                                {% else %}
-                                    Select a country to see school term times
-                                {% endif %}
+                            <label class="form-label">Manage School Terms</label>
+                            <button type="button" id="editTermsBtn" onclick="toggleTermEditor()" class="btn-secondary" style="background: #007bff; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 4px; width: 100%;">
+                                <i class="fas fa-calendar-alt"></i> Edit Term Dates
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Term Dates Editor (Hidden by default) -->
+                    <div id="termDatesEditor" style="display: none; margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px;">
+                        <h3 style="margin-bottom: 1.5rem; color: #333;">
+                            <i class="fas fa-edit"></i> Edit School Term Dates
+                        </h3>
+                        
+                        <!-- Current Year Terms -->
+                        <div style="margin-bottom: 2rem;">
+                            <h4 style="margin-bottom: 1rem; color: #555;">2025 School Terms</h4>
+                            <div class="term-dates-grid" style="display: grid; gap: 1rem;">
+                                <div class="term-row">
+                                    <label class="form-label">Spring Half Term</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="date" name="spring_half_term_start_2025" class="form-input" style="flex: 1;">
+                                        <span>to</span>
+                                        <input type="date" name="spring_half_term_end_2025" class="form-input" style="flex: 1;">
+                                    </div>
+                                </div>
+                                <div class="term-row">
+                                    <label class="form-label">Easter Holidays</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="date" name="easter_holidays_start_2025" class="form-input" style="flex: 1;">
+                                        <span>to</span>
+                                        <input type="date" name="easter_holidays_end_2025" class="form-input" style="flex: 1;">
+                                    </div>
+                                </div>
+                                <div class="term-row">
+                                    <label class="form-label">May Half Term</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="date" name="may_half_term_start_2025" class="form-input" style="flex: 1;">
+                                        <span>to</span>
+                                        <input type="date" name="may_half_term_end_2025" class="form-input" style="flex: 1;">
+                                    </div>
+                                </div>
+                                <div class="term-row">
+                                    <label class="form-label">Summer Holidays</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="date" name="summer_holidays_start_2025" class="form-input" style="flex: 1;">
+                                        <span>to</span>
+                                        <input type="date" name="summer_holidays_end_2025" class="form-input" style="flex: 1;">
+                                    </div>
+                                </div>
+                                <div class="term-row">
+                                    <label class="form-label">Autumn Half Term</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="date" name="autumn_half_term_start_2025" class="form-input" style="flex: 1;">
+                                        <span>to</span>
+                                        <input type="date" name="autumn_half_term_end_2025" class="form-input" style="flex: 1;">
+                                    </div>
+                                </div>
+                                <div class="term-row">
+                                    <label class="form-label">Christmas Holidays</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="date" name="christmas_holidays_start_2025" class="form-input" style="flex: 1;">
+                                        <span>to</span>
+                                        <input type="date" name="christmas_holidays_end_2025" class="form-input" style="flex: 1;">
+                                    </div>
+                                </div>
                             </div>
+                        </div>
+                        
+                        <!-- Next Year Terms -->
+                        <div style="margin-bottom: 2rem;">
+                            <h4 style="margin-bottom: 1rem; color: #555;">2026 School Terms</h4>
+                            <div class="term-dates-grid" style="display: grid; gap: 1rem;">
+                                <div class="term-row">
+                                    <label class="form-label">Spring Half Term</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="date" name="spring_half_term_start_2026" class="form-input" style="flex: 1;">
+                                        <span>to</span>
+                                        <input type="date" name="spring_half_term_end_2026" class="form-input" style="flex: 1;">
+                                    </div>
+                                </div>
+                                <div class="term-row">
+                                    <label class="form-label">Easter Holidays</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="date" name="easter_holidays_start_2026" class="form-input" style="flex: 1;">
+                                        <span>to</span>
+                                        <input type="date" name="easter_holidays_end_2026" class="form-input" style="flex: 1;">
+                                    </div>
+                                </div>
+                                <div class="term-row">
+                                    <label class="form-label">May Half Term</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="date" name="may_half_term_start_2026" class="form-input" style="flex: 1;">
+                                        <span>to</span>
+                                        <input type="date" name="may_half_term_end_2026" class="form-input" style="flex: 1;">
+                                    </div>
+                                </div>
+                                <div class="term-row">
+                                    <label class="form-label">Summer Holidays</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="date" name="summer_holidays_start_2026" class="form-input" style="flex: 1;">
+                                        <span>to</span>
+                                        <input type="date" name="summer_holidays_end_2026" class="form-input" style="flex: 1;">
+                                    </div>
+                                </div>
+                                <div class="term-row">
+                                    <label class="form-label">Autumn Half Term</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="date" name="autumn_half_term_start_2026" class="form-input" style="flex: 1;">
+                                        <span>to</span>
+                                        <input type="date" name="autumn_half_term_end_2026" class="form-input" style="flex: 1;">
+                                    </div>
+                                </div>
+                                <div class="term-row">
+                                    <label class="form-label">Christmas Holidays</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="date" name="christmas_holidays_start_2026" class="form-input" style="flex: 1;">
+                                        <span>to</span>
+                                        <input type="date" name="christmas_holidays_end_2026" class="form-input" style="flex: 1;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 1rem;">
+                            <button type="button" onclick="loadDefaultTermDates()" class="btn-secondary" style="background: #6c757d; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 4px;">
+                                Load Default Dates
+                            </button>
+                            <button type="button" onclick="toggleTermEditor()" class="btn-secondary" style="background: #28a745; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 4px;">
+                                Done Editing
+                            </button>
                         </div>
                     </div>
                     
@@ -610,8 +735,8 @@
                             {% if school_calendar and school_calendar.inset_days %}
                                 {% for day in school_calendar.inset_days %}
                                 <div class="inset-day-item" style="display: flex; gap: 1rem; margin-bottom: 0.5rem;">
-                                    <input type="date" value="{{ day.date }}" class="form-input" style="flex: 1;">
-                                    <input type="text" value="{{ day.description or '' }}" placeholder="Description" class="form-input" style="flex: 2;">
+                                    <input type="date" value="{{ day.date }}" name="inset_dates[]" class="form-input" style="flex: 1;">
+                                    <input type="text" value="{{ day.description or '' }}" name="inset_descriptions[]" placeholder="Description" class="form-input" style="flex: 2;">
                                     <button type="button" onclick="removeInsetDay(this)" class="btn-remove" style="padding: 0.5rem 1rem; background: #dc3545; color: white; border: none; border-radius: 4px;">Remove</button>
                                 </div>
                                 {% endfor %}
@@ -693,6 +818,8 @@
             const data = {};
             
             // Convert form data to object
+            const termDates = {};
+            
             for (let [key, value] of formData.entries()) {
                 if (key === 'preferred_accommodation') {
                     // Handle multiple checkbox values
@@ -706,9 +833,17 @@
                     // Handle INSET descriptions array
                     if (!data['inset_descriptions']) data['inset_descriptions'] = [];
                     data['inset_descriptions'].push(value);
+                } else if (key.includes('_start_') || key.includes('_end_')) {
+                    // Collect term dates separately
+                    termDates[key] = value;
                 } else {
                     data[key] = value;
                 }
+            }
+            
+            // Add term dates to data if any were set
+            if (Object.keys(termDates).length > 0) {
+                data['term_dates'] = termDates;
             }
             
             // Convert arrays to comma-separated strings for certain fields
@@ -770,15 +905,152 @@
             });
         });
         
+        // Default term dates by country
+        const DEFAULT_TERM_DATES = {
+            'England': {
+                2025: {
+                    'spring_half_term': { start: '2025-02-17', end: '2025-02-21' },
+                    'easter_holidays': { start: '2025-04-14', end: '2025-04-25' },
+                    'may_half_term': { start: '2025-05-26', end: '2025-05-30' },
+                    'summer_holidays': { start: '2025-07-21', end: '2025-09-01' },
+                    'autumn_half_term': { start: '2025-10-27', end: '2025-10-31' },
+                    'christmas_holidays': { start: '2025-12-22', end: '2026-01-05' }
+                },
+                2026: {
+                    'spring_half_term': { start: '2026-02-16', end: '2026-02-20' },
+                    'easter_holidays': { start: '2026-04-03', end: '2026-04-17' },
+                    'may_half_term': { start: '2026-05-25', end: '2026-05-29' },
+                    'summer_holidays': { start: '2026-07-22', end: '2026-09-02' },
+                    'autumn_half_term': { start: '2026-10-26', end: '2026-10-30' },
+                    'christmas_holidays': { start: '2026-12-21', end: '2027-01-04' }
+                }
+            },
+            'Scotland': {
+                2025: {
+                    'spring_half_term': { start: '2025-02-10', end: '2025-02-14' },
+                    'easter_holidays': { start: '2025-04-07', end: '2025-04-18' },
+                    'may_half_term': { start: '2025-05-05', end: '2025-05-06' },
+                    'summer_holidays': { start: '2025-06-27', end: '2025-08-18' },
+                    'autumn_half_term': { start: '2025-10-13', end: '2025-10-17' },
+                    'christmas_holidays': { start: '2025-12-22', end: '2026-01-05' }
+                },
+                2026: {
+                    'spring_half_term': { start: '2026-02-09', end: '2026-02-13' },
+                    'easter_holidays': { start: '2026-03-30', end: '2026-04-10' },
+                    'may_half_term': { start: '2026-05-04', end: '2026-05-05' },
+                    'summer_holidays': { start: '2026-06-26', end: '2026-08-17' },
+                    'autumn_half_term': { start: '2026-10-12', end: '2026-10-16' },
+                    'christmas_holidays': { start: '2026-12-21', end: '2027-01-04' }
+                }
+            },
+            'Wales': {
+                2025: {
+                    'spring_half_term': { start: '2025-02-17', end: '2025-02-21' },
+                    'easter_holidays': { start: '2025-04-14', end: '2025-04-25' },
+                    'may_half_term': { start: '2025-05-26', end: '2025-05-30' },
+                    'summer_holidays': { start: '2025-07-21', end: '2025-09-01' },
+                    'autumn_half_term': { start: '2025-10-27', end: '2025-10-31' },
+                    'christmas_holidays': { start: '2025-12-22', end: '2026-01-05' }
+                },
+                2026: {
+                    'spring_half_term': { start: '2026-02-16', end: '2026-02-20' },
+                    'easter_holidays': { start: '2026-04-03', end: '2026-04-17' },
+                    'may_half_term': { start: '2026-05-25', end: '2026-05-29' },
+                    'summer_holidays': { start: '2026-07-20', end: '2026-08-31' },
+                    'autumn_half_term': { start: '2026-10-26', end: '2026-10-30' },
+                    'christmas_holidays': { start: '2026-12-21', end: '2027-01-04' }
+                }
+            },
+            'Northern Ireland': {
+                2025: {
+                    'spring_half_term': { start: '2025-02-17', end: '2025-02-18' },
+                    'easter_holidays': { start: '2025-04-14', end: '2025-04-25' },
+                    'may_half_term': { start: '2025-05-26', end: '2025-05-26' },
+                    'summer_holidays': { start: '2025-07-01', end: '2025-08-29' },
+                    'autumn_half_term': { start: '2025-10-27', end: '2025-10-31' },
+                    'christmas_holidays': { start: '2025-12-22', end: '2026-01-02' }
+                },
+                2026: {
+                    'spring_half_term': { start: '2026-02-16', end: '2026-02-17' },
+                    'easter_holidays': { start: '2026-04-01', end: '2026-04-10' },
+                    'may_half_term': { start: '2026-05-25', end: '2026-05-25' },
+                    'summer_holidays': { start: '2026-07-01', end: '2026-08-31' },
+                    'autumn_half_term': { start: '2026-10-26', end: '2026-10-30' },
+                    'christmas_holidays': { start: '2026-12-21', end: '2027-01-01' }
+                }
+            }
+        };
+        
         // School calendar functions
         function updateSchoolInfo() {
             const country = document.getElementById('countrySelect').value;
-            const infoDiv = document.getElementById('schoolTermInfo');
+            const editBtn = document.getElementById('editTermsBtn');
             
             if (country) {
-                infoDiv.textContent = `Based on ${country} school calendar`;
+                editBtn.style.display = 'block';
+                loadTermDatesIfAvailable();
             } else {
-                infoDiv.textContent = 'Select a country to see school term times';
+                editBtn.style.display = 'none';
+            }
+        }
+        
+        function toggleTermEditor() {
+            const editor = document.getElementById('termDatesEditor');
+            const isVisible = editor.style.display === 'block';
+            editor.style.display = isVisible ? 'none' : 'block';
+            
+            if (!isVisible && document.getElementById('countrySelect').value) {
+                loadTermDatesIfAvailable();
+            }
+        }
+        
+        function loadDefaultTermDates() {
+            const country = document.getElementById('countrySelect').value;
+            if (!country || !DEFAULT_TERM_DATES[country]) {
+                alert('Please select a country first');
+                return;
+            }
+            
+            const dates = DEFAULT_TERM_DATES[country];
+            
+            // Load 2025 dates
+            Object.keys(dates[2025]).forEach(term => {
+                const startInput = document.querySelector(`input[name="${term}_start_2025"]`);
+                const endInput = document.querySelector(`input[name="${term}_end_2025"]`);
+                if (startInput && endInput) {
+                    startInput.value = dates[2025][term].start;
+                    endInput.value = dates[2025][term].end;
+                }
+            });
+            
+            // Load 2026 dates
+            Object.keys(dates[2026]).forEach(term => {
+                const startInput = document.querySelector(`input[name="${term}_start_2026"]`);
+                const endInput = document.querySelector(`input[name="${term}_end_2026"]`);
+                if (startInput && endInput) {
+                    startInput.value = dates[2026][term].start;
+                    endInput.value = dates[2026][term].end;
+                }
+            });
+        }
+        
+        function loadTermDatesIfAvailable() {
+            // This will be populated from saved data if available
+            // For now, check if we have existing term dates in the form
+            const existingDates = document.querySelector('input[type="hidden"][name="existing_term_dates"]');
+            if (existingDates && existingDates.value) {
+                try {
+                    const dates = JSON.parse(existingDates.value);
+                    // Populate form fields with existing dates
+                    Object.keys(dates).forEach(termKey => {
+                        const input = document.querySelector(`input[name="${termKey}"]`);
+                        if (input) {
+                            input.value = dates[termKey];
+                        }
+                    });
+                } catch (e) {
+                    console.error('Error loading existing term dates:', e);
+                }
             }
         }
         

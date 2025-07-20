@@ -372,6 +372,33 @@ class InsetDay(db.Model):
         }
 
 
+class SchoolTermDates(db.Model):
+    """Custom school term dates for user's calendar"""
+    __tablename__ = 'school_term_dates'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    calendar_id = db.Column(db.Integer, db.ForeignKey('user_school_calendars.id'), nullable=False)
+    year = db.Column(db.Integer, nullable=False)
+    term_name = db.Column(db.String(50), nullable=False)  # spring_half_term, easter_holidays, etc.
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
+    
+    # Timestamps
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    def to_dict(self):
+        """Convert to dictionary"""
+        return {
+            'id': self.id,
+            'calendar_id': self.calendar_id,
+            'year': self.year,
+            'term_name': self.term_name,
+            'start_date': self.start_date.isoformat() if self.start_date else None,
+            'end_date': self.end_date.isoformat() if self.end_date else None
+        }
+
+
 # Keep old UserSchool for backward compatibility but deprecated
 class UserSchool(db.Model):
     """DEPRECATED: User school/council association for term dates"""
