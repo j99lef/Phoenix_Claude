@@ -14,5 +14,6 @@ fi
 echo "Running import tests..."
 python test_import.py
 
-echo "Starting gunicorn on port $PORT"
-exec gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --log-level debug --access-logfile - --error-logfile - --preload
+echo "Starting TravelAiGent with scheduler on port $PORT"
+# Run the combined web + scheduler process
+exec python start_with_scheduler.py
