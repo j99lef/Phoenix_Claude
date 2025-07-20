@@ -3,6 +3,7 @@ import logging
 import os
 import secrets
 from pathlib import Path
+from datetime import datetime
 
 from flask import Flask
 from flask_limiter import Limiter
@@ -174,6 +175,17 @@ def create_app(config_overrides=None):
             'status': 'healthy', 
             'app': 'TravelAiGent',
             'version': VERSION_FULL
+        }), 200
+    
+    # Debug route to check deployment
+    @app.route('/version')
+    def version_check():
+        from flask import jsonify
+        return jsonify({
+            'version': VERSION_FULL,
+            'build': get_version_info()['build'],
+            'test_routes_available': True,
+            'timestamp': datetime.utcnow().isoformat()
         }), 200
 
     # ---------------------------------------------------------------------
