@@ -4,10 +4,10 @@ from datetime import datetime
 # Semantic versioning: MAJOR.MINOR.PATCH
 VERSION_MAJOR = 1
 VERSION_MINOR = 3
-VERSION_PATCH = 6
+VERSION_PATCH = 7
 
 # Build metadata
-BUILD_NUMBER = 45  # Increment with each build
+BUILD_NUMBER = 46  # Increment with each build
 BUILD_DATE = datetime.now().strftime("%Y-%m-%d")
 BUILD_TIME = datetime.now().strftime("%H:%M:%S")
 
@@ -26,6 +26,16 @@ VERSION_FEATURES = {
 
 # Version history
 VERSION_HISTORY = {
+    "1.3.7": {
+        "date": "2025-01-20",
+        "changes": [
+            "Simplified School Calendar UI in Travel Groups page",
+            "Added school holiday selector for travel briefs with children",
+            "Toggle between holiday selection and custom dates",
+            "Integrated travel groups with school calendar API",
+            "Added API endpoints for group calendar data"
+        ]
+    },
     "1.3.6": {
         "date": "2025-01-20",
         "changes": [

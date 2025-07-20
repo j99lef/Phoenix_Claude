@@ -555,7 +555,38 @@
                     </div>
                     
                     <div class="luxury-form-grid">
-                        <div class="luxury-form-group">
+                        <!-- Date Selection Mode Toggle (shown when school children in group) -->
+                        <div class="luxury-form-group full-width" id="dateSelectionMode" style="display: none;">
+                            <label class="luxury-label">How would you like to select travel dates?</label>
+                            <div style="display: flex; gap: var(--space-luxury-md); margin-top: var(--space-luxury-sm);">
+                                <label class="radio-option" style="flex: 1;">
+                                    <input type="radio" name="date_mode" value="holidays" onclick="toggleDateMode('holidays')" checked>
+                                    <div class="radio-content">
+                                        <i class="fas fa-graduation-cap"></i>
+                                        <span>School Holidays</span>
+                                    </div>
+                                </label>
+                                <label class="radio-option" style="flex: 1;">
+                                    <input type="radio" name="date_mode" value="custom" onclick="toggleDateMode('custom')">
+                                    <div class="radio-content">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>Custom Dates</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- School Holiday Selector (default for school children) -->
+                        <div class="luxury-form-group full-width" id="holidaySelector" style="display: none;">
+                            <label class="luxury-label">Select School Holiday Period</label>
+                            <div class="holiday-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-luxury-md); margin-top: var(--space-luxury-md);">
+                                <!-- Holiday options will be populated here based on calendar settings -->
+                            </div>
+                            <input type="hidden" name="selected_holiday" id="selected_holiday">
+                        </div>
+                        
+                        <!-- Traditional Date Picker (default for no children) -->
+                        <div class="luxury-form-group" id="customDatePicker">
                             <label class="luxury-label">Travel Dates</label>
                             <div class="date-input-wrapper">
                                 <input type="date" class="luxury-input" name="departure_date" id="departure_date"
@@ -570,7 +601,7 @@
                             <div id="schoolHolidayHints" style="display: none; margin-top: var(--space-luxury-md); padding: var(--space-luxury-md); background: var(--luxury-champagne); border-radius: 8px; border-left: 4px solid var(--luxury-gold);">
                                 <h4 style="margin: 0 0 var(--space-luxury-sm) 0; color: var(--luxury-obsidian); font-size: 0.9rem;">
                                     <i class="fas fa-graduation-cap" style="color: var(--luxury-gold);"></i>
-                                    School Holiday Suggestions
+                                    Quick Select: School Holidays
                                 </h4>
                                 <div id="holidayOptions" style="display: flex; flex-wrap: wrap; gap: var(--space-luxury-sm);">
                                     <!-- Holiday options will be populated here -->
@@ -1261,11 +1292,17 @@
         function checkForFamilyGroup() {
             const travelers = document.querySelectorAll('#travelersContainer .traveler-item');
             let hasChildren = false;
+            let hasSchoolAgeChildren = false;
             
             travelers.forEach(traveler => {
                 const typeSelect = traveler.querySelector('select');
                 if (typeSelect && (typeSelect.value === 'child' || typeSelect.value === 'infant')) {
                     hasChildren = true;
+                    // Consider children (not infants) as school age - this is a simplification
+                    // In reality, we'd check actual ages
+                    if (typeSelect.value === 'child') {
+                        hasSchoolAgeChildren = true;
+                    }
                 }
             });
             
@@ -1273,6 +1310,28 @@
             const preferencesDiv = document.getElementById('schoolHolidayPreferences');
             if (preferencesDiv) {
                 preferencesDiv.style.display = hasChildren ? 'block' : 'none';
+            }
+            
+            // Show/hide date selection mode toggle
+            const dateSelectionMode = document.getElementById('dateSelectionMode');
+            const holidaySelector = document.getElementById('holidaySelector');
+            const customDatePicker = document.getElementById('customDatePicker');
+            
+            if (dateSelectionMode) {
+                if (hasSchoolAgeChildren) {
+                    dateSelectionMode.style.display = 'block';
+                    // Default to holiday mode for school-age children
+                    const holidayRadio = document.querySelector('input[name="date_mode"][value="holidays"]');
+                    if (holidayRadio && !holidayRadio.checked) {
+                        holidayRadio.checked = true;
+                        toggleDateMode('holidays');
+                    }
+                } else {
+                    dateSelectionMode.style.display = 'none';
+                    // Show custom date picker for non-school groups
+                    if (holidaySelector) holidaySelector.style.display = 'none';
+                    if (customDatePicker) customDatePicker.style.display = 'block';
+                }
             }
             
             if (hasChildren) {
@@ -1422,6 +1481,128 @@
             
             // Update form with INSET day context
             updateReturnDate();
+        }
+        
+        // Toggle between holiday and custom date modes
+        function toggleDateMode(mode) {
+            const holidaySelector = document.getElementById('holidaySelector');
+            const customDatePicker = document.getElementById('customDatePicker');
+            const schoolHints = document.getElementById('schoolHolidayHints');
+            
+            if (mode === 'holidays') {
+                holidaySelector.style.display = 'block';
+                customDatePicker.style.display = 'none';
+                populateHolidayCards();
+            } else {
+                holidaySelector.style.display = 'none';
+                customDatePicker.style.display = 'block';
+                if (schoolHints) {
+                    schoolHints.style.display = 'block';
+                }
+            }
+        }
+        
+        // Populate holiday cards based on selected travel group
+        async function populateHolidayCards() {
+            const holidayGrid = document.querySelector('#holidaySelector .holiday-grid');
+            if (!holidayGrid) return;
+            
+            const selectedGroupId = document.getElementById('travel_group_id').value;
+            if (!selectedGroupId) {
+                holidayGrid.innerHTML = '<p>Please select a travel group first.</p>';
+                return;
+            }
+            
+            try {
+                // Get group details
+                const response = await fetch(`/api/groups/${selectedGroupId}`);
+                if (!response.ok) throw new Error('Failed to load group');
+                
+                const group = await response.json();
+                
+                // Get school calendar for the group
+                const calendarResponse = await fetch(`/api/groups/${selectedGroupId}/calendar`);
+                if (!calendarResponse.ok) {
+                    holidayGrid.innerHTML = '<p>No school calendar configured for this group.</p>';
+                    return;
+                }
+                
+                const calendar = await calendarResponse.json();
+                
+                // Create holiday cards
+                const holidays = calendar.holidays || [];
+                const today = new Date();
+                const futureHolidays = holidays.filter(h => new Date(h.start_date) > today);
+                
+                if (futureHolidays.length === 0) {
+                    holidayGrid.innerHTML = '<p>No upcoming school holidays found.</p>';
+                    return;
+                }
+                
+                holidayGrid.innerHTML = futureHolidays.slice(0, 6).map(holiday => {
+                    const startDate = new Date(holiday.start_date);
+                    const endDate = new Date(holiday.end_date);
+                    const duration = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+                    
+                    return `
+                        <div class="holiday-card" onclick="selectHolidayCard('${holiday.name}', '${holiday.start_date}', '${holiday.end_date}')" 
+                             style="padding: var(--space-luxury-md); border: 2px solid var(--luxury-stone); border-radius: 8px; cursor: pointer; 
+                                    transition: all 0.2s; background: var(--luxury-white);">
+                            <h4 style="margin: 0 0 var(--space-luxury-sm) 0; color: var(--luxury-gold);">
+                                ${holiday.name}
+                            </h4>
+                            <p style="margin: 0; color: var(--luxury-slate); font-size: 0.9rem;">
+                                ${startDate.toLocaleDateString('en-GB', { month: 'short', day: 'numeric' })} - 
+                                ${endDate.toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' })}
+                            </p>
+                            <p style="margin: var(--space-luxury-xs) 0 0 0; color: var(--luxury-midnight); font-weight: 500;">
+                                ${duration} days
+                            </p>
+                        </div>
+                    `;
+                }).join('');
+                
+                // Add hover effect
+                document.querySelectorAll('.holiday-card').forEach(card => {
+                    card.addEventListener('mouseenter', function() {
+                        this.style.borderColor = 'var(--luxury-gold)';
+                        this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+                    });
+                    card.addEventListener('mouseleave', function() {
+                        if (!this.classList.contains('selected')) {
+                            this.style.borderColor = 'var(--luxury-stone)';
+                            this.style.boxShadow = 'none';
+                        }
+                    });
+                });
+                
+            } catch (error) {
+                console.error('Error loading holidays:', error);
+                holidayGrid.innerHTML = '<p>Error loading school holidays.</p>';
+            }
+        }
+        
+        // Select a holiday card and populate dates
+        function selectHolidayCard(holidayName, startDate, endDate) {
+            // Update hidden field
+            document.getElementById('selected_holiday').value = holidayName;
+            
+            // Update date inputs
+            document.getElementById('departure_date').value = startDate;
+            document.getElementById('return_date').value = endDate;
+            
+            // Update visual selection
+            document.querySelectorAll('.holiday-card').forEach(card => {
+                card.classList.remove('selected');
+                card.style.borderColor = 'var(--luxury-stone)';
+                card.style.boxShadow = 'none';
+                card.style.background = 'var(--luxury-white)';
+            });
+            
+            event.currentTarget.classList.add('selected');
+            event.currentTarget.style.borderColor = 'var(--luxury-gold)';
+            event.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+            event.currentTarget.style.background = 'var(--luxury-pearl)';
         }
         
         // Initialize on load

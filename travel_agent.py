@@ -3,7 +3,10 @@ import time
 from datetime import datetime, timedelta
 from sheets_handler import SheetsHandler
 from amadeus_api import AmadeusAPI
-from openai_analyzer import OpenAIAnalyzer
+try:
+    from claude_analyzer import ClaudeAnalyzer
+except ImportError:
+    from openai_analyzer import OpenAIAnalyzer
 from telegram_notifier import TelegramNotifier
 import config
 
@@ -20,9 +23,17 @@ class TravelAgent:
             self.amadeus = None
             
         try:
-            self.ai_analyzer = OpenAIAnalyzer()
+            # Try Claude first, fall back to OpenAI if needed
+            if config.ANTHROPIC_API_KEY:
+                self.ai_analyzer = ClaudeAnalyzer()
+                logging.info("Using Claude for AI analysis")
+            elif config.OPENAI_API_KEY:
+                self.ai_analyzer = OpenAIAnalyzer()
+                logging.info("Using OpenAI for AI analysis")
+            else:
+                raise Exception("No AI API key configured")
         except Exception as e:
-            logging.warning(f"OpenAI analyzer initialization failed: {e}. Will use mock analysis.")
+            logging.warning(f"AI analyzer initialization failed: {e}. Will use mock analysis.")
             self.ai_analyzer = None
             
         try:
