@@ -4,10 +4,10 @@ from datetime import datetime
 # Semantic versioning: MAJOR.MINOR.PATCH
 VERSION_MAJOR = 1
 VERSION_MINOR = 3
-VERSION_PATCH = 9
+VERSION_PATCH = 10
 
 # Build metadata
-BUILD_NUMBER = 48  # Increment with each build
+BUILD_NUMBER = 49  # Increment with each build
 BUILD_DATE = datetime.now().strftime("%Y-%m-%d")
 BUILD_TIME = datetime.now().strftime("%H:%M:%S")
 
@@ -26,6 +26,16 @@ VERSION_FEATURES = {
 
 # Version history
 VERSION_HISTORY = {
+    "1.3.10": {
+        "date": "2025-01-20",
+        "changes": [
+            "Fixed school holiday dropdown now properly shows when user has calendar configured",
+            "Profile API now returns school calendar country from UserSchoolCalendar",
+            "Profile API can now save/update school calendar country",
+            "Removed redundant 'Focus on school holidays and INSET days' section",
+            "School holiday dropdown loads holidays from user's calendar settings"
+        ]
+    },
     "1.3.9": {
         "date": "2025-01-20",
         "changes": [

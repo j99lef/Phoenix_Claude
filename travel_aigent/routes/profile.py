@@ -9,7 +9,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
 from auth import require_auth, auth
-from ..models import db, User
+from ..models import db, User, UserSchoolCalendar
 
 # Rate limiter instance
 limiter = Limiter(key_func=get_remote_address)
@@ -101,7 +101,14 @@ def api_profile():  # type: ignore[return-value]
             return jsonify({"error": "User not found"}), 404
         
         if request.method == "GET":
-            return jsonify(user.to_dict())
+            user_data = user.to_dict()
+            
+            # Add school calendar country if exists
+            calendar = UserSchoolCalendar.query.filter_by(user_id=user.id).first()
+            if calendar:
+                user_data['country'] = calendar.country
+            
+            return jsonify(user_data)
         
         # Handle PUT request
         data = request.get_json()
@@ -148,6 +155,21 @@ def api_profile():  # type: ignore[return-value]
         if 'preferred_accommodation' in data:
             user.preferred_accommodation = data['preferred_accommodation']
             updated_fields.append('preferred_accommodation')
+        
+        # Handle school calendar country
+        if 'country' in data:
+            calendar = UserSchoolCalendar.query.filter_by(user_id=user.id).first()
+            if not calendar:
+                # Create new calendar
+                calendar = UserSchoolCalendar(
+                    user_id=user.id,
+                    country=data['country']
+                )
+                db.session.add(calendar)
+            else:
+                # Update existing calendar
+                calendar.country = data['country']
+            updated_fields.append('country')
         
         # Commit all changes
         db.session.commit()

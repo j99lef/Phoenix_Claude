@@ -693,66 +693,6 @@
                             <!-- Hidden field for form submission -->
                             <input type="hidden" name="travelers" id="travelers_hidden">
                         </div>
-                        
-                        <!-- School Holiday Preferences (shown when children are in group) -->
-                        <div class="luxury-form-group full-width" id="schoolHolidayPreferences" style="display: none;">
-                            <label class="luxury-label">
-                                <input type="checkbox" name="focus_on_school_holidays" id="focus_school_holidays" 
-                                       onchange="toggleHolidayPeriods()">
-                                Focus on school holidays and INSET days
-                            </label>
-                            <p style="color: var(--luxury-charcoal); font-size: 0.9rem; margin-top: var(--space-luxury-sm);">
-                                We'll prioritize travel dates that align with school breaks
-                            </p>
-                            
-                            <div id="holidayPeriodsSection" style="display: none; margin-top: var(--space-luxury-lg);">
-                                <label class="luxury-label">Preferred Holiday Periods</label>
-                                <div class="checkbox-group" style="margin-top: var(--space-luxury-md);">
-                                    <div class="luxury-checkbox-item">
-                                        <input type="checkbox" id="period_spring" name="holiday_periods" value="spring_half_term">
-                                        <label for="period_spring" class="checkbox-label">
-                                            <i class="fas fa-seedling"></i>
-                                            Spring Half Term
-                                        </label>
-                                    </div>
-                                    <div class="luxury-checkbox-item">
-                                        <input type="checkbox" id="period_easter" name="holiday_periods" value="easter">
-                                        <label for="period_easter" class="checkbox-label">
-                                            <i class="fas fa-egg"></i>
-                                            Easter Holidays
-                                        </label>
-                                    </div>
-                                    <div class="luxury-checkbox-item">
-                                        <input type="checkbox" id="period_may" name="holiday_periods" value="may_half_term">
-                                        <label for="period_may" class="checkbox-label">
-                                            <i class="fas fa-sun"></i>
-                                            May Half Term
-                                        </label>
-                                    </div>
-                                    <div class="luxury-checkbox-item">
-                                        <input type="checkbox" id="period_summer" name="holiday_periods" value="summer">
-                                        <label for="period_summer" class="checkbox-label">
-                                            <i class="fas fa-umbrella-beach"></i>
-                                            Summer Break
-                                        </label>
-                                    </div>
-                                    <div class="luxury-checkbox-item">
-                                        <input type="checkbox" id="period_autumn" name="holiday_periods" value="autumn_half_term">
-                                        <label for="period_autumn" class="checkbox-label">
-                                            <i class="fas fa-leaf"></i>
-                                            October Half Term
-                                        </label>
-                                    </div>
-                                    <div class="luxury-checkbox-item">
-                                        <input type="checkbox" id="period_christmas" name="holiday_periods" value="christmas">
-                                        <label for="period_christmas" class="checkbox-label">
-                                            <i class="fas fa-snowflake"></i>
-                                            Winter Break
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </section>
 
@@ -1327,11 +1267,6 @@
                 }
             });
             
-            // Show/hide school holiday preferences
-            const preferencesDiv = document.getElementById('schoolHolidayPreferences');
-            if (preferencesDiv) {
-                preferencesDiv.style.display = hasChildren ? 'block' : 'none';
-            }
             
             // Show/hide date selection mode toggle
             const dateSelectionMode = document.getElementById('dateSelectionMode');
@@ -1362,14 +1297,6 @@
             }
         }
         
-        // Toggle holiday periods selection
-        function toggleHolidayPeriods() {
-            const checkbox = document.getElementById('focus_school_holidays');
-            const periodsSection = document.getElementById('holidayPeriodsSection');
-            if (checkbox && periodsSection) {
-                periodsSection.style.display = checkbox.checked ? 'block' : 'none';
-            }
-        }
         
         // Show school holiday suggestions based on user's schools
         async function showSchoolHolidayHints() {
