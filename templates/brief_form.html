@@ -451,7 +451,7 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: var(--luxury-obsidian);
+            background: var(--luxury-success);
             color: var(--luxury-white);
             padding: var(--space-luxury-lg) var(--space-luxury-xl);
             border-radius: 12px;
@@ -459,10 +459,17 @@
             transform: translateY(100px);
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: var(--space-luxury-sm);
         }
         
         .luxury-toast.show {
             transform: translateY(0);
+        }
+        
+        .luxury-toast.error {
+            background: var(--luxury-error);
         }
     </style>
 </head>
@@ -921,11 +928,22 @@
         }
         
         // Show toast notification
-        function showToast(message) {
+        function showToast(message, type = 'success') {
             const toast = document.getElementById('successToast');
             const toastMessage = document.getElementById('toastMessage');
+            const icon = toast.querySelector('i');
             
             toastMessage.textContent = message;
+            
+            // Update icon and style based on type
+            if (type === 'error') {
+                toast.classList.add('error');
+                icon.className = 'fas fa-exclamation-circle';
+            } else {
+                toast.classList.remove('error');
+                icon.className = 'fas fa-check-circle';
+            }
+            
             toast.classList.add('show');
             
             setTimeout(() => {

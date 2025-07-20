@@ -60,6 +60,12 @@
   --transition-luxury: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-luxury-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-luxury-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* Status Colors */
+  --luxury-success: #22c55e;
+  --luxury-error: #ef4444;
+  --luxury-warning: #f59e0b;
+  --luxury-info: #3b82f6;
 }
 
 /* ==========================================

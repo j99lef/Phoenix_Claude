@@ -1128,17 +1128,23 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
+                    credentials: 'same-origin',
                     body: JSON.stringify(data)
                 });
                 
                 if (response.ok) {
                     showNotification('School calendar settings saved successfully!', 'success');
-                    // Return to initial view
-                    document.getElementById('termDatesView').style.display = 'none';
-                    document.getElementById('termDatesEdit').style.display = 'none';
-                    document.getElementById('viewDatesBtn').style.display = 'inline-flex';
-                    document.getElementById('editDatesBtn').style.display = 'none';
-                    document.getElementById('continueBtn').style.display = 'inline-flex';
+                    // Return to initial view after a brief delay
+                    setTimeout(() => {
+                        document.getElementById('termDatesView').style.display = 'none';
+                        document.getElementById('termDatesEdit').style.display = 'none';
+                        document.getElementById('viewDatesBtn').style.display = 'inline-flex';
+                        document.getElementById('editDatesBtn').style.display = 'none';
+                        document.getElementById('continueBtn').style.display = 'inline-flex';
+                    }, 500);
+                    
+                    // Reload school calendar data to confirm save
+                    loadSchoolCalendar();
                 } else {
                     const error = await response.json();
                     showNotification('Failed to save: ' + (error.error || 'Unknown error'), 'error');
@@ -1522,7 +1528,7 @@
                 <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
                 <span>${message}</span>
             `;
-            notification.style.background = type === 'success' ? 'var(--luxury-success)' : '#f44336';
+            notification.style.background = type === 'success' ? 'var(--luxury-success)' : 'var(--luxury-error)';
             notification.classList.add('show');
             
             setTimeout(() => {
