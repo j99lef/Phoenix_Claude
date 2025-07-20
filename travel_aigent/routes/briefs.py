@@ -90,18 +90,22 @@ def index():  # type: ignore[return-value]
                 api_status = f"Error: {str(e)}"
                 amadeus_info['error'] = str(e)
             
+            from version import VERSION
             return render_template("index.html", 
                                  briefs_count=briefs_count,
                                  recent_briefs=recent_briefs,
                                  user=user,
                                  api_status=api_status,
-                                 amadeus_info=amadeus_info)
+                                 amadeus_info=amadeus_info,
+                                 version=VERSION)
         except Exception as exc:  # noqa: BLE001
             logging.exception("Error loading dashboard: %s", exc)
-            return render_template("index.html", briefs_count=0, recent_briefs=[], user=None)
+            from version import VERSION
+            return render_template("index.html", briefs_count=0, recent_briefs=[], user=None, version=VERSION)
     else:
         # Show home page for non-authenticated users
-        return render_template("home.html")
+        from version import VERSION
+        return render_template("home.html", version=VERSION)
 
 
 @bp.route("/brief/<brief_id>")
@@ -159,7 +163,8 @@ def brief_detail(brief_id: str):  # type: ignore[return-value]
             'api_status': api_status
         }
         
-        return render_template("brief_detail.html", brief=brief, activity_stats=activity_stats, user=user)
+        from version import VERSION
+        return render_template("brief_detail.html", brief=brief, activity_stats=activity_stats, user=user, version=VERSION)
     except Exception as exc:  # noqa: BLE001
         logging.exception("Error loading brief detail for %s", brief_id)
         return render_template("error.html", message="Unable to load brief details"), 500
@@ -172,7 +177,8 @@ def new_brief():  # type: ignore[return-value]
     from flask import session
     from auth import auth
     user = auth.get_current_user()
-    return render_template("brief_form.html", brief=None, mode="create", user=user)
+    from version import VERSION
+    return render_template("brief_form.html", brief=None, mode="create", user=user, version=VERSION)
 
 
 @bp.route("/briefs")
@@ -192,7 +198,8 @@ def briefs_list():  # type: ignore[return-value]
             # Admin or invalid user - show no briefs
             briefs = []
             
-        return render_template("briefs_list.html", briefs=briefs, user=user)
+        from version import VERSION
+        return render_template("briefs_list.html", briefs=briefs, user=user, version=VERSION)
     except Exception as exc:  # noqa: BLE001
         logging.exception("Error loading briefs list: %s", exc)
         return render_template("error.html", message="Unable to load briefs"), 500
@@ -206,7 +213,8 @@ def deals_list():  # type: ignore[return-value]
     try:
         username = session.get('username', 'user')
         user = User.query.filter_by(username=username).first()
-        return render_template("deals_list.html", user=user)
+        from version import VERSION
+        return render_template("deals_list.html", user=user, version=VERSION)
     except Exception as exc:  # noqa: BLE001
         logging.exception("Error loading deals: %s", exc)
         return render_template("error.html", message="Unable to load deals"), 500
@@ -222,7 +230,8 @@ def edit_brief(brief_id: str):  # type: ignore[return-value]
         user = User.query.filter_by(username=username).first()
         # Get brief from database, not Google Sheets
         brief = TravelBrief.query.get_or_404(brief_id)
-        return render_template("brief_form.html", brief=brief, mode="edit", user=user)
+        from version import VERSION
+        return render_template("brief_form.html", brief=brief, mode="edit", user=user, version=VERSION)
     except Exception as exc:  # noqa: BLE001
         logging.exception("Error loading brief for editing: %s", brief_id)
         return render_template("error.html", message="Error loading brief"), 500

@@ -82,7 +82,8 @@ def travel_groups():  # type: ignore[return-value]
         if not user:
             return redirect(url_for('auth.login'))
         
-        return render_template("groups.html", user=user)
+        from version import VERSION
+        return render_template("groups.html", user=user, version=VERSION)
     except Exception as exc:  # noqa: BLE001
         logging.exception("Error loading groups: %s", exc)
         return render_template("error.html", message="Unable to load groups"), 500
