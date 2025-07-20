@@ -412,6 +412,43 @@
             </div>
         </section>
 
+        <!-- Search Activity Timeline -->
+        <section class="search-activity-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-history"></i>
+                    Search Activity
+                </h2>
+                <button class="luxury-button luxury-button-primary" onclick="refreshSearchActivity()">
+                    <i class="fas fa-sync"></i>
+                    Refresh
+                </button>
+            </div>
+            
+            <div id="searchActivityTimeline" class="search-timeline">
+                <!-- Timeline will be loaded here -->
+                <div class="timeline-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Loading search activity...
+                </div>
+            </div>
+            
+            <!-- Search Suggestions -->
+            <div id="searchSuggestions" class="search-suggestions" style="display: none;">
+                <div class="suggestion-card">
+                    <div class="suggestion-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <div class="suggestion-content">
+                        <h4>No results yet? Try these suggestions:</h4>
+                        <ul id="suggestionsList">
+                            <!-- Suggestions will be populated dynamically -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Brief Details -->
         <section class="brief-details">
             <!-- Travel Details -->
@@ -518,10 +555,10 @@
                 <i class="fas fa-edit"></i>
                 Edit Brief
             </a>
-            <a href="/api/run-search" class="action-button primary" onclick="triggerSearch(event)">
+            <button class="action-button primary" onclick="triggerSearch(event)">
                 <i class="fas fa-search"></i>
                 Trigger New Search
-            </a>
+            </button>
         </section>
     </main>
     
@@ -531,25 +568,34 @@
             event.preventDefault();
             const button = event.target.closest('.action-button');
             const originalText = button.innerHTML;
+            const briefId = {{ brief.id }};
             
             try {
                 button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching...';
                 button.style.pointerEvents = 'none';
+                button.disabled = true;
                 
                 const response = await fetch('/api/run-search', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ brief_id: briefId })
                 });
                 
                 const result = await response.json();
                 
                 if (response.ok) {
                     button.innerHTML = '<i class="fas fa-check"></i> Search Started!';
+                    // Refresh search activity after a short delay
+                    setTimeout(() => {
+                        loadSearchActivity();
+                    }, 2000);
                     setTimeout(() => {
                         button.innerHTML = originalText;
                         button.style.pointerEvents = 'auto';
+                        button.disabled = false;
                     }, 3000);
                 } else {
                     throw new Error(result.error || 'Failed to start search');
@@ -560,6 +606,7 @@
                 setTimeout(() => {
                     button.innerHTML = originalText;
                     button.style.pointerEvents = 'auto';
+                    button.disabled = false;
                 }, 3000);
             }
         }
@@ -694,6 +741,176 @@
         
         // Refresh deals every 30 seconds
         setInterval(loadDeals, 30000);
+        
+        // Load search activity timeline
+        async function loadSearchActivity() {
+            const briefId = {{ brief.id }};
+            const timeline = document.getElementById('searchActivityTimeline');
+            
+            try {
+                const response = await fetch(`/api/briefs/${briefId}/search-activity`);
+                const activities = await response.json();
+                
+                if (activities.length === 0) {
+                    timeline.innerHTML = `
+                        <div class="timeline-empty">
+                            <i class="fas fa-clock"></i>
+                            <p>No search activity yet. Searches run automatically every 30 minutes.</p>
+                            <button class="luxury-button luxury-button-primary" onclick="triggerSearch(event)">
+                                <i class="fas fa-search"></i>
+                                Start Search Now
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    const timelineHTML = activities.map((activity, index) => {
+                        const statusIcon = {
+                            'started': 'fa-spinner',
+                            'success': 'fa-check',
+                            'failed': 'fa-times',
+                            'no_results': 'fa-search'
+                        }[activity.status] || 'fa-question';
+                        
+                        const statusClass = activity.status === 'started' ? 'in-progress' : activity.status;
+                        
+                        return `
+                            <div class="timeline-item" style="animation-delay: ${index * 0.1}s">
+                                <div class="timeline-icon ${statusClass}">
+                                    <i class="fas ${statusIcon}"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <div class="timeline-header">
+                                        <div class="timeline-title">
+                                            ${activity.search_type === 'package' ? 'Package Search' : 
+                                              activity.search_type === 'flight' ? 'Flight Search' : 
+                                              'Hotel Search'}
+                                            ${activity.status === 'started' ? '(In Progress)' : ''}
+                                        </div>
+                                        <div class="timeline-time">
+                                            ${formatTimeAgo(activity.started_at)}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="timeline-details">
+                                        <div class="timeline-detail">
+                                            <i class="fas fa-server"></i>
+                                            ${activity.api_provider || 'Amadeus'}
+                                        </div>
+                                        ${activity.api_calls_made ? `
+                                            <div class="timeline-detail">
+                                                <i class="fas fa-network-wired"></i>
+                                                ${activity.api_calls_made} API calls
+                                            </div>
+                                        ` : ''}
+                                        ${activity.results_found ? `
+                                            <div class="timeline-detail">
+                                                <i class="fas fa-gem"></i>
+                                                ${activity.results_found} results
+                                            </div>
+                                        ` : ''}
+                                        ${activity.deals_created ? `
+                                            <div class="timeline-detail">
+                                                <i class="fas fa-star"></i>
+                                                ${activity.deals_created} deals saved
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                    
+                                    ${activity.error_message ? `
+                                        <div class="timeline-error">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                            ${activity.error_message}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    timeline.innerHTML = timelineHTML;
+                    
+                    // Check if we should show suggestions
+                    const latestActivity = activities[0];
+                    const hoursSinceLastSearch = (Date.now() - new Date(latestActivity.started_at)) / (1000 * 60 * 60);
+                    const hasNoResults = activities.filter(a => a.results_found === 0).length > 3;
+                    
+                    if (hoursSinceLastSearch > 2 || hasNoResults) {
+                        showSearchSuggestions(activities);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading search activity:', error);
+                timeline.innerHTML = `
+                    <div class="timeline-error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Error loading search activity
+                    </div>
+                `;
+            }
+        }
+        
+        // Show search suggestions
+        function showSearchSuggestions(activities) {
+            const suggestionsDiv = document.getElementById('searchSuggestions');
+            const suggestionsList = document.getElementById('suggestionsList');
+            
+            const suggestions = [];
+            
+            // Analyze search patterns for suggestions
+            const noResults = activities.filter(a => a.results_found === 0).length > 0;
+            const lowResults = activities.filter(a => a.results_found < 3).length > 0;
+            
+            if (noResults) {
+                suggestions.push('Try increasing your date flexibility to find more options');
+                suggestions.push('Consider alternative nearby airports or destinations');
+                suggestions.push('Adjust your budget range to see more results');
+            }
+            
+            if (lowResults) {
+                suggestions.push('Enable school holiday flexibility if traveling with children');
+                suggestions.push('Consider mid-week departures for better availability');
+            }
+            
+            if (suggestions.length === 0) {
+                suggestions.push('Search is working well! Check back for new deals');
+                suggestions.push('Enable notifications to get alerts for great deals');
+            }
+            
+            suggestionsList.innerHTML = suggestions.map(s => `<li>${s}</li>`).join('');
+            suggestionsDiv.style.display = 'block';
+        }
+        
+        // Format time ago
+        function formatTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+            
+            if (seconds < 60) return 'Just now';
+            if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+            return `${Math.floor(seconds / 86400)} days ago`;
+        }
+        
+        // Refresh search activity
+        async function refreshSearchActivity() {
+            const button = event.target.closest('.luxury-button');
+            const originalHTML = button.innerHTML;
+            
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+            button.disabled = true;
+            
+            await loadSearchActivity();
+            
+            button.innerHTML = originalHTML;
+            button.disabled = false;
+        }
+        
+        // Load search activity on page load
+        loadSearchActivity();
+        
+        // Refresh search activity every minute
+        setInterval(loadSearchActivity, 60000);
     </script>
 
     <style>
@@ -826,6 +1043,25 @@
             color: var(--luxury-stone);
             margin-bottom: var(--space-luxury-md);
             display: block;
+        }
+        
+        /* Timeline empty state */
+        .timeline-empty {
+            text-align: center;
+            padding: var(--space-luxury-3xl);
+            color: var(--luxury-charcoal);
+        }
+        
+        .timeline-empty i {
+            font-size: 3rem;
+            color: var(--luxury-stone);
+            margin-bottom: var(--space-luxury-md);
+            display: block;
+        }
+        
+        .timeline-empty p {
+            margin-bottom: var(--space-luxury-xl);
+            font-size: 1.05rem;
         }
     </style>
 </body>

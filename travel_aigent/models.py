@@ -440,6 +440,63 @@ class UserSchool(db.Model):
 # Booking model removed - TravelAiGent is a deal finder that redirects to external booking partners
 
 
+class SearchActivity(db.Model):
+    """Track all search activities and API calls for briefs"""
+    __tablename__ = 'search_activities'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    brief_id = db.Column(db.Integer, db.ForeignKey('travel_briefs.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    
+    # Search details
+    search_type = db.Column(db.String(50))  # flight, hotel, package
+    api_provider = db.Column(db.String(50))  # amadeus, mock
+    status = db.Column(db.String(50))  # started, success, failed, no_results
+    
+    # API call details
+    destinations_searched = db.Column(db.Integer, default=0)
+    api_calls_made = db.Column(db.Integer, default=0)
+    api_response_time = db.Column(db.Float)  # in seconds
+    error_message = db.Column(db.Text)
+    
+    # Results
+    results_found = db.Column(db.Integer, default=0)
+    deals_created = db.Column(db.Integer, default=0)
+    highest_score = db.Column(db.Float)
+    
+    # Timestamps
+    started_at = db.Column(db.DateTime, default=datetime.utcnow)
+    completed_at = db.Column(db.DateTime)
+    
+    # Relationships
+    brief = db.relationship('TravelBrief', backref='search_activities', lazy=True)
+    user = db.relationship('User', backref='search_activities', lazy=True)
+    
+    def to_dict(self):
+        """Convert to dictionary"""
+        duration = None
+        if self.started_at and self.completed_at:
+            duration = (self.completed_at - self.started_at).total_seconds()
+            
+        return {
+            'id': self.id,
+            'brief_id': self.brief_id,
+            'search_type': self.search_type,
+            'api_provider': self.api_provider,
+            'status': self.status,
+            'destinations_searched': self.destinations_searched,
+            'api_calls_made': self.api_calls_made,
+            'api_response_time': self.api_response_time,
+            'error_message': self.error_message,
+            'results_found': self.results_found,
+            'deals_created': self.deals_created,
+            'highest_score': self.highest_score,
+            'started_at': self.started_at.isoformat() if self.started_at else None,
+            'completed_at': self.completed_at.isoformat() if self.completed_at else None,
+            'duration': duration
+        }
+
+
 class PasswordResetToken(db.Model):
     """Password reset tokens for secure password recovery"""
     __tablename__ = 'password_reset_tokens'

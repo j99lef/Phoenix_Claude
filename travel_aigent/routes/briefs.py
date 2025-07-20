@@ -369,15 +369,57 @@ def get_recent_deals():  # type: ignore[return-value]
 
 @bp.route("/api/run-search", methods=["POST"])
 @limiter.limit("5 per minute")
+@require_auth
 def manual_search():  # type: ignore[return-value]
+    """Manually trigger a deal search for a specific brief or all briefs"""
+    from auth import auth
+    from ..models import TravelBrief
+    
+    user = auth.get_current_user()
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+        
     agent = _get_agent()
-
-    def _run():
-        if agent:
-            agent.run_deal_search()
-
-    threading.Thread(target=_run, daemon=True).start()
-    return jsonify({"message": "Search started"})
+    if not agent:
+        return jsonify({"message": "Travel agent service not available"}), 503
+    
+    data = request.get_json() or {}
+    brief_id = data.get('brief_id')
+    
+    # If specific brief requested, process just that one
+    if brief_id:
+        brief = TravelBrief.query.filter_by(id=brief_id, user_id=user.id).first()
+        if not brief:
+            return jsonify({"error": "Brief not found"}), 404
+        
+        # Convert to format expected by travel agent
+        brief_dict = {
+            'Brief_ID': str(brief.id),
+            'Destinations': brief.destination,
+            'Departure_Location': brief.departure_location,
+            'Travel_Dates': f"{brief.departure_date.strftime('%Y-%m-%d')} to {brief.return_date.strftime('%Y-%m-%d') if brief.return_date else ''}",
+            'Budget_Max': brief.budget_max,
+            'Travelers': brief.travelers,
+            'Trip_Duration': brief.trip_length,
+            'AI_Instructions': brief.interests
+        }
+        
+        # Run search in background thread for this specific brief
+        def _run_single():
+            try:
+                agent.process_travel_brief(brief_dict)
+            except Exception as e:
+                logging.error(f"Error in search thread: {e}")
+                
+        threading.Thread(target=_run_single, daemon=True).start()
+        return jsonify({"message": f"Search started for brief {brief_id}"})
+    else:
+        # Run the search for all active briefs
+        def _run():
+            if agent:
+                agent.run_deal_search()
+        threading.Thread(target=_run, daemon=True).start()
+        return jsonify({"message": "Search started for all active briefs"})
 
 
 @bp.route("/api/test-notification", methods=["POST"])

@@ -89,7 +89,7 @@ class TravelAgent:
     def save_deal_to_database(self, deal_data, brief_dict, analysis=None):
         """Save a deal to the database"""
         try:
-            from travel_aigent.models import db, Deal, TravelBrief
+            from travel_aigent.models import db, Deal, TravelBrief, SearchActivity
             from datetime import datetime
             import app
             
@@ -196,6 +196,31 @@ class TravelAgent:
         brief_id = brief.get('Brief_ID', 'Unknown')
         logging.info(f"Processing travel brief: {brief_id}")
         
+        # Track search activity
+        search_activity = None
+        start_time = datetime.now()
+        deals_before = self.stats.get('total_deals_found', 0)
+        
+        try:
+            # Create search activity record
+            from travel_aigent.models import db, SearchActivity, TravelBrief
+            import app
+            
+            with app.app.app_context():
+                brief_obj = TravelBrief.query.get(int(brief_id)) if brief_id != 'Unknown' else None
+                if brief_obj:
+                    search_activity = SearchActivity(
+                        brief_id=brief_obj.id,
+                        user_id=brief_obj.user_id,
+                        search_type='package',
+                        api_provider='amadeus' if self.amadeus else 'mock',
+                        status='started'
+                    )
+                    db.session.add(search_activity)
+                    db.session.commit()
+        except Exception as e:
+            logging.error(f"Error creating search activity: {e}")
+        
         try:
             # Search for complete travel packages (flights + hotels)
             travel_packages = []
@@ -249,8 +274,40 @@ class TravelAgent:
             # Update last checked timestamp for this brief
             self.sheets.update_brief_timestamp(brief_id)
             
+            # Update search activity with results
+            if search_activity:
+                try:
+                    with app.app.app_context():
+                        # Refresh the activity object
+                        search_activity = SearchActivity.query.get(search_activity.id)
+                        if search_activity:
+                            search_activity.completed_at = datetime.now()
+                            search_activity.destinations_searched = len(travel_packages)
+                            search_activity.results_found = len(travel_packages)
+                            search_activity.status = 'success' if len(travel_packages) > 0 else 'no_results'
+                            search_activity.api_response_time = (datetime.now() - start_time).total_seconds()
+                            search_activity.api_calls_made = len(travel_packages) if self.amadeus else 0
+                            search_activity.deals_created = self.stats.get('total_deals_found', 0) - deals_before
+                            db.session.commit()
+                except Exception as e:
+                    logging.error(f"Error updating search activity: {e}")
+                    
         except Exception as e:
             logging.error(f"Error processing brief {brief_id}: {e}")
+            
+            # Update search activity with error
+            if search_activity:
+                try:
+                    with app.app.app_context():
+                        search_activity = SearchActivity.query.get(search_activity.id)
+                        if search_activity:
+                            search_activity.completed_at = datetime.now()
+                            search_activity.status = 'failed'
+                            search_activity.error_message = str(e)
+                            search_activity.api_response_time = (datetime.now() - start_time).total_seconds()
+                            db.session.commit()
+                except Exception as e2:
+                    logging.error(f"Error updating failed search activity: {e2}")
     
     def _get_mock_flight_deals(self, brief):
         """Generate mock flight deals for testing"""

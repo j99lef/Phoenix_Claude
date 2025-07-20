@@ -4,7 +4,7 @@ from sqlalchemy import or_, and_
 from datetime import datetime, timedelta
 import logging
 
-from ..models import db, Deal, User, TravelBrief
+from ..models import db, Deal, User, TravelBrief, SearchActivity
 from auth import require_auth
 
 bp = Blueprint("deals", __name__)
@@ -289,3 +289,44 @@ def create_deal():
         logging.error(f"Error creating deal: {e}")
         db.session.rollback()
         return jsonify({"error": "Failed to create deal"}), 500
+
+
+@bp.route("/api/briefs/<int:brief_id>/search-activity")
+@require_auth
+def get_search_activity(brief_id):
+    """Get search activity for a specific brief"""
+    try:
+        from auth import auth
+        user = auth.get_current_user()
+        
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+        
+        # Verify the brief belongs to the user
+        brief = TravelBrief.query.filter_by(id=brief_id, user_id=user.id).first()
+        if not brief:
+            return jsonify({"error": "Brief not found"}), 404
+        
+        # Get search activities for this brief
+        activities = SearchActivity.query.filter_by(
+            brief_id=brief_id
+        ).order_by(SearchActivity.started_at.desc()).limit(20).all()
+        
+        # Convert to dict and add any running activities
+        activity_list = []
+        for activity in activities:
+            activity_dict = activity.to_dict()
+            
+            # Calculate duration if completed
+            if activity.completed_at and activity.started_at:
+                duration = (activity.completed_at - activity.started_at).total_seconds()
+                activity_dict['duration_seconds'] = duration
+                activity_dict['duration_display'] = f"{int(duration)}s"
+            
+            activity_list.append(activity_dict)
+        
+        return jsonify(activity_list)
+        
+    except Exception as e:
+        logging.error(f"Error fetching search activity: {e}")
+        return jsonify({"error": "Failed to fetch search activity"}), 500
