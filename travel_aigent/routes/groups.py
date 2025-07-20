@@ -107,28 +107,38 @@ def get_group_calendar(group_id):
         
         holidays = []
         
-        # Add upcoming holidays based on country
+        # Get actual school term dates (using 2025 England defaults for now)
         if calendar.country.lower() == 'england':
             holidays = [
                 {
-                    'name': 'February Half Term',
-                    'start_date': (today + timedelta(days=30)).strftime('%Y-%m-%d'),
-                    'end_date': (today + timedelta(days=37)).strftime('%Y-%m-%d')
+                    'name': 'February Half Term 2025',
+                    'start_date': '2025-02-17',
+                    'end_date': '2025-02-21'
                 },
                 {
-                    'name': 'Easter Holidays',
-                    'start_date': (today + timedelta(days=60)).strftime('%Y-%m-%d'),
-                    'end_date': (today + timedelta(days=74)).strftime('%Y-%m-%d')
+                    'name': 'Easter Holidays 2025',
+                    'start_date': '2025-04-14',
+                    'end_date': '2025-04-25'
                 },
                 {
-                    'name': 'May Half Term',
-                    'start_date': (today + timedelta(days=100)).strftime('%Y-%m-%d'),
-                    'end_date': (today + timedelta(days=107)).strftime('%Y-%m-%d')
+                    'name': 'May Half Term 2025',
+                    'start_date': '2025-05-26',
+                    'end_date': '2025-05-30'
                 },
                 {
-                    'name': 'Summer Holidays',
-                    'start_date': (today + timedelta(days=150)).strftime('%Y-%m-%d'),
-                    'end_date': (today + timedelta(days=192)).strftime('%Y-%m-%d')
+                    'name': 'Summer Holidays 2025',
+                    'start_date': '2025-07-21',
+                    'end_date': '2025-09-01'
+                },
+                {
+                    'name': 'October Half Term 2025',
+                    'start_date': '2025-10-27',
+                    'end_date': '2025-10-31'
+                },
+                {
+                    'name': 'Christmas Holidays 2025',
+                    'start_date': '2025-12-22',
+                    'end_date': '2026-01-05'
                 }
             ]
         else:

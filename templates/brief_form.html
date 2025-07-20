@@ -564,6 +564,15 @@
                             </select>
                         </div>
                         
+                        <!-- OR Separator -->
+                        <div class="luxury-form-group full-width" id="orSeparator" style="display: none; text-align: center; margin: var(--space-luxury-lg) 0;">
+                            <div style="display: flex; align-items: center; gap: var(--space-luxury-md);">
+                                <div style="flex: 1; height: 1px; background: var(--luxury-stone);"></div>
+                                <span style="color: var(--luxury-charcoal); font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">OR</span>
+                                <div style="flex: 1; height: 1px; background: var(--luxury-stone);"></div>
+                            </div>
+                        </div>
+                        
                         <!-- School Calendar Prompt (shown when no calendar configured) -->
                         <div class="luxury-form-group full-width" id="schoolCalendarPrompt" style="display: none;">
                             <div style="background: var(--luxury-pearl); padding: var(--space-luxury-lg); border-radius: 8px; border-left: 4px solid var(--luxury-gold);">
@@ -994,6 +1003,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
+                    credentials: 'same-origin',
                     body: JSON.stringify(data)
                 });
                 
@@ -1565,10 +1575,12 @@
                         // User has school calendar, load holidays
                         loadSchoolHolidayDropdown();
                         document.getElementById('schoolHolidayDropdown').style.display = 'block';
+                        document.getElementById('orSeparator').style.display = 'block';
                         document.getElementById('schoolCalendarPrompt').style.display = 'none';
                     } else {
                         // No school calendar configured
                         document.getElementById('schoolHolidayDropdown').style.display = 'none';
+                        document.getElementById('orSeparator').style.display = 'none';
                         document.getElementById('schoolCalendarPrompt').style.display = 'block';
                     }
                 }

@@ -169,6 +169,12 @@ def api_profile():  # type: ignore[return-value]
             else:
                 # Update existing calendar
                 calendar.country = data['country']
+            
+            # Add profile name if provided
+            if 'profile_name' in data:
+                calendar.profile_name = data['profile_name']
+                updated_fields.append('profile_name')
+                
             updated_fields.append('country')
         
         # Commit all changes

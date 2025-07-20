@@ -654,6 +654,40 @@
         </div>
     </div>
     
+    <!-- School Profile Save Modal -->
+    <div class="modal-overlay" id="schoolProfileModal" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Save School Calendar Profile</h3>
+                <p style="color: var(--luxury-charcoal);">
+                    Your customized term dates can be saved as a profile for easy reuse
+                </p>
+            </div>
+            
+            <form id="schoolProfileForm" onsubmit="saveSchoolProfile(event)">
+                <div class="form-group">
+                    <label class="form-label">Profile Name</label>
+                    <input type="text" class="form-input" id="profileNameInput" 
+                           placeholder="e.g., St Mary's Primary School, Birmingham Academy" 
+                           value="My School Calendar" required>
+                    <p style="color: var(--luxury-slate); font-size: 0.85rem; margin-top: var(--space-luxury-sm);">
+                        This name will help you identify this calendar when creating travel briefs
+                    </p>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="cancel-link" onclick="cancelSchoolProfile()">
+                        Skip & Use Default
+                    </button>
+                    <button type="submit" class="save-button">
+                        <i class="fas fa-save"></i>
+                        Save Profile
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
     <script>
         // Travel Groups Management
         let groups = [];
@@ -1020,6 +1054,10 @@
                 return;
             }
             
+            // Check if dates have been modified from defaults
+            let datesModified = false;
+            const defaultDates = DEFAULT_TERM_DATES[country];
+            
             // Collect all term dates
             const termDates = {};
             const years = [2025, 2026];
@@ -1032,6 +1070,14 @@
                     if (startInput && endInput) {
                         termDates[`${term}_start_${year}`] = startInput.value;
                         termDates[`${term}_end_${year}`] = endInput.value;
+                        
+                        // Check if dates differ from defaults
+                        if (defaultDates && defaultDates[year] && defaultDates[year][term]) {
+                            if (startInput.value !== defaultDates[year][term].start || 
+                                endInput.value !== defaultDates[year][term].end) {
+                                datesModified = true;
+                            }
+                        }
                     }
                 }
             }
@@ -1050,13 +1096,32 @@
                 }
             }
             
-            const data = {
-                country: country,
-                term_dates: termDates,
-                inset_dates: insetDays.map(d => d.date),
-                inset_descriptions: insetDays.map(d => d.description)
-            };
-            
+            // If dates were modified or INSET days added, show profile modal
+            if (datesModified || insetDays.length > 0) {
+                // Store the data temporarily
+                window.pendingSchoolCalendarData = {
+                    country: country,
+                    term_dates: termDates,
+                    inset_dates: insetDays.map(d => d.date),
+                    inset_descriptions: insetDays.map(d => d.description)
+                };
+                
+                // Show the modal
+                document.getElementById('schoolProfileModal').style.display = 'flex';
+            } else {
+                // Save without profile name (using defaults)
+                const data = {
+                    country: country,
+                    term_dates: termDates,
+                    inset_dates: insetDays.map(d => d.date),
+                    inset_descriptions: insetDays.map(d => d.description)
+                };
+                
+                await saveSchoolCalendarData(data);
+            }
+        }
+        
+        async function saveSchoolCalendarData(data) {
             try {
                 const response = await fetch('/api/profile', {
                     method: 'PUT',
@@ -1153,6 +1218,35 @@
                 age--;
             }
             return age;
+        }
+        
+        // School Profile Modal Functions
+        async function saveSchoolProfile(event) {
+            event.preventDefault();
+            
+            const profileName = document.getElementById('profileNameInput').value;
+            
+            // Add profile name to pending data
+            const data = {
+                ...window.pendingSchoolCalendarData,
+                profile_name: profileName
+            };
+            
+            // Hide modal
+            document.getElementById('schoolProfileModal').style.display = 'none';
+            
+            // Save the data
+            await saveSchoolCalendarData(data);
+        }
+        
+        function cancelSchoolProfile() {
+            // Hide modal
+            document.getElementById('schoolProfileModal').style.display = 'none';
+            
+            // Save without profile name
+            if (window.pendingSchoolCalendarData) {
+                saveSchoolCalendarData(window.pendingSchoolCalendarData);
+            }
         }
         
         async function loadGroups() {
