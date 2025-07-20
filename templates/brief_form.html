@@ -555,6 +555,27 @@
                     </div>
                     
                     <div class="luxury-form-grid">
+                        <!-- School Holiday Quick Select (always shown if calendar configured) -->
+                        <div class="luxury-form-group full-width" id="schoolHolidayDropdown" style="display: none;">
+                            <label class="luxury-label">Quick Select: School Holiday</label>
+                            <select class="luxury-select" id="holidayDropdownSelect" onchange="selectSchoolHolidayFromDropdown()">
+                                <option value="">Select a school holiday period...</option>
+                                <!-- Options will be populated dynamically -->
+                            </select>
+                        </div>
+                        
+                        <!-- School Calendar Prompt (shown when no calendar configured) -->
+                        <div class="luxury-form-group full-width" id="schoolCalendarPrompt" style="display: none;">
+                            <div style="background: var(--luxury-pearl); padding: var(--space-luxury-lg); border-radius: 8px; border-left: 4px solid var(--luxury-gold);">
+                                <p style="margin: 0; color: var(--luxury-obsidian);">
+                                    <i class="fas fa-graduation-cap" style="color: var(--luxury-gold); margin-right: var(--space-luxury-sm);"></i>
+                                    Travelling around school term dates? 
+                                    <a href="/groups" style="color: var(--luxury-gold); text-decoration: underline;">Add a Travel Group</a> 
+                                    with your family group details.
+                                </p>
+                            </div>
+                        </div>
+                        
                         <!-- Date Selection Mode Toggle (shown when school children in group) -->
                         <div class="luxury-form-group full-width" id="dateSelectionMode" style="display: none;">
                             <label class="luxury-label">How would you like to select travel dates?</label>
@@ -1605,6 +1626,109 @@
             event.currentTarget.style.background = 'var(--luxury-pearl)';
         }
         
+        // Check if user has school calendar and show appropriate UI
+        async function checkSchoolCalendarStatus() {
+            try {
+                // Check if user has school calendar configured
+                const response = await fetch('/api/profile');
+                if (response.ok) {
+                    const profile = await response.json();
+                    
+                    if (profile.country) {
+                        // User has school calendar, load holidays
+                        loadSchoolHolidayDropdown();
+                        document.getElementById('schoolHolidayDropdown').style.display = 'block';
+                        document.getElementById('schoolCalendarPrompt').style.display = 'none';
+                    } else {
+                        // No school calendar configured
+                        document.getElementById('schoolHolidayDropdown').style.display = 'none';
+                        document.getElementById('schoolCalendarPrompt').style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking school calendar:', error);
+                // Default to showing prompt
+                document.getElementById('schoolHolidayDropdown').style.display = 'none';
+                document.getElementById('schoolCalendarPrompt').style.display = 'block';
+            }
+        }
+        
+        // Load school holidays into dropdown
+        async function loadSchoolHolidayDropdown() {
+            try {
+                const select = document.getElementById('holidayDropdownSelect');
+                
+                // Get user's calendar from their primary group
+                const groupsResponse = await fetch('/api/groups');
+                if (!groupsResponse.ok) return;
+                
+                const groups = await groupsResponse.json();
+                if (groups.length === 0) return;
+                
+                // Use first group to get calendar (in future, could be smarter)
+                const calendarResponse = await fetch(`/api/groups/${groups[0].id}/calendar`);
+                if (!calendarResponse.ok) return;
+                
+                const calendar = await calendarResponse.json();
+                const holidays = calendar.holidays || [];
+                
+                // Clear existing options
+                select.innerHTML = '<option value="">Select a school holiday period...</option>';
+                
+                // Add holiday options
+                holidays.forEach(holiday => {
+                    const startDate = new Date(holiday.start_date);
+                    const endDate = new Date(holiday.end_date);
+                    const duration = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+                    
+                    const option = document.createElement('option');
+                    option.value = JSON.stringify({
+                        name: holiday.name,
+                        start: holiday.start_date,
+                        end: holiday.end_date
+                    });
+                    option.textContent = `${holiday.name} - ${startDate.toLocaleDateString('en-GB', { 
+                        month: 'short', 
+                        day: 'numeric' 
+                    })} to ${endDate.toLocaleDateString('en-GB', { 
+                        month: 'short', 
+                        day: 'numeric', 
+                        year: 'numeric' 
+                    })} (${duration} days)`;
+                    
+                    select.appendChild(option);
+                });
+                
+            } catch (error) {
+                console.error('Error loading school holidays:', error);
+            }
+        }
+        
+        // Handle school holiday selection from dropdown
+        function selectSchoolHolidayFromDropdown() {
+            const select = document.getElementById('holidayDropdownSelect');
+            if (!select.value) return;
+            
+            try {
+                const holiday = JSON.parse(select.value);
+                document.getElementById('departure_date').value = holiday.start;
+                document.getElementById('return_date').value = holiday.end;
+                
+                // Update any date-dependent UI
+                updateReturnDate();
+                
+                // Show success feedback
+                const dropdown = document.getElementById('schoolHolidayDropdown');
+                dropdown.style.borderLeft = '4px solid var(--luxury-emerald)';
+                setTimeout(() => {
+                    dropdown.style.borderLeft = '';
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Error selecting holiday:', error);
+            }
+        }
+        
         // Initialize on load
         document.addEventListener('DOMContentLoaded', () => {
             updateBudgetDisplay();
@@ -1612,6 +1736,9 @@
             initializeTravelers();
             enhanceDatePickers();
             loadTravelGroups();
+            
+            // Check school calendar status
+            checkSchoolCalendarStatus();
             
             // Check for school holiday suggestions
             setTimeout(() => {

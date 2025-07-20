@@ -515,15 +515,15 @@
                     </div>
                     
                     <div style="display: flex; gap: var(--space-luxury-lg); margin-bottom: var(--space-luxury-xl);">
-                        <button type="button" class="btn-luxury-outline" onclick="viewSchoolDates()" id="viewDatesBtn">
-                            <i class="fas fa-eye"></i>
-                            View School Dates
-                        </button>
-                        <button type="button" class="btn-luxury-outline" onclick="editSchoolDates()" id="editDatesBtn" style="display: none;">
+                        <button type="button" class="luxury-button luxury-button-outline" onclick="viewSchoolDates()" id="viewDatesBtn">
                             <i class="fas fa-edit"></i>
-                            Customize Dates
+                            Customise Dates
                         </button>
-                        <button type="button" class="save-button" onclick="saveBasicCalendar()">
+                        <button type="button" class="luxury-button luxury-button-outline" onclick="editSchoolDates()" id="editDatesBtn" style="display: none;">
+                            <i class="fas fa-check"></i>
+                            Save Changes
+                        </button>
+                        <button type="button" class="luxury-button luxury-button-primary" onclick="saveBasicCalendar()">
                             <i class="fas fa-check"></i>
                             Continue with Default Dates
                         </button>
@@ -927,7 +927,27 @@
                 });
                 
                 if (response.ok) {
-                    showNotification('School calendar saved! You can customize dates anytime.', 'success');
+                    showNotification('School calendar saved!', 'success');
+                    
+                    // Hide the calendar settings section
+                    document.getElementById('termDatesSection').style.display = 'none';
+                    
+                    // Check if user has any groups
+                    const groupsResponse = await fetch('/api/groups');
+                    const groups = await groupsResponse.json();
+                    
+                    if (groups.length === 0) {
+                        // No groups yet, show the create group modal
+                        setTimeout(() => {
+                            showNotification('Now create a travel group to start planning!', 'info');
+                            showAddGroupModal();
+                        }, 1000);
+                    } else {
+                        // Already has groups, just reload to show them
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    }
                 } else {
                     showNotification('Failed to save calendar settings', 'error');
                 }
