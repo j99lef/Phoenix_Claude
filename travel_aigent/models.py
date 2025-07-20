@@ -93,6 +93,10 @@ class TravelBrief(db.Model):
     inspiration_sources = db.Column(db.Text)
     amadeus_destination_code = db.Column(db.String(10))
     
+    # School holiday preferences
+    focus_on_school_holidays = db.Column(db.Boolean, default=False)
+    preferred_holiday_periods = db.Column(db.Text)  # JSON array of holiday types
+    
     # Tracking and Status
     status = db.Column(db.String(20), default='active')  # active, paused, completed, cancelled
     last_deal_check = db.Column(db.DateTime)
@@ -318,19 +322,70 @@ class TravelGroup(db.Model):
         }
 
 
+class UserSchoolCalendar(db.Model):
+    """User's personal school calendar settings"""
+    __tablename__ = 'user_school_calendars'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    country = db.Column(db.String(50), nullable=False)  # England, Scotland, Wales, Northern Ireland
+    
+    # Timestamps
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    user = db.relationship('User', backref='school_calendar', lazy=True)
+    inset_days = db.relationship('InsetDay', backref='calendar', lazy=True, cascade='all, delete-orphan')
+    
+    def to_dict(self):
+        """Convert to dictionary"""
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'country': self.country,
+            'inset_days': [day.to_dict() for day in self.inset_days],
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+        }
+
+
+class InsetDay(db.Model):
+    """Inset days for personal school calendar"""
+    __tablename__ = 'inset_days'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    calendar_id = db.Column(db.Integer, db.ForeignKey('user_school_calendars.id'), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    description = db.Column(db.String(200))  # Optional description like "Teacher Training Day"
+    
+    # Timestamps
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def to_dict(self):
+        """Convert to dictionary"""
+        return {
+            'id': self.id,
+            'date': self.date.isoformat() if self.date else None,
+            'description': self.description,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
+
+
+# Keep old UserSchool for backward compatibility but deprecated
 class UserSchool(db.Model):
-    """User school/council association for term dates"""
+    """DEPRECATED: User school/council association for term dates"""
     __tablename__ = 'user_schools'
     
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    school_key = db.Column(db.String(100), nullable=False)  # Key from UK_SCHOOLS_DATABASE
+    school_key = db.Column(db.String(100), nullable=False)
     school_name = db.Column(db.String(200), nullable=False)
-    school_type = db.Column(db.String(50))  # 'council', 'independent', 'academy', etc.
+    school_type = db.Column(db.String(50))
     region = db.Column(db.String(100))
     country = db.Column(db.String(50))
-    is_primary = db.Column(db.Boolean, default=False)  # Primary school for this user
-    child_name = db.Column(db.String(100))  # Optional: which child attends this school
+    is_primary = db.Column(db.Boolean, default=False)
+    child_name = db.Column(db.String(100))
     
     # Timestamps
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

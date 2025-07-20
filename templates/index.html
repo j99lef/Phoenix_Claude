@@ -113,7 +113,6 @@
                 <a href="/profile" class="luxury-nav-link">Profile</a>
                 <a href="/briefs" class="luxury-nav-link">Travel Briefs</a>
                 <a href="/groups" class="luxury-nav-link">Travel Groups</a>
-                <a href="/deals" class="luxury-nav-link">Deals</a>
             </nav>
             
             <div class="luxury-profile dropdown">
@@ -161,10 +160,6 @@
                     <i class="fas fa-plus"></i>
                     Create Travel Brief
                 </a>
-                <a href="/deals" class="btn-luxury-secondary">
-                    <i class="fas fa-search"></i>
-                    Explore Curated Deals
-                </a>
             </div>
         </div>
     </section>
@@ -192,14 +187,6 @@
                     <div class="luxury-stat-description">Personalized searches</div>
                 </div>
                 
-                <div class="luxury-stat-card luxury-animate-scale">
-                    <div class="luxury-stat-icon">
-                        <i class="fas fa-gem"></i>
-                    </div>
-                    <span class="luxury-stat-number" id="total-deals">0</span>
-                    <div class="luxury-stat-label">Curated Deals</div>
-                    <div class="luxury-stat-description">Exclusive opportunities</div>
-                </div>
                 
                 <div class="luxury-stat-card luxury-animate-scale">
                     <div class="luxury-stat-icon">
@@ -301,10 +288,6 @@
                                 New Travel Brief
                             </a>
                             
-                            <a href="/deals" class="btn-luxury-secondary" style="margin-bottom: var(--space-luxury-md);">
-                                <i class="fas fa-search"></i>
-                                Browse Curated Deals
-                            </a>
                             
                             <a href="/profile" class="btn-luxury-secondary">
                                 <i class="fas fa-cog"></i>
@@ -417,7 +400,6 @@
             animateStatisticsEntry() {
                 const stats = [
                     { id: 'active-briefs', value: 0 },
-                    { id: 'total-deals', value: 0 },
                     { id: 'recommendations', value: 0 }
                 ];
                 

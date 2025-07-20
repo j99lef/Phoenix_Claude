@@ -600,7 +600,6 @@
                 <a href="/profile" class="luxury-nav-link active">Profile</a>
                 <a href="/briefs" class="luxury-nav-link">Travel Briefs</a>
                 <a href="/groups" class="luxury-nav-link">Travel Groups</a>
-                <a href="/deals" class="luxury-nav-link">Deals</a>
             </nav>
             
             <div class="luxury-profile">
@@ -853,26 +852,56 @@
                 </button>
             </section>
             
-            <!-- School/Council Selection -->
+            <!-- School Calendar Settings -->
             <section class="profile-form-section luxury-animate-fade-up">
                 <h2 class="section-title">
                     <i class="fas fa-graduation-cap"></i>
-                    School & Council Profiles
+                    School Calendar Settings
                 </h2>
                 
                 <p style="color: var(--luxury-charcoal); margin-bottom: var(--space-luxury-xl);">
-                    Add your school or council to get personalized travel suggestions based on term dates and holidays. 
-                    Perfect for families planning around school breaks and INSET days.
+                    Configure your UK school calendar to get travel suggestions that align with school holidays and INSET days.
                 </p>
                 
-                <div id="schoolsContainer">
-                    <!-- School profiles will be loaded here -->
+                <div class="form-group">
+                    <label class="form-label">Which UK country do you live in?</label>
+                    <select class="form-select" id="schoolCountry" onchange="updateSchoolCalendar()">
+                        <option value="">Select your country</option>
+                        <option value="England">England</option>
+                        <option value="Scotland">Scotland</option>
+                        <option value="Wales">Wales</option>
+                        <option value="Northern Ireland">Northern Ireland</option>
+                    </select>
                 </div>
                 
-                <button type="button" class="save-button" onclick="showAddSchoolModal()" id="addSchoolBtn">
-                    <i class="fas fa-plus"></i>
-                    Add School/Council
-                </button>
+                <div id="calendarSection" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-calendar-alt"></i>
+                            Upcoming School Holidays
+                        </label>
+                        <div id="upcomingHolidays" style="margin-top: var(--space-luxury-md);">
+                            <!-- Holidays will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-calendar-plus"></i>
+                            INSET Days (Teacher Training Days)
+                        </label>
+                        <p style="color: var(--luxury-charcoal); font-size: 0.9rem; margin-bottom: var(--space-luxury-md);">
+                            Add your school's INSET days for personalized weekend getaway suggestions.
+                        </p>
+                        <div id="insetDaysContainer">
+                            <!-- INSET days will be loaded here -->
+                        </div>
+                        <button type="button" class="save-button" onclick="showAddInsetDayModal()">
+                            <i class="fas fa-plus"></i>
+                            Add INSET Day
+                        </button>
+                    </div>
+                </div>
             </section>
             
             <!-- Form Actions -->
@@ -941,49 +970,34 @@
         </div>
     </div>
     
-    <!-- School/Council Selection Modal -->
-    <div class="modal-overlay" id="schoolModal">
+    <!-- INSET Day Modal -->
+    <div class="modal-overlay" id="insetDayModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Add School/Council</h3>
+                <h3 class="modal-title">Add INSET Day</h3>
                 <p style="color: var(--luxury-charcoal);">
-                    Search for your school or local council to get accurate term dates and holiday information
+                    Add teacher training days or other school closure dates for weekend getaway suggestions
                 </p>
             </div>
             
-            <form id="schoolForm" onsubmit="saveSchool(event)">
+            <form id="insetDayForm" onsubmit="saveInsetDay(event)">
                 <div class="form-group">
-                    <label class="form-label">Search Schools/Councils</label>
-                    <input type="text" class="form-input" id="schoolSearch" 
-                           placeholder="Type school name, council, or location..." 
-                           onkeyup="searchSchools()" autocomplete="off">
-                    <div id="schoolSearchResults" class="search-results"></div>
-                </div>
-                
-                <div class="form-group" id="selectedSchoolInfo" style="display: none;">
-                    <label class="form-label">Selected School/Council</label>
-                    <div id="selectedSchoolDetails" class="selected-school-card"></div>
+                    <label class="form-label">INSET Day Date</label>
+                    <input type="date" class="form-input" name="date" required 
+                           min="{{ (datetime.now().date() + timedelta(days=1)).isoformat() }}">
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">Child's Name (Optional)</label>
-                    <input type="text" class="form-input" name="child_name" 
-                           placeholder="Which child attends this school?">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Set as Primary School</label>
-                    <select class="form-select" name="is_primary">
-                        <option value="false">No</option>
-                        <option value="true">Yes - Use for travel suggestions</option>
-                    </select>
+                    <label class="form-label">Description (Optional)</label>
+                    <input type="text" class="form-input" name="description" 
+                           placeholder="e.g., Teacher Training Day, Staff Development">
                 </div>
                 
                 <div class="form-actions" style="margin-top: var(--space-luxury-xl);">
-                    <button type="button" class="cancel-link" onclick="closeSchoolModal()">Cancel</button>
-                    <button type="submit" class="save-button" id="saveSchoolBtn" disabled>
+                    <button type="button" class="cancel-link" onclick="closeInsetDayModal()">Cancel</button>
+                    <button type="submit" class="save-button">
                         <i class="fas fa-save"></i>
-                        Add School/Council
+                        Add INSET Day
                     </button>
                 </div>
             </form>
@@ -993,16 +1007,6 @@
     <script src="/static/uk-schools-database.js"></script>
     <script src="/static/common.js"></script>
     <script>
-        // Make school modal function globally accessible
-        window.showAddSchoolModal = function() {
-            const modal = document.getElementById('schoolModal');
-            if (modal) {
-                modal.classList.add('show');
-                setTimeout(() => {
-                    document.getElementById('schoolSearch')?.focus();
-                }, 100);
-            }
-        };
         async function saveProfile(event) {
             event.preventDefault();
             
@@ -1355,209 +1359,136 @@
             }
         }
         
-        // School Management
-        let schools = [];
-        let selectedSchool = null;
+        // School Calendar Management
+        let schoolHolidays = [];
+        let insetDays = [];
         
-        async function loadSchools() {
+        async function loadSchoolCalendar() {
+            const country = document.getElementById('schoolCountry').value;
+            if (!country) return;
+            
             try {
-                const response = await fetch('/api/schools');
+                // Load holidays for the selected country
+                const response = await fetch(`/api/school-calendar/${country}`);
                 if (response.ok) {
-                    schools = await response.json();
-                    displaySchools();
+                    const data = await response.json();
+                    schoolHolidays = data.holidays || [];
+                    insetDays = data.insetDays || [];
+                    displayHolidays();
+                    displayInsetDays();
+                    document.getElementById('calendarSection').style.display = 'block';
                 } else {
-                    const error = await response.json();
-                    console.error('Failed to load schools:', error);
-                    // Display message for 404 (API not available)
-                    if (response.status === 404) {
-                        const container = document.getElementById('schoolsContainer');
-                        if (container) {
-                            container.innerHTML = `
-                                <div style="text-align: center; padding: var(--space-luxury-2xl); color: #e74c3c;">
-                                    <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: var(--space-luxury-md);"></i>
-                                    <p>School functionality will be available after deployment. Please check back later.</p>
-                                </div>
-                            `;
-                        }
-                    }
+                    console.error('Failed to load school calendar');
                 }
             } catch (error) {
-                console.error('Error loading schools:', error);
-                // Display error message in the schools container
-                const container = document.getElementById('schoolsContainer');
-                if (container) {
-                    container.innerHTML = `
-                        <div style="text-align: center; padding: var(--space-luxury-2xl); color: #e74c3c;">
-                            <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: var(--space-luxury-md);"></i>
-                            <p>Failed to load schools. Please refresh the page.</p>
-                        </div>
-                    `;
-                }
+                console.error('Error loading school calendar:', error);
             }
         }
         
-        function displaySchools() {
-            const container = document.getElementById('schoolsContainer');
+        function updateSchoolCalendar() {
+            loadSchoolCalendar();
+        }
+        
+        function displayHolidays() {
+            const container = document.getElementById('upcomingHolidays');
             
-            if (schools.length === 0) {
+            if (schoolHolidays.length === 0) {
                 container.innerHTML = `
-                    <div style="text-align: center; padding: var(--space-luxury-2xl); color: var(--luxury-charcoal);">
-                        <i class="fas fa-graduation-cap" style="font-size: 2rem; color: var(--luxury-stone); margin-bottom: var(--space-luxury-md);"></i>
-                        <p>No schools or councils added yet. Add your first school to get personalized travel suggestions!</p>
+                    <div style="text-align: center; padding: var(--space-luxury-lg); color: var(--luxury-charcoal);">
+                        <p>No upcoming holidays found for your region.</p>
                     </div>
                 `;
                 return;
             }
             
-            container.innerHTML = schools.map(school => `
-                <div class="school-item">
-                    <div class="school-info">
-                        <div class="school-name">
-                            ${school.school_name}
-                            ${school.is_primary ? '<span class="school-primary-badge">Primary</span>' : ''}
+            const today = new Date();
+            const upcomingHolidays = schoolHolidays.filter(holiday => {
+                const startDate = new Date(holiday.start_date);
+                return startDate >= today;
+            }).slice(0, 5); // Show next 5 holidays
+            
+            container.innerHTML = upcomingHolidays.map(holiday => {
+                const startDate = new Date(holiday.start_date);
+                const endDate = new Date(holiday.end_date);
+                const duration = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+                
+                return `
+                    <div class="school-item" style="margin-bottom: var(--space-luxury-sm);">
+                        <div class="school-info">
+                            <div class="school-name">${holiday.name}</div>
+                            <div class="school-details">
+                                ${startDate.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+                                - ${endDate.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+                                (${duration} days)
+                            </div>
                         </div>
-                        <div class="school-details">
-                            ${school.region}, ${school.country}
-                            ${school.child_name ? ` • ${school.child_name}` : ''}
-                        </div>
                     </div>
-                    <div class="school-actions">
-                        <button class="btn-group-action" onclick="deleteSchool(${school.id})">
-                            <i class="fas fa-trash"></i> Remove
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        function showAddSchoolModal() {
-            console.log('showAddSchoolModal called');
-            
-            try {
-                const modal = document.getElementById('schoolModal');
-                if (!modal) {
-                    console.error('School modal element not found!');
-                    alert('Error: School modal not found. Please refresh the page.');
-                    return;
-                }
-                
-                console.log('Adding show class to modal');
-                modal.classList.add('show');
-                
-                const searchInput = document.getElementById('schoolSearch');
-                if (searchInput) {
-                    setTimeout(() => searchInput.focus(), 100);
-                }
-                
-                // Test if the API is available
-                fetch('/api/schools')
-                    .then(response => {
-                        if (!response.ok) {
-                            console.error('Schools API not available. Status:', response.status);
-                            if (response.status === 404) {
-                                console.log('Schools API endpoint not found - this may be normal if running locally');
-                            }
-                        } else {
-                            console.log('Schools API is available');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error checking schools API:', error);
-                    });
-                    
-            } catch (error) {
-                console.error('Error in showAddSchoolModal:', error);
-                alert('An error occurred opening the school modal. Please check the console.');
-            }
-        }
-        
-        function closeSchoolModal() {
-            const modal = document.getElementById('schoolModal');
-            if (modal) {
-                modal.classList.remove('show');
-            }
-            document.getElementById('schoolForm').reset();
-            document.getElementById('schoolSearchResults').classList.remove('show');
-            document.getElementById('selectedSchoolInfo').style.display = 'none';
-            document.getElementById('saveSchoolBtn').disabled = true;
-            selectedSchool = null;
-        }
-        
-        function searchSchools() {
-            const query = document.getElementById('schoolSearch').value;
-            const resultsContainer = document.getElementById('schoolSearchResults');
-            
-            if (query.length < 2) {
-                resultsContainer.classList.remove('show');
-                return;
-            }
-            
-            // Check if the searchSchools function is available
-            if (typeof window.searchSchools !== 'function') {
-                console.error('School search function not loaded. Please refresh the page.');
-                resultsContainer.innerHTML = '<div class="search-result-item">Error: School database not loaded. Please refresh the page.</div>';
-                resultsContainer.classList.add('show');
-                return;
-            }
-            
-            const results = window.searchSchools(query);
-            
-            if (results.length === 0) {
-                resultsContainer.innerHTML = '<div class="search-result-item">No schools found</div>';
-                resultsContainer.classList.add('show');
-                return;
-            }
-            
-            resultsContainer.innerHTML = results.slice(0, 10).map(school => `
-                <div class="search-result-item" onclick="selectSchool('${school.key}')">
-                    <div class="search-result-name">${school.name}</div>
-                    <div class="search-result-details">
-                        ${school.region}, ${school.country}
-                        ${school.type ? ` • ${school.type}` : ''}
-                    </div>
-                </div>
-            `).join('');
-            
-            resultsContainer.classList.add('show');
-        }
-        
-        function selectSchool(schoolKey) {
-            selectedSchool = window.getSchoolInfo(schoolKey);
-            
-            if (selectedSchool) {
-                document.getElementById('selectedSchoolDetails').innerHTML = `
-                    <div class="selected-school-name">${selectedSchool.name}</div>
-                    <div class="selected-school-info">${selectedSchool.region}, ${selectedSchool.country}</div>
-                    ${selectedSchool.type ? `<div class="selected-school-info">Type: ${selectedSchool.type}</div>` : ''}
                 `;
-                
-                document.getElementById('selectedSchoolInfo').style.display = 'block';
-                document.getElementById('schoolSearchResults').classList.remove('show');
-                document.getElementById('saveSchoolBtn').disabled = false;
-            }
+            }).join('');
         }
         
-        async function saveSchool(event) {
+        function displayInsetDays() {
+            const container = document.getElementById('insetDaysContainer');
+            
+            if (insetDays.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: var(--space-luxury-lg); color: var(--luxury-charcoal);">
+                        <p>No INSET days added yet. Add your school's INSET days for weekend getaway suggestions.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const today = new Date();
+            const upcomingInsetDays = insetDays.filter(day => {
+                const date = new Date(day.date);
+                return date >= today;
+            });
+            
+            container.innerHTML = upcomingInsetDays.map(day => {
+                const date = new Date(day.date);
+                const dayOfWeek = date.toLocaleDateString('en-GB', { weekday: 'long' });
+                
+                return `
+                    <div class="school-item" style="margin-bottom: var(--space-luxury-sm);">
+                        <div class="school-info">
+                            <div class="school-name">
+                                ${dayOfWeek}, ${date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                            </div>
+                            ${day.description ? `<div class="school-details">${day.description}</div>` : ''}
+                        </div>
+                        <div class="school-actions">
+                            <button class="btn-group-action danger" onclick="deleteInsetDay(${day.id})">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function showAddInsetDayModal() {
+            const modal = document.getElementById('insetDayModal');
+            modal.classList.add('show');
+            document.getElementById('insetDayForm').reset();
+        }
+        
+        function closeInsetDayModal() {
+            const modal = document.getElementById('insetDayModal');
+            modal.classList.remove('show');
+        }
+        
+        async function saveInsetDay(event) {
             event.preventDefault();
-            
-            if (!selectedSchool) {
-                alert('Please select a school or council first');
-                return;
-            }
             
             const formData = new FormData(event.target);
             const data = {
-                school_key: selectedSchool.key,
-                school_name: selectedSchool.name,
-                school_type: selectedSchool.type || 'council',
-                region: selectedSchool.region,
-                country: selectedSchool.country,
-                child_name: formData.get('child_name') || null,
-                is_primary: formData.get('is_primary') === 'true'
+                date: formData.get('date'),
+                description: formData.get('description') || ''
             };
             
             try {
-                const response = await fetch('/api/schools', {
+                const response = await fetch('/api/inset-days', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1566,44 +1497,43 @@
                 });
                 
                 if (response.ok) {
-                    const newSchool = await response.json();
-                    schools.push(newSchool);
-                    displaySchools();
-                    closeSchoolModal();
+                    const newInsetDay = await response.json();
+                    insetDays.push(newInsetDay);
+                    displayInsetDays();
+                    closeInsetDayModal();
                     
                     // Show success notification
                     const notification = document.getElementById('successNotification');
-                    notification.textContent = 'School/Council added successfully!';
+                    notification.textContent = 'INSET day added successfully!';
                     notification.classList.add('show');
                     setTimeout(() => {
                         notification.classList.remove('show');
                     }, 3000);
                 } else {
                     const error = await response.json();
-                    console.error('School save error:', error);
-                    alert('Error adding school: ' + (error.error || 'Unknown error'));
+                    alert('Error adding INSET day: ' + (error.error || 'Unknown error'));
                 }
             } catch (error) {
-                console.error('Error saving school:', error);
-                alert('Failed to add school: ' + error.message);
+                console.error('Error:', error);
+                alert('Failed to add INSET day');
             }
         }
         
-        async function deleteSchool(schoolId) {
-            if (!confirm('Are you sure you want to remove this school/council?')) return;
+        async function deleteInsetDay(insetDayId) {
+            if (!confirm('Are you sure you want to remove this INSET day?')) return;
             
             try {
-                const response = await fetch(`/api/schools/${schoolId}`, {
+                const response = await fetch(`/api/inset-days/${insetDayId}`, {
                     method: 'DELETE'
                 });
                 
                 if (response.ok) {
-                    schools = schools.filter(s => s.id !== schoolId);
-                    displaySchools();
+                    insetDays = insetDays.filter(d => d.id !== insetDayId);
+                    displayInsetDays();
                     
                     // Show success notification
                     const notification = document.getElementById('successNotification');
-                    notification.textContent = 'School/Council removed successfully!';
+                    notification.textContent = 'INSET day removed successfully!';
                     notification.classList.add('show');
                     setTimeout(() => {
                         notification.classList.remove('show');
@@ -1611,7 +1541,7 @@
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Failed to remove school');
+                alert('Failed to remove INSET day');
             }
         }
         
@@ -1626,47 +1556,10 @@
                 console.error('UK schools database not loaded!');
             }
             
-            // Load travel groups and schools
+            // Load travel groups and school calendar
             loadGroups();
-            loadSchools();
+            loadSchoolCalendar();
             
-            // Add event listener for Add School button as backup
-            const addSchoolBtn = document.getElementById('addSchoolBtn');
-            if (addSchoolBtn) {
-                console.log('Setting up click handler for Add School button');
-                
-                // Remove any existing onclick attribute
-                addSchoolBtn.removeAttribute('onclick');
-                
-                addSchoolBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('Add School button clicked via event listener');
-                    
-                    // Direct modal manipulation
-                    const modal = document.getElementById('schoolModal');
-                    if (modal) {
-                        console.log('Found school modal, showing it now');
-                        modal.classList.add('show');
-                        
-                        // Focus the search input
-                        const searchInput = document.getElementById('schoolSearch');
-                        if (searchInput) {
-                            setTimeout(() => {
-                                searchInput.focus();
-                                console.log('Focused on school search input');
-                            }, 100);
-                        }
-                    } else {
-                        console.error('School modal not found!');
-                        alert('Error: Unable to open school modal. Please refresh the page.');
-                    }
-                });
-                
-                console.log('Click handler attached successfully');
-            } else {
-                console.error('Add School button not found!');
-            }
             
             // Auto-format phone number
             const phoneInput = document.querySelector('input[name="phone"]');
@@ -1700,11 +1593,11 @@
                 }
             });
             
-            const schoolModal = document.getElementById('schoolModal');
-            if (schoolModal) {
-                schoolModal.addEventListener('click', (e) => {
-                    if (e.target.id === 'schoolModal') {
-                        closeSchoolModal();
+            const insetDayModal = document.getElementById('insetDayModal');
+            if (insetDayModal) {
+                insetDayModal.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('modal-overlay')) {
+                        closeInsetDayModal();
                     }
                 });
             }

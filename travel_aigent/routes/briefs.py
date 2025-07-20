@@ -419,7 +419,9 @@ def create_brief():  # type: ignore[return-value]
             accommodation_type=validated_data["accommodation_type"],
             interests=validated_data.get("ai_instructions", ""),
             trip_length=7.0,  # Default trip length
-            date_flexibility=validated_data.get("date_flexibility", 2)  # Default 2 days flexibility
+            date_flexibility=validated_data.get("date_flexibility", 2),  # Default 2 days flexibility
+            focus_on_school_holidays=data.get("focus_on_school_holidays", False),
+            preferred_holiday_periods=data.get("preferred_holiday_periods", None)
         )
         
         # Save to database
@@ -537,6 +539,8 @@ def update_brief(brief_id: str):  # type: ignore[return-value]
         brief.accommodation_type = validated_data["accommodation_type"]
         brief.interests = validated_data.get("ai_instructions", "")
         brief.date_flexibility = validated_data.get("date_flexibility", 2)
+        brief.focus_on_school_holidays = data.get("focus_on_school_holidays", False)
+        brief.preferred_holiday_periods = data.get("preferred_holiday_periods", None)
         
         # Parse travel dates if provided - for now use existing dates
         from datetime import datetime

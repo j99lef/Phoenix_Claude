@@ -3,11 +3,11 @@ from datetime import datetime
 
 # Semantic versioning: MAJOR.MINOR.PATCH
 VERSION_MAJOR = 1
-VERSION_MINOR = 2
+VERSION_MINOR = 3
 VERSION_PATCH = 0
 
 # Build metadata
-BUILD_NUMBER = 23  # Increment with each build
+BUILD_NUMBER = 24  # Increment with each build
 BUILD_DATE = datetime.now().strftime("%Y-%m-%d")
 BUILD_TIME = datetime.now().strftime("%H:%M:%S")
 
@@ -26,6 +26,18 @@ VERSION_FEATURES = {
 
 # Version history
 VERSION_HISTORY = {
+    "1.3.0": {
+        "date": "2025-01-20",
+        "changes": [
+            "Removed deals section to focus on AI travel brief searches",
+            "Implemented UK school calendar system with holidays data",
+            "Added country-based school calendar selection",
+            "Added personal INSET days management", 
+            "Integrated school holiday preferences in travel briefs",
+            "Fixed travelers form to allow multiple people",
+            "Simplified profile for better user experience"
+        ]
+    },
     "1.2.0": {
         "date": "2025-01-19",
         "changes": [

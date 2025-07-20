@@ -193,7 +193,6 @@ def create_app(config_overrides=None):
     # ---------------------------------------------------------------------
     from .routes.status import bp as status_bp  # pylint: disable=import-outside-toplevel
     from .routes.briefs import bp as briefs_bp  # pylint: disable=import-outside-toplevel
-    from .routes.deals import bp as deals_bp  # pylint: disable=import-outside-toplevel
     from .routes.auth import bp as auth_bp  # pylint: disable=import-outside-toplevel
     from .routes.profile import bp as profile_bp  # pylint: disable=import-outside-toplevel
     from .routes.groups import groups_bp  # pylint: disable=import-outside-toplevel
@@ -201,14 +200,15 @@ def create_app(config_overrides=None):
     from .routes.people import bp as people_bp  # pylint: disable=import-outside-toplevel
     from .routes.notifications import bp as notifications_bp  # pylint: disable=import-outside-toplevel
     from .routes.test_pages import bp as test_bp  # pylint: disable=import-outside-toplevel
+    from .routes.school_calendar import bp as school_calendar_bp  # pylint: disable=import-outside-toplevel
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(status_bp)
     app.register_blueprint(briefs_bp)
-    app.register_blueprint(deals_bp)
     app.register_blueprint(profile_bp)
     app.register_blueprint(groups_bp)
     app.register_blueprint(schools)
+    app.register_blueprint(school_calendar_bp)
     app.register_blueprint(people_bp)
     app.register_blueprint(notifications_bp)
     app.register_blueprint(test_bp)
