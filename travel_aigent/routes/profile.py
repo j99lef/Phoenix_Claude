@@ -174,6 +174,24 @@ def account():  # type: ignore[return-value]
         return render_template("error.html", message="Unable to load account"), 500
 
 
+@bp.route("/profile/simple")
+@require_auth
+def profile_simple():  # type: ignore[return-value]
+    """Simple profile page for debugging."""
+    try:
+        from auth import auth
+        user = auth.get_current_user()
+        
+        if not user:
+            logging.error("No user found for simple profile page")
+            return redirect(url_for('auth.login'))
+            
+        return render_template("profile_simple.html", user=user)
+    except Exception as exc:  # noqa: BLE001
+        logging.exception("Error loading simple profile: %s", exc)
+        return jsonify({"error": str(exc), "type": str(type(exc))}), 500
+
+
 @bp.route("/profile/debug")
 @require_auth
 def profile_debug():  # type: ignore[return-value]

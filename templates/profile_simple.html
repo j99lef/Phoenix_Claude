@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - TravelAiGent</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .user-info {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .field {
+            margin: 10px 0;
+        }
+        .field label {
+            font-weight: bold;
+            display: inline-block;
+            width: 150px;
+        }
+        .nav {
+            margin: 20px 0;
+        }
+        .nav a {
+            margin-right: 15px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .nav a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simple Profile Page</h1>
+        
+        <div class="nav">
+            <a href="/">Home</a>
+            <a href="/briefs">Travel Briefs</a>
+            <a href="/groups">Groups</a>
+            <a href="/logout">Logout</a>
+        </div>
+        
+        <div class="user-info">
+            <h2>User Information</h2>
+            {% if user %}
+                <div class="field">
+                    <label>Username:</label> {{ user.username }}
+                </div>
+                <div class="field">
+                    <label>Email:</label> {{ user.email or 'Not set' }}
+                </div>
+                <div class="field">
+                    <label>First Name:</label> {{ user.first_name or 'Not set' }}
+                </div>
+                <div class="field">
+                    <label>Last Name:</label> {{ user.last_name or 'Not set' }}
+                </div>
+                <div class="field">
+                    <label>User ID:</label> {{ user.id if user.id else 'No ID' }}
+                </div>
+            {% else %}
+                <p>No user data available</p>
+            {% endif %}
+        </div>
+        
+        <div class="user-info">
+            <h2>Debug Information</h2>
+            <p>This is a simplified profile page for debugging.</p>
+            <p>If you can see this page, the route is working correctly.</p>
+            <p><a href="/profile/debug">View Debug Data</a></p>
+        </div>
+    </div>
+</body>
+</html>

@@ -138,6 +138,8 @@ class SimpleAuth:
                         first_name='Admin',
                         last_name='User'
                     )
+                    # Set temporary ID
+                    user.id = 0
                     # Don't add to session, just return for display
                     
             if not user:
