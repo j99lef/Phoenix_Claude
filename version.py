@@ -4,10 +4,10 @@ from datetime import datetime
 # Semantic versioning: MAJOR.MINOR.PATCH
 VERSION_MAJOR = 1
 VERSION_MINOR = 3
-VERSION_PATCH = 8
+VERSION_PATCH = 9
 
 # Build metadata
-BUILD_NUMBER = 47  # Increment with each build
+BUILD_NUMBER = 48  # Increment with each build
 BUILD_DATE = datetime.now().strftime("%Y-%m-%d")
 BUILD_TIME = datetime.now().strftime("%H:%M:%S")
 
@@ -26,6 +26,16 @@ VERSION_FEATURES = {
 
 # Version history
 VERSION_HISTORY = {
+    "1.3.9": {
+        "date": "2025-01-20",
+        "changes": [
+            "Fixed button layout in School Calendar view mode",
+            "Changed 'Save Changes' button to 'Edit Dates' with pencil icon",
+            "Improved button visibility toggling for better UX",
+            "Fixed state management after saving calendar changes",
+            "Buttons now properly hide/show based on current mode"
+        ]
+    },
     "1.3.8": {
         "date": "2025-01-20",
         "changes": [
