@@ -2,6 +2,7 @@
 import os
 import secrets
 import time
+import logging
 from typing import Optional
 from datetime import datetime, timedelta
 
@@ -114,25 +115,39 @@ class SimpleAuth:
             return None
             
         # Try to get user from database
-        from travel_aigent.models import User
-        user = User.query.filter_by(username=username).first()
-        
-        # If no user found, try to create admin user if it's the admin
-        if not user and username == 'admin':
-            # Try to create admin user
-            try:
-                from travel_aigent import _ensure_admin_user
-                _ensure_admin_user()
-                # Try again
-                user = User.query.filter_by(username=username).first()
-            except:
-                pass
-                
-        if not user:
-            logging.warning(f"User {username} not found in database")
-            return None
+        try:
+            from travel_aigent.models import User, db
+            user = User.query.filter_by(username=username).first()
             
-        return user
+            # If no user found, try to create admin user if it's the admin
+            if not user and username == 'admin':
+                # Try to create admin user
+                try:
+                    from travel_aigent import _ensure_admin_user
+                    _ensure_admin_user()
+                    # Commit the transaction to ensure the user is saved
+                    db.session.commit()
+                    # Try again
+                    user = User.query.filter_by(username=username).first()
+                except Exception as e:
+                    logging.error(f"Failed to create admin user: {e}")
+                    # Create a temporary user object for admin
+                    user = User(
+                        username='admin',
+                        email='admin@travelaigent.uk',
+                        first_name='Admin',
+                        last_name='User'
+                    )
+                    # Don't add to session, just return for display
+                    
+            if not user:
+                logging.warning(f"User {username} not found in database")
+                return None
+                
+            return user
+        except Exception as e:
+            logging.error(f"Error getting current user: {e}")
+            return None
     
     def require_auth(self, f):
         """Decorator to require authentication for routes."""
