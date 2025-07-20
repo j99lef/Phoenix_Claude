@@ -145,3 +145,46 @@
 2. Verify profile page loads without errors
 3. Check browser console for any JavaScript errors
 4. Test profile save functionality
+
+## Profile Route Investigation (Build 26-28)
+
+### Issue: User reported profile link broken (404 error)
+
+**Investigation Steps Taken:**
+1. ✅ **Checked route registration** - Profile blueprint was properly defined in code
+2. ✅ **Added route introspection** - Created /version endpoint to list all registered routes
+3. ✅ **Verified blueprint registration** - Profile routes were registered correctly in __init__.py
+4. ✅ **Fixed deployment sync issue** - Deployment was running old code without profile routes
+5. ✅ **Confirmed routes working** - After deployment update, /profile redirects to /login when not authenticated (correct behavior)
+
+**Key Findings:**
+- Profile route WAS properly coded all along
+- Issue was deployment running outdated code (Build 25 instead of latest)
+- After pushing changes and incrementing build number, routes became accessible
+- Profile page requires authentication (redirects to /login when not logged in)
+
+**Current Status:**
+- `/profile` route works correctly (302 redirect to login when not authenticated)
+- `/api/profile` API endpoint is accessible
+- `/groups` and other profile-related routes are functioning
+- User must log in to access profile (username: admin, password: from ADMIN_PASSWORD env var)
+
+### Profile Page Blank Issue (Build 28)
+
+**Issue:** Admin user logs in successfully but profile page appears blank/dead
+
+**Debugging Steps Added:**
+1. ✅ **Added profile debug endpoint** - /profile/debug to diagnose user data issues
+2. ✅ **Enhanced profile route** - Added checks for all required user attributes
+3. ✅ **Added detailed logging** - Track profile page loading and user state
+4. ✅ **Ensured user attributes exist** - Set default values for missing attributes to prevent template errors
+
+**Debug Endpoints Available:**
+- `/profile/debug` - Shows user authentication state and attributes
+- `/version` - Shows all registered routes and build info
+- `/test-profile-route` - Simple test endpoint to verify routing
+
+**Next Steps for User:**
+1. Access https://phoenixclaude-production.up.railway.app/profile/debug while logged in
+2. Check browser Developer Console (F12) for JavaScript errors on profile page
+3. Report what the debug endpoint shows about user data
