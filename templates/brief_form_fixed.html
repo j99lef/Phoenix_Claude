@@ -1,0 +1,165 @@
+<!-- Travel Group Section with Auto-Add User -->
+<script>
+// Auto-add current user as primary traveler
+function initializeTravelersFixed() {
+    const container = document.getElementById('travelersContainer');
+    
+    // Add current user as primary traveler
+    const currentUser = {
+        name: "{{ user.first_name }} {{ user.last_name }}" || "{{ user.username }}",
+        type: "adult"
+    };
+    
+    // Clear any existing travelers
+    container.innerHTML = '';
+    travelerCount = 0;
+    
+    // Add current user first
+    addTravelerWithData(currentUser.name, currentUser.type, true);
+    
+    // Check if we're editing an existing brief
+    const existingTravelers = "{{ brief.travelers if brief else '' }}";
+    if (existingTravelers && existingTravelers.trim()) {
+        // Parse existing travelers
+        const travelersList = existingTravelers.split(',').map(t => t.trim());
+        
+        // Add other travelers (skip the first one if it matches current user)
+        travelersList.forEach((traveler, index) => {
+            if (index === 0 && traveler.includes(currentUser.name)) {
+                // Skip - already added
+                return;
+            }
+            
+            // Extract name and type
+            const match = traveler.match(/(.+)\s*\((\w+)\)/);
+            if (match) {
+                addTravelerWithData(match[1].trim(), match[2].trim(), false);
+            }
+        });
+    }
+    
+    // Always update the hidden field
+    updateTravelersField();
+}
+
+function addTravelerWithData(name, type, isPrimary) {
+    travelerCount++;
+    const container = document.getElementById('travelersContainer');
+    
+    const travelerDiv = document.createElement('div');
+    travelerDiv.className = 'traveler-item';
+    travelerDiv.style.display = 'flex';
+    travelerDiv.style.gap = 'var(--space-luxury-md)';
+    travelerDiv.style.marginBottom = 'var(--space-luxury-md)';
+    travelerDiv.style.alignItems = 'center';
+    travelerDiv.innerHTML = `
+        <input type="text" 
+               class="luxury-input" 
+               value="${name}" 
+               placeholder="Name" 
+               ${isPrimary ? 'readonly' : ''}
+               style="flex: 1; ${isPrimary ? 'background-color: #f5f5f5;' : ''}"
+               onchange="updateTravelersField()">
+        <select class="luxury-select" 
+                style="width: 150px;" 
+                ${isPrimary ? 'disabled' : ''}
+                onchange="updateTravelersField()">
+            <option value="adult" ${type === 'adult' ? 'selected' : ''}>Adult</option>
+            <option value="child" ${type === 'child' ? 'selected' : ''}>Child</option>
+            <option value="infant" ${type === 'infant' ? 'selected' : ''}>Infant</option>
+            <option value="senior" ${type === 'senior' ? 'selected' : ''}>Senior</option>
+        </select>
+        ${isPrimary ? 
+            '<span class="text-green-600 font-semibold">Primary</span>' : 
+            `<button type="button" class="luxury-button-icon" onclick="removeTraveler(this)" title="Remove traveler">
+                <i class="fas fa-times"></i>
+            </button>`
+        }
+    `;
+    
+    container.appendChild(travelerDiv);
+}
+
+function updateTravelersField() {
+    const travelers = [];
+    const travelerItems = document.querySelectorAll('.traveler-item');
+    
+    travelerItems.forEach(item => {
+        const nameInput = item.querySelector('input[type="text"]');
+        const typeSelect = item.querySelector('select');
+        
+        if (nameInput && nameInput.value.trim()) {
+            travelers.push(`${nameInput.value.trim()} (${typeSelect.value})`);
+        }
+    });
+    
+    const travelersField = document.getElementById('travelers_hidden');
+    // Ensure we always have at least one traveler
+    travelersField.value = travelers.length > 0 ? travelers.join(', ') : 'Solo Traveler (adult)';
+    
+    console.log('Updated travelers field:', travelersField.value);
+}
+
+// Override the original addTraveler function
+function addTraveler() {
+    addTravelerWithData('', 'adult', false);
+    updateTravelersField();
+}
+
+// Auto-select "Me + Partner" group type when appropriate
+function autoSelectGroupType() {
+    const travelerItems = document.querySelectorAll('.traveler-item');
+    if (travelerItems.length === 2) {
+        const types = Array.from(travelerItems).map(item => 
+            item.querySelector('select').value
+        );
+        
+        if (types.every(t => t === 'adult')) {
+            // Two adults - likely "Me + Partner"
+            const groupSelect = document.getElementById('travel_group_select');
+            if (groupSelect) {
+                // Find and select "Me + Partner" option if it exists
+                for (let option of groupSelect.options) {
+                    if (option.text.includes('Partner')) {
+                        groupSelect.value = option.value;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    initializeTravelersFixed();
+});
+</script>
+
+<!-- Add this CSS for better styling -->
+<style>
+.traveler-item {
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.traveler-item input[readonly] {
+    cursor: not-allowed;
+}
+
+.luxury-button-icon {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.luxury-button-icon:hover {
+    background: #dc2626;
+}
+</style>

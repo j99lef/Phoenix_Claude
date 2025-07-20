@@ -106,6 +106,24 @@
                 </select>
             </div>
             
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Child Name (Optional)</label>
+                <select id="child_name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                    <option value="">-- Select Child --</option>
+                    {% if user %}
+                        {% for person in user.people %}
+                            {% if person.person_type == 'child' %}
+                            <option value="{{ person.first_name }} {{ person.last_name }}">
+                                {{ person.first_name }} {{ person.last_name }} 
+                                {% if person.nickname %}({{ person.nickname }}){% endif %}
+                            </option>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </select>
+                <p class="text-sm text-gray-500 mt-1">Add children in People/Groups first</p>
+            </div>
+            
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                 Add School
             </button>
@@ -139,7 +157,8 @@ document.getElementById('add-school-form').addEventListener('submit', async (e) 
         school_type: document.getElementById('school_type').value,
         region: 'London',
         country: 'England',
-        is_primary: true
+        is_primary: true,
+        child_name: document.getElementById('child_name').value || null
     };
     
     try {

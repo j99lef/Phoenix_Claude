@@ -7,6 +7,12 @@ from datetime import datetime, timedelta
 
 bp = Blueprint('test_pages', __name__)
 
+@bp.route("/schools/simple")
+@require_auth
+def schools_simple():
+    """Simple schools management page."""
+    return render_template("schools_simple.html")
+
 @bp.route("/test")
 @require_auth
 def test_dashboard():
@@ -19,16 +25,23 @@ def test_schools():
     """Test page for schools functionality."""
     user = auth.get_current_user()
     schools = []
+    people = []
     error = None
     
     if user:
         schools = UserSchool.query.filter_by(user_id=user.id).all()
+        # Get user's people (children) - need to load the relationship
+        from ..models import Person
+        people = Person.query.filter_by(user_id=user.id).all()
+        # Add people to user object for template
+        user.people = people
     else:
         error = "No user found in session"
         
     return render_template("test_schools.html", 
                          user=user, 
                          schools=schools,
+                         people=people,
                          error=error)
 
 @bp.route("/test/deals")

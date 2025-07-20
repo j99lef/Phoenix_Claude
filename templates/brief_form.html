@@ -1377,5 +1377,13 @@
             });
         });
     </script>
+    
+    <!-- Brief Form Fix -->
+    <script src="/static/brief-form-fix.js"></script>
+    
+    <!-- User metadata for JavaScript -->
+    <meta name="user-name" content="{{ user.username if user else 'Traveler' }}">
+    <meta name="user-first-name" content="{{ user.first_name if user and user.first_name else '' }}">
+    <meta name="user-last-name" content="{{ user.last_name if user and user.last_name else '' }}">
 </body>
 </html>

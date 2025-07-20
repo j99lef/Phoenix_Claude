@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schools Management - TravelAiGent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <nav class="bg-white shadow-md p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">Schools/Council Management</h1>
+            <a href="/profile" class="text-blue-600 hover:text-blue-800">← Back to Profile</a>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Simple Add School Form -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Add School/Council</h2>
+            
+            <form onsubmit="addSchoolSimple(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Select a Council or School
+                    </label>
+                    <select id="school_select" onchange="updateSchoolInfo()" 
+                            class="w-full p-2 border rounded-md" required>
+                        <option value="">-- Select --</option>
+                        <optgroup label="London Councils">
+                            <option value="westminster|Westminster Council|council|London">Westminster Council</option>
+                            <option value="camden|Camden Council|council|London">Camden Council</option>
+                            <option value="islington|Islington Council|council|London">Islington Council</option>
+                        </optgroup>
+                        <optgroup label="Major Cities">
+                            <option value="birmingham|Birmingham Council|council|West Midlands">Birmingham Council</option>
+                            <option value="manchester|Manchester Council|council|Greater Manchester">Manchester Council</option>
+                            <option value="leeds|Leeds Council|council|West Yorkshire">Leeds Council</option>
+                        </optgroup>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Child Name (Optional)
+                    </label>
+                    <input type="text" id="child_name" placeholder="Enter child's name"
+                           class="w-full p-2 border rounded-md">
+                    <p class="text-sm text-gray-500 mt-1">
+                        You can also add children in the People/Groups section
+                    </p>
+                </div>
+                
+                <div class="flex items-center">
+                    <input type="checkbox" id="is_primary" class="mr-2">
+                    <label for="is_primary" class="text-sm">Set as primary school</label>
+                </div>
+                
+                <button type="submit" 
+                        class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+                    Add School/Council
+                </button>
+            </form>
+            
+            <div id="result" class="mt-4"></div>
+        </div>
+
+        <!-- Current Schools -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold mb-4">Your Schools/Councils</h2>
+            <div id="schools-list" class="space-y-2">
+                <p class="text-gray-500">Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Load schools on page load
+    loadSchools();
+    
+    function updateSchoolInfo() {
+        const select = document.getElementById('school_select');
+        const selected = select.value;
+        if (selected) {
+            const [key, name, type, region] = selected.split('|');
+            console.log('Selected:', {key, name, type, region});
+        }
+    }
+    
+    async function addSchoolSimple(event) {
+        event.preventDefault();
+        
+        const select = document.getElementById('school_select');
+        const selected = select.value;
+        
+        if (!selected) {
+            alert('Please select a school or council');
+            return;
+        }
+        
+        const [school_key, school_name, school_type, region] = selected.split('|');
+        
+        const data = {
+            school_key: school_key,
+            school_name: school_name,
+            school_type: school_type,
+            region: region,
+            country: 'England',
+            is_primary: document.getElementById('is_primary').checked,
+            child_name: document.getElementById('child_name').value || null
+        };
+        
+        console.log('Sending data:', data);
+        
+        try {
+            const response = await fetch('/api/schools', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                document.getElementById('result').innerHTML = 
+                    '<p class="text-green-600">✅ School added successfully!</p>';
+                loadSchools();
+                // Reset form
+                document.getElementById('school_select').value = '';
+                document.getElementById('child_name').value = '';
+                document.getElementById('is_primary').checked = false;
+            } else {
+                document.getElementById('result').innerHTML = 
+                    `<p class="text-red-600">❌ Error: ${result.error || 'Failed to add school'}</p>`;
+            }
+        } catch (error) {
+            document.getElementById('result').innerHTML = 
+                `<p class="text-red-600">❌ Error: ${error.message}</p>`;
+        }
+    }
+    
+    async function loadSchools() {
+        try {
+            const response = await fetch('/api/schools');
+            const schools = await response.json();
+            
+            const listDiv = document.getElementById('schools-list');
+            
+            if (!response.ok) {
+                listDiv.innerHTML = `<p class="text-red-600">Error loading schools: ${schools.error || 'Unknown error'}</p>`;
+                return;
+            }
+            
+            if (schools.length === 0) {
+                listDiv.innerHTML = '<p class="text-gray-500">No schools added yet.</p>';
+                return;
+            }
+            
+            listDiv.innerHTML = schools.map(school => `
+                <div class="border rounded p-3 flex justify-between items-center">
+                    <div>
+                        <strong>${school.school_name}</strong>
+                        ${school.is_primary ? '<span class="text-green-600 text-sm ml-2">✓ Primary</span>' : ''}
+                        <br>
+                        <span class="text-sm text-gray-600">
+                            ${school.school_type} · ${school.region || 'Unknown region'}
+                            ${school.child_name ? ` · Child: ${school.child_name}` : ''}
+                        </span>
+                    </div>
+                    <button onclick="removeSchool(${school.id})" 
+                            class="text-red-600 hover:text-red-800">
+                        Remove
+                    </button>
+                </div>
+            `).join('');
+            
+        } catch (error) {
+            document.getElementById('schools-list').innerHTML = 
+                `<p class="text-red-600">Error: ${error.message}</p>`;
+        }
+    }
+    
+    async function removeSchool(id) {
+        if (!confirm('Remove this school?')) return;
+        
+        try {
+            const response = await fetch(`/api/schools/${id}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                loadSchools();
+            } else {
+                alert('Failed to remove school');
+            }
+        } catch (error) {
+            alert(`Error: ${error.message}`);
+        }
+    }
+    </script>
+</body>
+</html>
