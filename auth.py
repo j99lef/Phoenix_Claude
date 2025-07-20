@@ -117,8 +117,19 @@ class SimpleAuth:
         from travel_aigent.models import User
         user = User.query.filter_by(username=username).first()
         
-        # If no user found, return None - they need to be in database
+        # If no user found, try to create admin user if it's the admin
+        if not user and username == 'admin':
+            # Try to create admin user
+            try:
+                from travel_aigent import _ensure_admin_user
+                _ensure_admin_user()
+                # Try again
+                user = User.query.filter_by(username=username).first()
+            except:
+                pass
+                
         if not user:
+            logging.warning(f"User {username} not found in database")
             return None
             
         return user

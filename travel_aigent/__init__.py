@@ -13,6 +13,47 @@ from auth import init_auth
 from version import VERSION_FULL, get_version_info
 
 # ----------------------------------------------------------------------------
+# Helper Functions
+# ----------------------------------------------------------------------------
+
+def _ensure_admin_user():
+    """Ensure admin user exists in database."""
+    try:
+        from .models import User
+        from argon2 import PasswordHasher
+        
+        # Check if admin exists
+        admin = User.query.filter_by(username='admin').first()
+        
+        if not admin:
+            ph = PasswordHasher()
+            
+            # Get admin credentials from environment
+            admin_username = os.environ.get("ADMIN_USERNAME", "admin")
+            admin_password = os.environ.get("ADMIN_PASSWORD", "changeme123!")
+            
+            # Create admin user
+            admin = User(
+                username=admin_username,
+                email='admin@travelaigent.com',
+                password_hash=ph.hash(admin_password),
+                first_name='Admin',
+                last_name='User'
+            )
+            
+            db.session.add(admin)
+            db.session.commit()
+            
+            logging.info(f"Created admin user: {admin_username} (ID: {admin.id})")
+        else:
+            logging.info(f"Admin user exists: {admin.username} (ID: {admin.id})")
+            
+    except Exception as e:
+        logging.error(f"Failed to ensure admin user: {e}")
+        # Don't crash the app if admin user creation fails
+        pass
+
+# ----------------------------------------------------------------------------
 # Application Factory
 # ----------------------------------------------------------------------------
 
@@ -104,6 +145,9 @@ def create_app(config_overrides=None):
     with app.app_context():
         db.create_all()
         logging.info(f"Database tables created successfully - TravelAiGent {VERSION_FULL}")
+        
+        # Ensure admin user exists
+        _ensure_admin_user()
         
     # Make version available to all templates
     @app.context_processor
