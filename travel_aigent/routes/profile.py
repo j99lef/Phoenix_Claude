@@ -26,8 +26,39 @@ def profile():  # type: ignore[return-value]
         user = auth.get_current_user()
         
         if not user:
+            logging.error("No user found for profile page")
             return redirect(url_for('auth.login'))
         
+        logging.info(f"Loading profile page for user: {user.username} (ID: {user.id if hasattr(user, 'id') else 'No ID'})")
+        
+        # Make sure user has all required attributes
+        if not hasattr(user, 'first_name'):
+            user.first_name = None
+        if not hasattr(user, 'last_name'):
+            user.last_name = None
+        if not hasattr(user, 'email'):
+            user.email = None
+        if not hasattr(user, 'phone'):
+            user.phone = None
+        if not hasattr(user, 'whatsapp_number'):
+            user.whatsapp_number = None
+        if not hasattr(user, 'home_airports'):
+            user.home_airports = None
+        if not hasattr(user, 'preferred_airlines'):
+            user.preferred_airlines = None
+        if not hasattr(user, 'dietary_restrictions'):
+            user.dietary_restrictions = None
+        if not hasattr(user, 'travel_style'):
+            user.travel_style = None
+        if not hasattr(user, 'adults_count'):
+            user.adults_count = 2
+        if not hasattr(user, 'children_ages'):
+            user.children_ages = None
+        if not hasattr(user, 'senior_travelers'):
+            user.senior_travelers = False
+        if not hasattr(user, 'preferred_accommodation'):
+            user.preferred_accommodation = None
+            
         return render_template("profile.html", user=user)
     except Exception as exc:  # noqa: BLE001
         logging.exception("Error loading profile: %s", exc)
@@ -141,6 +172,41 @@ def account():  # type: ignore[return-value]
     except Exception as exc:  # noqa: BLE001
         logging.exception("Error loading account: %s", exc)
         return render_template("error.html", message="Unable to load account"), 500
+
+
+@bp.route("/profile/debug")
+@require_auth
+def profile_debug():  # type: ignore[return-value]
+    """Debug endpoint to check profile functionality."""
+    try:
+        from auth import auth
+        user = auth.get_current_user()
+        
+        debug_info = {
+            "authenticated": auth.is_authenticated(),
+            "session_username": session.get('username'),
+            "user_found": user is not None,
+        }
+        
+        if user:
+            debug_info.update({
+                "user_id": getattr(user, 'id', 'No ID'),
+                "username": getattr(user, 'username', 'No username'),
+                "first_name": getattr(user, 'first_name', 'No first_name'),
+                "last_name": getattr(user, 'last_name', 'No last_name'),
+                "email": getattr(user, 'email', 'No email'),
+                "has_attributes": {
+                    "id": hasattr(user, 'id'),
+                    "username": hasattr(user, 'username'),
+                    "first_name": hasattr(user, 'first_name'),
+                    "last_name": hasattr(user, 'last_name'),
+                    "email": hasattr(user, 'email'),
+                }
+            })
+        
+        return jsonify(debug_info)
+    except Exception as e:
+        return jsonify({"error": str(e), "type": str(type(e))}), 500
 
 
 @bp.route("/api/user/preferences", methods=["GET", "PUT"])
