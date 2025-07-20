@@ -603,6 +603,7 @@
                     <div id="termDatesEditor" style="display: none; margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px;">
                         <h3 style="margin-bottom: 1.5rem; color: #333;">
                             <i class="fas fa-edit"></i> Edit School Term Dates
+                            <span id="countryIndicator" style="font-size: 1rem; font-weight: normal; color: #666; margin-left: 1rem;"></span>
                         </h3>
                         
                         <!-- Current Year Terms -->
@@ -985,12 +986,15 @@
         function updateSchoolInfo() {
             const country = document.getElementById('countrySelect').value;
             const editBtn = document.getElementById('editTermsBtn');
+            const editor = document.getElementById('termDatesEditor');
             
             if (country) {
                 editBtn.style.display = 'block';
-                loadTermDatesIfAvailable();
+                // Hide the editor when country changes (user needs to click Edit again)
+                editor.style.display = 'none';
             } else {
                 editBtn.style.display = 'none';
+                editor.style.display = 'none';
             }
         }
         
@@ -999,8 +1003,20 @@
             const isVisible = editor.style.display === 'block';
             editor.style.display = isVisible ? 'none' : 'block';
             
-            if (!isVisible && document.getElementById('countrySelect').value) {
-                loadTermDatesIfAvailable();
+            if (!isVisible) {
+                const country = document.getElementById('countrySelect').value;
+                if (country) {
+                    // Update country indicator
+                    document.getElementById('countryIndicator').textContent = `(${country})`;
+                    
+                    // First check if we have saved dates
+                    const savedDates = loadTermDatesIfAvailable();
+                    
+                    // If no saved dates, load the defaults for the selected country
+                    if (!savedDates) {
+                        loadDefaultTermDates();
+                    }
+                }
             }
         }
         
@@ -1012,6 +1028,7 @@
             }
             
             const dates = DEFAULT_TERM_DATES[country];
+            let fieldsUpdated = 0;
             
             // Load 2025 dates
             Object.keys(dates[2025]).forEach(term => {
@@ -1020,6 +1037,7 @@
                 if (startInput && endInput) {
                     startInput.value = dates[2025][term].start;
                     endInput.value = dates[2025][term].end;
+                    fieldsUpdated += 2;
                 }
             });
             
@@ -1030,28 +1048,46 @@
                 if (startInput && endInput) {
                     startInput.value = dates[2026][term].start;
                     endInput.value = dates[2026][term].end;
+                    fieldsUpdated += 2;
                 }
             });
+            
+            // Show feedback
+            if (fieldsUpdated > 0) {
+                const btn = event.target;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Dates Loaded!';
+                btn.style.background = '#28a745';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = '#6c757d';
+                }, 2000);
+            }
         }
         
         function loadTermDatesIfAvailable() {
-            // This will be populated from saved data if available
-            // For now, check if we have existing term dates in the form
+            // Check if we have existing term dates saved
             const existingDates = document.querySelector('input[type="hidden"][name="existing_term_dates"]');
-            if (existingDates && existingDates.value) {
+            if (existingDates && existingDates.value && existingDates.value !== '{}') {
                 try {
                     const dates = JSON.parse(existingDates.value);
-                    // Populate form fields with existing dates
-                    Object.keys(dates).forEach(termKey => {
-                        const input = document.querySelector(`input[name="${termKey}"]`);
-                        if (input) {
-                            input.value = dates[termKey];
-                        }
-                    });
+                    
+                    // Check if we actually have dates
+                    if (Object.keys(dates).length > 0) {
+                        // Populate form fields with existing dates
+                        Object.keys(dates).forEach(termKey => {
+                            const input = document.querySelector(`input[name="${termKey}"]`);
+                            if (input) {
+                                input.value = dates[termKey];
+                            }
+                        });
+                        return true; // Found and loaded saved dates
+                    }
                 } catch (e) {
                     console.error('Error loading existing term dates:', e);
                 }
             }
+            return false; // No saved dates found
         }
         
         function addInsetDay() {
