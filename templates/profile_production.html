@@ -571,6 +571,58 @@
                     </div>
                 </div>
                 
+                <!-- Location & School Settings -->
+                <div class="profile-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Location & School Calendar
+                    </h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Country</label>
+                            <select class="form-select" name="country" id="countrySelect" onchange="updateSchoolInfo()">
+                                <option value="">Select your country</option>
+                                <option value="England" {% if school_calendar and school_calendar.country == 'England' %}selected{% endif %}>England</option>
+                                <option value="Scotland" {% if school_calendar and school_calendar.country == 'Scotland' %}selected{% endif %}>Scotland</option>
+                                <option value="Wales" {% if school_calendar and school_calendar.country == 'Wales' %}selected{% endif %}>Wales</option>
+                                <option value="Northern Ireland" {% if school_calendar and school_calendar.country == 'Northern Ireland' %}selected{% endif %}>Northern Ireland</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">School Term Times</label>
+                            <div id="schoolTermInfo" class="form-input" style="background: #f8f9fa; min-height: 45px; display: flex; align-items: center;">
+                                {% if school_calendar %}
+                                    Based on {{ school_calendar.country }} school calendar
+                                {% else %}
+                                    Select a country to see school term times
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- INSET Days -->
+                    <div class="form-group" style="margin-top: 1.5rem;">
+                        <label class="form-label">Personal INSET Days</label>
+                        <p style="font-size: 0.875rem; color: #666; margin-bottom: 1rem;">
+                            Add your school's specific INSET/Teacher Training days
+                        </p>
+                        <div id="insetDaysList" style="margin-bottom: 1rem;">
+                            {% if school_calendar and school_calendar.inset_days %}
+                                {% for day in school_calendar.inset_days %}
+                                <div class="inset-day-item" style="display: flex; gap: 1rem; margin-bottom: 0.5rem;">
+                                    <input type="date" value="{{ day.date }}" class="form-input" style="flex: 1;">
+                                    <input type="text" value="{{ day.description or '' }}" placeholder="Description" class="form-input" style="flex: 2;">
+                                    <button type="button" onclick="removeInsetDay(this)" class="btn-remove" style="padding: 0.5rem 1rem; background: #dc3545; color: white; border: none; border-radius: 4px;">Remove</button>
+                                </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <button type="button" onclick="addInsetDay()" class="btn-secondary" style="background: #6c757d; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px;">
+                            Add INSET Day
+                        </button>
+                    </div>
+                </div>
+                
                 <!-- Special Requirements -->
                 <div class="profile-section">
                     <h2 class="section-title">
@@ -646,6 +698,14 @@
                     // Handle multiple checkbox values
                     if (!data[key]) data[key] = [];
                     data[key].push(value);
+                } else if (key === 'inset_dates[]') {
+                    // Handle INSET dates array
+                    if (!data['inset_dates']) data['inset_dates'] = [];
+                    data['inset_dates'].push(value);
+                } else if (key === 'inset_descriptions[]') {
+                    // Handle INSET descriptions array
+                    if (!data['inset_descriptions']) data['inset_descriptions'] = [];
+                    data['inset_descriptions'].push(value);
                 } else {
                     data[key] = value;
                 }
@@ -709,6 +769,37 @@
                 e.target.value = value;
             });
         });
+        
+        // School calendar functions
+        function updateSchoolInfo() {
+            const country = document.getElementById('countrySelect').value;
+            const infoDiv = document.getElementById('schoolTermInfo');
+            
+            if (country) {
+                infoDiv.textContent = `Based on ${country} school calendar`;
+            } else {
+                infoDiv.textContent = 'Select a country to see school term times';
+            }
+        }
+        
+        function addInsetDay() {
+            const container = document.getElementById('insetDaysList');
+            const dayDiv = document.createElement('div');
+            dayDiv.className = 'inset-day-item';
+            dayDiv.style.cssText = 'display: flex; gap: 1rem; margin-bottom: 0.5rem;';
+            
+            dayDiv.innerHTML = `
+                <input type="date" name="inset_dates[]" class="form-input" style="flex: 1;" required>
+                <input type="text" name="inset_descriptions[]" placeholder="Description" class="form-input" style="flex: 2;">
+                <button type="button" onclick="removeInsetDay(this)" class="btn-remove" style="padding: 0.5rem 1rem; background: #dc3545; color: white; border: none; border-radius: 4px;">Remove</button>
+            `;
+            
+            container.appendChild(dayDiv);
+        }
+        
+        function removeInsetDay(button) {
+            button.parentElement.remove();
+        }
         
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {

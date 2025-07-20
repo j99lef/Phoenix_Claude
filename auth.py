@@ -132,14 +132,36 @@ class SimpleAuth:
                 except Exception as e:
                     logging.error(f"Failed to create admin user: {e}")
                     # Create a temporary user object for admin
-                    user = User(
-                        username='admin',
-                        email='admin@travelaigent.uk',
-                        first_name='Admin',
-                        last_name='User'
-                    )
-                    # Set temporary ID
-                    user.id = 0
+                    class TempUser:
+                        def __init__(self):
+                            self.id = 0
+                            self.username = 'admin'
+                            self.email = 'admin@travelaigent.uk'
+                            self.first_name = 'Admin'
+                            self.last_name = 'User'
+                            self.phone = ''
+                            self.whatsapp_number = ''
+                            self.home_airports = ''
+                            self.preferred_airlines = ''
+                            self.dietary_restrictions = ''
+                            self.travel_style = 'economy'
+                            self.adults_count = 2
+                            self.children_ages = ''
+                            self.senior_travelers = False
+                            self.preferred_accommodation = ''
+                            self.created_at = datetime.now()
+                            self.updated_at = datetime.now()
+                        
+                        def to_dict(self):
+                            return {
+                                'id': self.id,
+                                'username': self.username,
+                                'email': self.email,
+                                'first_name': self.first_name,
+                                'last_name': self.last_name
+                            }
+                    
+                    user = TempUser()
                     # Don't add to session, just return for display
                     
             if not user:

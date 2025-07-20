@@ -61,9 +61,13 @@ def profile():  # type: ignore[return-value]
             
         # Log what we're sending to template
         logging.info(f"User attributes: first_name={user.first_name}, email={user.email}, travel_style={user.travel_style}")
+        
+        # Get user's school calendar if exists
+        from ..models import UserSchoolCalendar
+        school_calendar = UserSchoolCalendar.query.filter_by(user_id=user.id).first() if hasattr(user, 'id') and user.id else None
             
         # Use production-ready profile template
-        return render_template("profile_production.html", user=user)
+        return render_template("profile_production.html", user=user, school_calendar=school_calendar)
     except Exception as exc:  # noqa: BLE001
         logging.exception("Error loading profile: %s", exc)
         # Return a more detailed error for debugging
@@ -111,6 +115,7 @@ def api_profile():  # type: ignore[return-value]
         # Update user fields
         updated_fields = []
         
+        # Basic profile fields
         if 'first_name' in data:
             user.first_name = data['first_name']
             updated_fields.append('first_name')
@@ -127,10 +132,10 @@ def api_profile():  # type: ignore[return-value]
             user.whatsapp_number = data['whatsapp_number']
             updated_fields.append('whatsapp_number')
         if 'home_airports' in data:
-            user.home_airports = json.dumps(data['home_airports']) if isinstance(data['home_airports'], list) else data['home_airports']
+            user.home_airports = data['home_airports']
             updated_fields.append('home_airports')
         if 'preferred_airlines' in data:
-            user.preferred_airlines = json.dumps(data['preferred_airlines']) if isinstance(data['preferred_airlines'], list) else data['preferred_airlines']
+            user.preferred_airlines = data['preferred_airlines']
             updated_fields.append('preferred_airlines')
         if 'dietary_restrictions' in data:
             user.dietary_restrictions = data['dietary_restrictions']
@@ -139,18 +144,59 @@ def api_profile():  # type: ignore[return-value]
             user.travel_style = data['travel_style']
             updated_fields.append('travel_style')
         if 'adults_count' in data:
-            user.adults_count = int(data['adults_count'])
+            user.adults_count = int(data['adults_count']) if data['adults_count'] else 1
             updated_fields.append('adults_count')
         if 'children_ages' in data:
-            user.children_ages = json.dumps(data['children_ages']) if isinstance(data['children_ages'], list) else data['children_ages']
+            user.children_ages = data['children_ages']
             updated_fields.append('children_ages')
         if 'senior_travelers' in data:
-            user.senior_travelers = bool(data['senior_travelers'])
+            user.senior_travelers = data['senior_travelers'] if isinstance(data['senior_travelers'], bool) else data['senior_travelers'] == 'true'
             updated_fields.append('senior_travelers')
         if 'preferred_accommodation' in data:
             user.preferred_accommodation = data['preferred_accommodation']
             updated_fields.append('preferred_accommodation')
         
+        # Handle school calendar
+        if 'country' in data and data['country']:
+            from ..models import UserSchoolCalendar, InsetDay
+            
+            # Get or create school calendar
+            school_calendar = UserSchoolCalendar.query.filter_by(user_id=user.id).first()
+            if not school_calendar:
+                school_calendar = UserSchoolCalendar(user_id=user.id, country=data['country'])
+                db.session.add(school_calendar)
+            else:
+                school_calendar.country = data['country']
+            
+            updated_fields.append('school_calendar')
+            
+            # Handle INSET days
+            if 'inset_dates[]' in data or 'inset_dates' in data:
+                # Clear existing INSET days
+                InsetDay.query.filter_by(calendar_id=school_calendar.id).delete()
+                
+                # Get dates and descriptions
+                dates = data.getlist('inset_dates[]') if hasattr(data, 'getlist') else data.get('inset_dates', [])
+                descriptions = data.getlist('inset_descriptions[]') if hasattr(data, 'getlist') else data.get('inset_descriptions', [])
+                
+                # Add new INSET days
+                for i, date_str in enumerate(dates):
+                    if date_str:
+                        try:
+                            from datetime import datetime
+                            date_obj = datetime.strptime(date_str, '%Y-%m-%d').date()
+                            description = descriptions[i] if i < len(descriptions) else ''
+                            
+                            inset_day = InsetDay(
+                                calendar_id=school_calendar.id,
+                                date=date_obj,
+                                description=description
+                            )
+                            db.session.add(inset_day)
+                        except ValueError:
+                            logging.warning(f"Invalid date format: {date_str}")
+        
+        # Commit all changes
         db.session.commit()
         
         logging.info(f"Updated profile for user {user.username} (ID: {user.id}). Fields updated: {', '.join(updated_fields)}")
