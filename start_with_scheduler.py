@@ -29,10 +29,10 @@ def run_scheduler():
     try:
         agent = TravelAgent()
         
-        # Schedule regular searches every 30 minutes for more frequent updates
-        schedule.every(30).minutes.do(agent.run_deal_search)
+        # Schedule regular searches every 6 hours as requested
+        schedule.every(6).hours.do(agent.run_deal_search)
         
-        # Run an initial check after 2 minutes
+        # Run an initial check after 2 minutes to catch any new briefs
         def initial_check():
             logging.info("Running initial search check...")
             agent.run_deal_search()
@@ -41,7 +41,7 @@ def run_scheduler():
         
         schedule.every(2).minutes.do(initial_check)
         
-        logging.info("Scheduler configured - will check every 30 minutes")
+        logging.info("Scheduler configured - will check every 6 hours")
         
         while True:
             try:

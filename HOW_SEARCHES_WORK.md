@@ -1,9 +1,9 @@
 # How TravelAiGent Searches Work
 
 ## Search Schedule
-- **Automatic searches**: Run every 6 hours
-- **Initial search**: Runs 1 minute after a brief is created
-- **Manual trigger**: Available on each brief detail page
+- **Immediate search**: Runs automatically when you submit a new brief
+- **Recurring searches**: Run every 6 hours after that
+- **Manual trigger**: Available on each brief detail page anytime
 
 ## How to See Results
 
