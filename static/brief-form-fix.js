@@ -2,6 +2,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Brief form fix loaded');
     
+    // Store original functions
+    const originalAddTraveler = window.addTraveler;
+    const originalInitializeTravelers = window.initializeTravelers;
+    
     // Override the updateTravelersField function
     window.updateTravelersField = function() {
         const travelers = [];
@@ -30,64 +34,75 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
     
-    // Auto-add current user as primary traveler
-    window.initializeTravelersWithUser = function() {
+    // Enhanced addTraveler function that allows adding more travelers
+    window.addTraveler = function() {
+        window.travelerCount = (window.travelerCount || 0) + 1;
         const container = document.getElementById('travelersContainer');
-        if (!container) return;
+        
+        const travelerDiv = document.createElement('div');
+        travelerDiv.className = 'traveler-item';
+        travelerDiv.style.display = 'flex';
+        travelerDiv.style.gap = 'var(--space-luxury-md)';
+        travelerDiv.style.alignItems = 'center';
+        travelerDiv.style.marginBottom = 'var(--space-luxury-md)';
+        
+        travelerDiv.innerHTML = `
+            <input type="text" class="luxury-input" placeholder="Traveler name" style="flex: 1;" 
+                   onchange="updateTravelersField()" data-traveler-id="${window.travelerCount}">
+            <select class="luxury-select" style="min-width: 120px;" onchange="updateTravelersField()" data-traveler-id="${window.travelerCount}">
+                <option value="adult">Adult</option>
+                <option value="child">Child</option>
+                <option value="senior">Senior</option>
+                <option value="infant">Infant</option>
+            </select>
+            <button type="button" class="luxury-button luxury-button-danger" onclick="removeTraveler(this)" style="padding: var(--space-luxury-sm);">
+                <i class="fas fa-trash"></i>
+            </button>
+        `;
+        
+        container.appendChild(travelerDiv);
+        updateTravelersField();
+    };
+    
+    // Override initializeTravelers to add user as primary
+    window.initializeTravelers = function() {
+        const existingTravelers = document.querySelector('meta[name="existing-travelers"]')?.content || '';
+        const container = document.getElementById('travelersContainer');
         
         // Get current user info
         const userFirstName = document.querySelector('meta[name="user-first-name"]')?.content || '';
         const userLastName = document.querySelector('meta[name="user-last-name"]')?.content || '';
         const userName = (userFirstName + ' ' + userLastName).trim() || 'You';
         
-        // Clear existing
-        container.innerHTML = '';
-        window.travelerCount = 0;
-        
-        // Add current user as primary
-        addTravelerWithUser(userName, 'adult', true);
-        
-        // Update the field immediately
-        updateTravelersField();
-    };
-    
-    // Enhanced addTraveler function
-    window.addTravelerWithUser = function(name, type, isPrimary) {
-        window.travelerCount = (window.travelerCount || 0) + 1;
-        const container = document.getElementById('travelersContainer');
-        
-        const travelerDiv = document.createElement('div');
-        travelerDiv.className = 'traveler-item';
-        travelerDiv.style.cssText = 'display: flex; gap: 10px; margin-bottom: 10px; align-items: center; padding: 10px; background: #f5f5f5; border-radius: 8px;';
-        
-        travelerDiv.innerHTML = `
-            <input type="text" 
-                   class="luxury-input" 
-                   value="${name}" 
-                   placeholder="Name" 
-                   ${isPrimary ? 'readonly' : ''}
-                   style="flex: 1; ${isPrimary ? 'background-color: #e0e0e0;' : ''}"
-                   onchange="updateTravelersField()">
-            <select class="luxury-select" 
-                    style="width: 120px;" 
-                    ${isPrimary ? 'disabled' : ''}
-                    onchange="updateTravelersField()">
-                <option value="adult" ${type === 'adult' ? 'selected' : ''}>Adult</option>
-                <option value="child" ${type === 'child' ? 'selected' : ''}>Child</option>
-                <option value="infant" ${type === 'infant' ? 'selected' : ''}>Infant</option>
-                <option value="senior" ${type === 'senior' ? 'selected' : ''}>Senior</option>
-            </select>
-            ${isPrimary ? 
-                '<span style="color: #22c55e; font-weight: 600;">You (Primary)</span>' : 
-                `<button type="button" 
-                         style="background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;"
-                         onclick="removeTraveler(this)" 
-                         title="Remove traveler">×</button>`
-            }
-        `;
-        
-        container.appendChild(travelerDiv);
-        updateTravelersField();
+        if (existingTravelers && existingTravelers.trim() && existingTravelers !== '2 Adults') {
+            // Parse existing travelers
+            originalInitializeTravelers.call(this);
+        } else {
+            // Add user as primary traveler
+            window.travelerCount = 1;
+            
+            const travelerDiv = document.createElement('div');
+            travelerDiv.className = 'traveler-item';
+            travelerDiv.style.display = 'flex';
+            travelerDiv.style.gap = 'var(--space-luxury-md)';
+            travelerDiv.style.alignItems = 'center';
+            travelerDiv.style.marginBottom = 'var(--space-luxury-md)';
+            
+            travelerDiv.innerHTML = `
+                <input type="text" class="luxury-input" value="${userName}" placeholder="Traveler name" style="flex: 1; background-color: #e0e0e0;" 
+                       readonly onchange="updateTravelersField()" data-traveler-id="1">
+                <select class="luxury-select" style="min-width: 120px;" disabled onchange="updateTravelersField()" data-traveler-id="1">
+                    <option value="adult" selected>Adult</option>
+                    <option value="child">Child</option>
+                    <option value="senior">Senior</option>
+                    <option value="infant">Infant</option>
+                </select>
+                <span style="color: #22c55e; font-weight: 600; min-width: 100px;">You (Primary)</span>
+            `;
+            
+            container.appendChild(travelerDiv);
+            updateTravelersField();
+        }
     };
     
     // Fix form submission
@@ -115,9 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize on load
     setTimeout(() => {
-        if (window.initializeTravelersWithUser) {
-            initializeTravelersWithUser();
-        } else if (window.initializeTravelers) {
+        if (window.initializeTravelers) {
             window.initializeTravelers();
         }
     }, 100);

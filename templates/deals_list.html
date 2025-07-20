@@ -1051,10 +1051,32 @@
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                const deals = await response.json();
+                const result = await response.json();
                 
-                console.log('Received deals:', deals);
-                displayDeals(deals);
+                console.log('Received result:', result);
+                
+                // Check if result is an array of deals or a message object
+                if (Array.isArray(result)) {
+                    displayDeals(result);
+                } else if (result.message) {
+                    // Handle message response (no deals found)
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <h3 class="empty-title">Search Complete</h3>
+                            <p class="empty-description">
+                                ${result.message}
+                            </p>
+                        </div>
+                    `;
+                    const resultsCount = document.getElementById('resultsCount');
+                    resultsCount.textContent = result.deals_found ? `${result.deals_found} deals found` : 'No deals found';
+                } else {
+                    // Unexpected response format
+                    throw new Error('Unexpected response format');
+                }
                 
             } catch (error) {
                 console.error('Search error:', error);
