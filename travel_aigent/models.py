@@ -78,7 +78,7 @@ class TravelBrief(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
-    departure_location = db.Column(db.String(100), nullable=False)
+    departure_location = db.Column(db.String(100), nullable=True)  # Made nullable to handle API responses
     destination = db.Column(db.String(100), nullable=False)
     departure_date = db.Column(db.DateTime, nullable=False)
     return_date = db.Column(db.DateTime, nullable=True)
@@ -155,7 +155,7 @@ class Deal(db.Model):
     
     # Deal Specifics
     destination = db.Column(db.String(100), nullable=False)
-    departure_location = db.Column(db.String(100), nullable=False)
+    departure_location = db.Column(db.String(100), nullable=True)  # Made nullable to handle API responses
     departure_date = db.Column(db.DateTime, nullable=False)
     return_date = db.Column(db.DateTime)
     accommodation_type = db.Column(db.String(50))
