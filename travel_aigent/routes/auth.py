@@ -149,6 +149,80 @@ def register():  # type: ignore[return-value]
         db.session.add(new_user)
         db.session.commit()
         
+        # Send welcome email to new user
+        try:
+            subject = "Welcome to TravelAiGent!"
+            html_content = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h1 style="color: #C9A96E; text-align: center;">Welcome to TravelAiGent!</h1>
+                
+                <p style="color: #666; font-size: 16px;">
+                    Hi {new_user.first_name},
+                </p>
+                
+                <p style="color: #666; font-size: 16px;">
+                    Thank you for joining TravelAiGent! Your account has been successfully created.
+                </p>
+                
+                <div style="background: #f9f9f9; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                    <h3 style="color: #333; margin-top: 0;">Your Account Details:</h3>
+                    <p style="color: #666; margin: 5px 0;"><strong>Username:</strong> {new_user.username}</p>
+                    <p style="color: #666; margin: 5px 0;"><strong>Email:</strong> {new_user.email}</p>
+                    <p style="color: #666; margin: 5px 0;"><strong>Name:</strong> {new_user.first_name} {new_user.last_name}</p>
+                </div>
+                
+                <h3 style="color: #333;">Get Started:</h3>
+                <ol style="color: #666; font-size: 16px;">
+                    <li>Create a Travel Group to organize your trips</li>
+                    <li>Add Travel Briefs to specify your destination preferences</li>
+                    <li>We'll search for amazing deals and notify you when we find them!</li>
+                </ol>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="{request.host_url}login" style="display: inline-block; background: #C9A96E; color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px;">
+                        Start Exploring Deals
+                    </a>
+                </div>
+                
+                <p style="color: #999; font-size: 14px; text-align: center;">
+                    If you have any questions, feel free to reach out to our support team.
+                </p>
+            </div>
+            """
+            
+            text_content = f"""
+            Welcome to TravelAiGent!
+            
+            Hi {new_user.first_name},
+            
+            Thank you for joining TravelAiGent! Your account has been successfully created.
+            
+            Your Account Details:
+            - Username: {new_user.username}
+            - Email: {new_user.email}
+            - Name: {new_user.first_name} {new_user.last_name}
+            
+            Get Started:
+            1. Create a Travel Group to organize your trips
+            2. Add Travel Briefs to specify your destination preferences
+            3. We'll search for amazing deals and notify you when we find them!
+            
+            Login here: {request.host_url}login
+            
+            If you have any questions, feel free to reach out to our support team.
+            """
+            
+            notification_service.send_email(
+                to_email=new_user.email,
+                subject=subject,
+                html_content=html_content,
+                text_content=text_content
+            )
+            logging.info(f"Welcome email sent to: {new_user.email}")
+        except Exception as email_error:
+            # Log error but don't fail registration
+            logging.error(f"Failed to send welcome email: {email_error}")
+        
         logging.info(f"New user registered: {data['username']}")
         
         return jsonify({
